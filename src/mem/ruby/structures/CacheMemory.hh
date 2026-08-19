@@ -43,6 +43,7 @@
 #define __MEM_RUBY_STRUCTURES_CACHEMEMORY_HH__
 
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "base/statistics.hh"
@@ -61,20 +62,24 @@
 namespace gem5
 {
 
-namespace ruby
-{
+  namespace ruby
+  {
 
-class CacheMemory : public SimObject
-{
-  public:
-    typedef RubyCacheParams Params;
-    typedef std::shared_ptr<replacement_policy::ReplacementData> ReplData;
-    CacheMemory(const Params &p);
-    ~CacheMemory();
-
-    void init();
-
-    // Public Methods
+    class CacheMemory : public SimObject
+    {
+      public:
+      typedef RubyCacheParams Params;
+      typedef std::shared_ptr<replacement_policy::ReplacementData> ReplData;
+      CacheMemory(const Params &p);
+      ~CacheMemory();
+      
+      void init();
+      //PRANJAL
+      void recordSetAccess(Addr address);
+      void recordHitWithAddress(Addr address);
+      void recordMissWithAddress(Addr address);
+      //PRANJAL
+      // Public Methods
     // perform a cache access and see if we hit or not.  Return true on a hit.
     bool tryCacheAccess(Addr address, RubyRequestType type,
                         DataBlock*& data_ptr);
@@ -211,7 +216,13 @@ class CacheMemory : public SimObject
      * false.
      */
     bool m_use_occupancy;
-
+    //PRANJAL
+    bool m_print_evictions;
+    int m_top_n_set;
+    std::vector<uint64_t> m_set_access_counts;
+    void updateTopNSetAccesses();
+    Addr m_last_accessed_address;  // Track last address for hit/miss statistics
+    //PRANJAL
     RubySystem *m_ruby_system = nullptr;
 
     Addr
@@ -223,12 +234,19 @@ class CacheMemory : public SimObject
     private:
       struct CacheMemoryStats : public statistics::Group
       {
-          CacheMemoryStats(statistics::Group *parent);
+          CacheMemoryStats(statistics::Group *parent, int topNSetCount);
 
           statistics::Scalar numDataArrayReads;
           statistics::Scalar numDataArrayWrites;
           statistics::Scalar numTagArrayReads;
           statistics::Scalar numTagArrayWrites;
+
+          ////////////////////////PRANJAL
+          statistics::Scalar m_demand_hits_T1_T2;
+          statistics::Scalar m_demand_misses_T1_T2;
+          statistics::Scalar numEvictions;
+          ////////////////////////PRANJAL
+
 
           statistics::Scalar numTagArrayStalls;
           statistics::Scalar numDataArrayStalls;
@@ -249,6 +267,17 @@ class CacheMemory : public SimObject
           statistics::Scalar m_prefetch_hits;
           statistics::Scalar m_prefetch_misses;
           statistics::Formula m_prefetch_accesses;
+
+          //PRANJAL
+          statistics::Vector topNSetIds;
+          statistics::Vector topNSetCounts;
+          
+          // Hits and misses per set and per way
+          statistics::Vector hits_per_set;
+          statistics::Vector misses_per_set;
+          statistics::Vector hits_per_way;
+          statistics::Vector misses_per_way;
+          //PRANJAL
 
           statistics::Vector m_accessModeType;
       } cacheMemoryStats;

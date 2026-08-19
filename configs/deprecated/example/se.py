@@ -46,6 +46,12 @@ import sys
 
 import m5
 from m5.defines import buildEnv
+#### PRANJALS CODE
+
+# from m5.stats import *
+# from m5 import event
+# import m5.events
+####
 from m5.objects import *
 from m5.params import NULL
 from m5.util import (
@@ -67,7 +73,10 @@ from common import (
     Simulation,
 )
 from common.Caches import *
-from common.cpu2000 import *
+# from common.cpu2000 import *
+#####PRANJAL
+from common.cpu2017 import *
+###
 from common.FileSystemConfig import config_filesystem
 from ruby import Ruby
 
@@ -93,10 +102,11 @@ def get_processes(args):
 
     idx = 0
     for wrkld in workloads:
-        process = Process(pid=100 + idx)
+        # process = Process(pid=100 + idx)
+        process = Process()
         process.executable = wrkld
         process.cwd = os.getcwd()
-        process.gid = os.getgid()
+        # process.gid = os.getgid()
 
         if args.env:
             with open(args.env) as f:
@@ -131,6 +141,19 @@ warn(
 )
 
 parser = argparse.ArgumentParser()
+####PRANJAL
+parser.add_argument(
+    "--print-evictions",
+    action="store_true",
+    help="Print number of cache evictions"
+)
+parser.add_argument(
+    "--top-n-set",
+    type=int,
+    default=0,
+    help="Top N sets to be monitored for cache occupancy"
+)
+####PRANJAL
 Options.addCommonOptions(parser)
 Options.addSEOptions(parser)
 
@@ -156,18 +179,16 @@ if args.bench:
                     % (app, args.arm_iset, args.spec_input)
                 )
             else:
-                # TARGET_ISA has been removed, but this is missing a ], so it
-                # has incorrect syntax and wasn't being used anyway.
                 exec(
-                    "workload = %s(buildEnv['TARGET_ISA', 'linux', '%s')"
+                    "workload = %s('x86', 'linux', '%s')"
                     % (app, args.spec_input)
                 )
+
             multiprocesses.append(workload.makeProcess())
-        except:
-            print(
-                f"Unable to find workload for ISA: {app}",
-                file=sys.stderr,
-            )
+
+        except Exception as e:
+            print(f"Unable to find workload for ISA: {app}", file=sys.stderr)
+            print(f"Actual error: {e}", file=sys.stderr)
             sys.exit(1)
 elif args.cmd:
     multiprocesses, numThreads = get_processes(args)
@@ -293,6 +314,13 @@ system.workload = SEWorkload.init_compatible(mp0_path)
 
 if args.wait_gdb:
     system.workload.wait_for_remote_gdb = True
+
+
+# ----------------------------------------------------
+# PRANJALS CODE
+# ----------------------------------------------------
+
+# ----------------------------------------------------
 
 root = Root(full_system=False, system=system)
 Simulation.run(args, root, system, FutureClass)

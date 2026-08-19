@@ -54,3 +54,7 @@ class RubyCache(SimObject):
     dataAccessLatency = Param.Cycles(1, "cycles for a data array access")
     tagAccessLatency = Param.Cycles(1, "cycles for a tag array access")
     resourceStalls = Param.Bool(False, "stall if there is a resource failure")
+    ###PRANJAL
+    print_evictions = Param.Bool(False, "Whether to report cache evictions")
+    top_n_set = Param.Int(0, "Top N sets to be monitored for cache occupancy")
+    ###PRANJAL

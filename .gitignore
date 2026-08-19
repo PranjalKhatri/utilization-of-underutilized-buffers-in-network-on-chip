@@ -38,3 +38,7 @@ configs/dram/lowp_sweep.cfg
 .vscode
 typings
 .DS_Store
+cpu2017/
+experiment_results
+m5out/
+=m5out_sweep/

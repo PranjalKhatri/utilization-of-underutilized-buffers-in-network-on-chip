@@ -86,12 +86,19 @@ def create_system(
             assoc=options.l1i_assoc,
             start_index_bit=block_size_bits,
             is_icache=True,
+        ####PRANJAL
+            # print_evictions=options.print_evictions,
+        ####PRANJAL
         )
         l1d_cache = L1Cache(
             size=options.l1d_size,
             assoc=options.l1d_assoc,
             start_index_bit=block_size_bits,
             is_icache=False,
+        ####PRANJAL
+            # print_evictions=options.print_evictions,
+            # top_n_set=options.top_n_set,
+        ####PRANJAL
         )
 
         prefetcher = RubyPrefetcher(block_size=options.cacheline_size)
@@ -151,6 +158,9 @@ def create_system(
             size=options.l2_size,
             assoc=options.l2_assoc,
             start_index_bit=l2_index_start,
+        ####PRANJAL
+            # print_evictions=options.print_evictions,
+        ####PRANJAL
         )
 
         l2_cntrl = MESI_Two_Level_L2Cache_Controller(

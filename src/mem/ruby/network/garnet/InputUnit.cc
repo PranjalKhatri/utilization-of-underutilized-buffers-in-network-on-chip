@@ -89,10 +89,11 @@ InputUnit::wakeup()
 
         if ((t_flit->get_type() == HEAD_) ||
             (t_flit->get_type() == HEAD_TAIL_)) {
-
+            
             assert(virtualChannels[vc].get_state() == IDLE_);
             set_vc_active(vc, curTick());
-
+            //PRANJAL
+            m_local_packets_generated += isLocalPacket();
             // Route computation for this vc
             int outport = m_router->route_compute(t_flit->get_route(),
                 m_id, m_direction);
@@ -181,6 +182,9 @@ InputUnit::resetStats()
         m_num_buffer_reads[j] = 0;
         m_num_buffer_writes[j] = 0;
     }
+
+    //PRANJAL
+    m_local_packets_generated = 0;
 }
 
 } // namespace garnet

@@ -232,7 +232,10 @@ structure (CacheMemory, external = "yes") {
   int getCacheSize();
   int getNumBlocks();
   Addr getAddressAtIdx(int);
-
+  //PRANJAL
+  void recordSetAccess(Addr);
+  void recordHitWithAddress(Addr);
+  void recordMissWithAddress(Addr);
   void profileDemandHit();
   void profileDemandMiss();
   void profilePrefetchHit();

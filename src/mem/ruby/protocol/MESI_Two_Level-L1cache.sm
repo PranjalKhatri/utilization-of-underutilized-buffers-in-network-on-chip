@@ -1002,18 +1002,30 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
   }
 
   action(uu_profileInstMiss, "\uim", desc="Profile the demand miss") {
+    //PRANJAL
+    L1Icache.recordSetAccess(address);
+    L1Icache.recordMissWithAddress(address);
     L1Icache.profileDemandMiss();
   }
 
   action(uu_profileInstHit, "\uih", desc="Profile the demand hit") {
+    //PRANJAL
+    L1Icache.recordSetAccess(address);
+    L1Icache.recordHitWithAddress(address);
     L1Icache.profileDemandHit();
   }
 
   action(uu_profileDataMiss, "\udm", desc="Profile the demand miss") {
+    //PRANJAL
+    L1Dcache.recordSetAccess(address);
+    L1Dcache.recordMissWithAddress(address);
     L1Dcache.profileDemandMiss();
   }
 
   action(uu_profileDataHit, "\udh", desc="Profile the demand hit") {
+    //PRANJAL
+    L1Dcache.recordSetAccess(address);
+    L1Dcache.recordHitWithAddress(address);
     L1Dcache.profileDemandHit();
   }
 

@@ -41,6 +41,8 @@
 
 #include "mem/ruby/structures/CacheMemory.hh"
 
+#include <algorithm>
+
 #include "base/intmath.hh"
 #include "base/logging.hh"
 #include "debug/HtmMem.hh"
@@ -51,6 +53,9 @@
 #include "mem/cache/replacement_policies/weighted_lru_rp.hh"
 #include "mem/ruby/protocol/AccessPermission.hh"
 #include "mem/ruby/system/RubySystem.hh"
+//////////////////////PRANJAL
+using namespace std;
+//////////////////////PRANJAL
 
 namespace gem5
 {
@@ -71,10 +76,15 @@ CacheMemory::CacheMemory(const Params &p)
     dataArray(p.dataArrayBanks, p.dataAccessLatency, p.start_index_bit),
     tagArray(p.tagArrayBanks, p.tagAccessLatency, p.start_index_bit),
     atomicALUArray(p.atomicALUs, p.atomicLatency),
-    cacheMemoryStats(this)
+    cacheMemoryStats(this, p.top_n_set)
 {
     m_cache_size = p.size;
     m_cache_assoc = p.assoc;
+    //PRANJAL
+    // m_print_evictions = p.print_evictions;
+    // m_top_n_set = p.top_n_set;
+    m_last_accessed_address = 0;
+    //PRANJAL
     m_replacementPolicy_ptr = p.replacement_policy;
     m_start_index_bit = p.start_index_bit;
     m_is_instruction_only_cache = p.is_icache;
@@ -107,6 +117,22 @@ CacheMemory::init()
     assert(m_cache_num_sets > 1);
     m_cache_num_set_bits = floorLog2(m_cache_num_sets);
     assert(m_cache_num_set_bits > 0);
+
+    //PRANJAL
+    if (m_top_n_set > 0) {
+        m_set_access_counts.resize(m_cache_num_sets, 0);
+    }
+    
+    // Initialize hits/misses per set and per way statistics with actual cache dimensions
+    // cacheMemoryStats.hits_per_set.init(m_cache_num_sets);
+    // cacheMemoryStats.misses_per_set.init(m_cache_num_sets);
+    // cacheMemoryStats.hits_per_way.init(m_cache_assoc);
+    // cacheMemoryStats.misses_per_way.init(m_cache_assoc);
+    cacheMemoryStats.hits_per_set.init(1);//PRANJAL disabled for less clutter in stats output
+    cacheMemoryStats.misses_per_set.init(1);
+    cacheMemoryStats.hits_per_way.init(1);
+    cacheMemoryStats.misses_per_way.init(1);
+    //PRANJAL
 
     m_cache.resize(m_cache_num_sets,
                     std::vector<AbstractCacheEntry*>(m_cache_assoc, nullptr));
@@ -335,6 +361,10 @@ void
 CacheMemory::deallocate(Addr address)
 {
     DPRINTF(RubyCache, "deallocating address: %#x\n", address);
+    //PRANJAL
+    if (m_print_evictions)
+        cacheMemoryStats.numEvictions++;
+    //PRANJAL
     AbstractCacheEntry* entry = lookup(address);
     assert(entry != nullptr);
     m_replacementPolicy_ptr->invalidate(entry->replacementData);
@@ -344,6 +374,92 @@ CacheMemory::deallocate(Addr address)
     m_cache[cache_set][way] = NULL;
     m_tag_index.erase(address);
 }
+
+//PRANJAL
+void
+CacheMemory::recordSetAccess(Addr address)
+{
+    // Store the address for later use in profileDemandHit/Miss
+    m_last_accessed_address = address;
+    
+    if (m_top_n_set <= 0 || m_set_access_counts.empty()) {
+        return;
+    }
+
+    int64_t set = addressToCacheSet(address);
+    if (set >= 0 && set < static_cast<int64_t>(m_set_access_counts.size())) {
+        m_set_access_counts[set]++;
+        updateTopNSetAccesses();
+    }
+}
+
+void
+CacheMemory::updateTopNSetAccesses()
+{
+    if (m_top_n_set <= 0 || m_set_access_counts.empty()) {
+        return;
+    }
+
+    std::vector<std::pair<int, uint64_t>> ranked_sets;
+    ranked_sets.reserve(m_set_access_counts.size());
+    for (int set = 0; set < static_cast<int>(m_set_access_counts.size()); ++set) {
+        ranked_sets.emplace_back(set, m_set_access_counts[set]);
+    }
+
+    std::sort(ranked_sets.begin(), ranked_sets.end(),
+        [](const std::pair<int, uint64_t>& a,
+           const std::pair<int, uint64_t>& b) {
+            if (a.second != b.second) {
+                return a.second > b.second;
+            }
+            return a.first < b.first;
+        });
+
+    const int limit = std::min(m_top_n_set,
+                              static_cast<int>(ranked_sets.size()));
+
+    for (int i = 0; i < limit; ++i) {
+        cacheMemoryStats.topNSetIds[i] = ranked_sets[i].first;
+        cacheMemoryStats.topNSetCounts[i] = ranked_sets[i].second;
+    }
+}
+//PRANJAL
+
+//PRANJAL - Record hits/misses per set and per way as statistics
+void
+CacheMemory::recordHitWithAddress(Addr address)
+{
+    int64_t set = addressToCacheSet(address);
+    if (set >= 0 && set < m_cache_num_sets) {
+        //PRANJAL DISABLED
+        // cacheMemoryStats.hits_per_set[set]++;
+    }
+    
+    // Get the way by looking up the entry
+    int loc = findTagInSet(set, address);
+    if (loc >= 0 && loc < m_cache_assoc) {
+        //PRANJAL DISABLED
+        // cacheMemoryStats.hits_per_way[loc]++;
+    }
+}
+
+void
+CacheMemory::recordMissWithAddress(Addr address)
+{
+    int64_t set = addressToCacheSet(address);
+    if (set >= 0 && set < m_cache_num_sets) {
+        //PRANJAL DISABLED
+        // cacheMemoryStats.misses_per_set[set]++;
+    }
+    
+    // For misses, increment a generic way counter if possible
+    // Note: We don't have a specific way for misses yet (way is determined during replacement)
+    if (m_cache_assoc > 0) {
+        //PRANJAL DISABLED
+        // cacheMemoryStats.misses_per_way[0]++;  // Track all misses in way 0 for now
+    }
+}
+//PRANJAL
 
 // Returns with the physical address of the conflicting cache line
 Addr
@@ -546,7 +662,8 @@ CacheMemory::isLocked(Addr address, int context)
 }
 
 CacheMemory::
-CacheMemoryStats::CacheMemoryStats(statistics::Group *parent)
+CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
+                                 int topNSetCount)
     : statistics::Group(parent),
       ADD_STAT(numDataArrayReads, "Number of data array reads"),
       ADD_STAT(numDataArrayWrites, "Number of data array writes"),
@@ -569,10 +686,25 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent)
                m_demand_hits + m_demand_misses),
       ADD_STAT(m_prefetch_hits, "Number of cache prefetch hits"),
       ADD_STAT(m_prefetch_misses, "Number of cache prefetch misses"),
+      /////////////////PRANJAL
+      ADD_STAT(m_demand_hits_T1_T2,"Number of demand hits between T1 and T2"),
+      ADD_STAT(m_demand_misses_T1_T2,"Number of demand miss between T1 and T2"),
+      ADD_STAT(numEvictions, "Number of cache evictions"),
+      ADD_STAT(topNSetIds, "Top N accessed cache set IDs"),
+      ADD_STAT(topNSetCounts, "Top N accessed cache set counts"),
+      ADD_STAT(hits_per_set, "Number of hits per cache set"),
+      ADD_STAT(misses_per_set, "Number of misses per cache set"),
+      ADD_STAT(hits_per_way, "Number of hits per cache way"),
+      ADD_STAT(misses_per_way, "Number of misses per cache way"),
+      /////////////////PRANJAL
       ADD_STAT(m_prefetch_accesses, "Number of cache prefetch accesses",
                m_prefetch_hits + m_prefetch_misses),
       ADD_STAT(m_accessModeType, "")
 {
+    const int validTopNSize = std::max(1, topNSetCount);
+    topNSetIds.init(validTopNSize);
+    topNSetCounts.init(validTopNSize);
+
     numDataArrayReads
         .flags(statistics::nozero);
 
@@ -645,6 +777,16 @@ CacheMemory::recordRequestType(CacheRequestType requestType, Addr addr)
 {
     DPRINTF(RubyStats, "Recorded statistic: %s\n",
             CacheRequestType_to_string(requestType));
+    //PRANJAL
+    if (m_top_n_set > 0 && !m_set_access_counts.empty()) {
+        int64_t set = addressToCacheSet(addr);
+        if (set >= 0 && set < static_cast<int64_t>(m_set_access_counts.size())) {
+            m_set_access_counts[set]++;
+            updateTopNSetAccesses();
+        }
+    }
+    //PRANJAL
+
     switch(requestType) {
     case CacheRequestType_DataArrayRead:
         if (m_resource_stalls)
@@ -794,17 +936,40 @@ CacheMemory::htmCommitTransaction()
         htmReadSetSize, htmWriteSetSize);
 }
 
-void
-CacheMemory::profileDemandHit()
-{
-    cacheMemoryStats.m_demand_hits++;
-}
+// void
+// CacheMemory::profileDemandHit()
+// {
+//     cacheMemoryStats.m_demand_hits++;
+// }
 
+// void
+// CacheMemory::profileDemandMiss()
+// {
+//     cacheMemoryStats.m_demand_misses++;
+// }
+////////////////////////////////////////////////PRANJAL
 void
-CacheMemory::profileDemandMiss()
-{
-    cacheMemoryStats.m_demand_misses++;
-}
+ CacheMemory::profileDemandHit()
+ {
+     const Tick T1 = 1500000000;                     // CHANGES START FOR PART A OF E2.
+     const Tick T2 = 1625000000;
+     cacheMemoryStats.m_demand_hits++;
+     if(curTick()>T1 && curTick()<T2){
+       cacheMemoryStats.m_demand_hits_T1_T2++;            // IF THE curTick() value is between 5000000 and 6000000 then increment value of demand hits
+     }
+ }
+ 
+ void
+ CacheMemory::profileDemandMiss()
+ {
+     const Tick T1 = 1500000000;
+     const Tick T2 = 1625000000;
+     cacheMemoryStats.m_demand_misses++;
+     if(curTick()>T1 && curTick()<T2){
+       cacheMemoryStats.m_demand_misses_T1_T2++;           // IF THE curTick() value is between 5000000 and 6000000 then increment value of demand MISSES
+     }
+ }
+////////////////////////////////////////////////PRANJAL
 
 void
 CacheMemory::profilePrefetchHit()

@@ -216,6 +216,12 @@ Router::regStats()
         .name(name() + ".sw_output_arbiter_activity")
         .flags(statistics::nozero)
     ;
+
+    //PRANJAL
+    m_local_packets_generated
+        .name(name() + ".local_packets_generated")
+        .flags(statistics::nozero)
+    ;
 }
 
 void
@@ -227,7 +233,12 @@ Router::collateStats()
             m_buffer_writes += m_input_unit[i]->get_buf_write_activity(j);
         }
     }
-
+    // PRANJAL
+    for (int i = 0; i < m_input_unit.size(); i++) {
+        m_local_packets_generated +=
+            m_input_unit[i]->get_local_packets_generated();
+    }
+    
     m_sw_input_arbiter_activity = switchAllocator.get_input_arbiter_activity();
     m_sw_output_arbiter_activity =
         switchAllocator.get_output_arbiter_activity();

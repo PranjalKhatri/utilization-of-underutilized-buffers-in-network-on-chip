@@ -152,12 +152,20 @@ class InputUnit : public Consumer
     double get_buf_write_activity(unsigned int vnet) const
     { return m_num_buffer_writes[vnet]; }
 
+    //PRANJAL
+    uint64_t get_local_packets_generated() const { return m_local_packets_generated; }
+
     bool functionalRead(Packet *pkt, WriteMask &mask);
     uint32_t functionalWrite(Packet *pkt);
 
     void resetStats();
 
   private:
+    //PRANJAL
+    bool isLocalPacket() const {
+        return m_direction == "Local";
+    }
+
     Router *m_router;
     int m_id;
     PortDirection m_direction;
@@ -165,7 +173,8 @@ class InputUnit : public Consumer
     NetworkLink *m_in_link;
     CreditLink *m_credit_link;
     flitBuffer creditQueue;
-
+    //PRANJAL
+    uint64_t m_local_packets_generated;
     // Input Virtual channels
     std::vector<VirtualChannel> virtualChannels;
 
