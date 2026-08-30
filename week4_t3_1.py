@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Simulation settings
-GEM5_BIN = "./build/NULL/gem5.opt"
+GEM5_BIN = "./build/Garnet_standalone/gem5.opt"
 CONFIG_SCRIPT = "configs/example/garnet_synth_traffic.py"
 STATS_FILE = "m5out/stats.txt"
-SIM_CYCLES = 20000
+SIM_CYCLES = 1000000 
 
 # Sweep injection rate from 0.02 to 0.50 in steps of 0.02
-injection_rates = np.arange(0.02, 0.52, 0.02)
+injection_rates = np.arange(0.1, 0.70, 0.1)
+num_cpus = 16
 apl_results = []
 valid_rates = []
 
@@ -22,13 +23,14 @@ for rate in injection_rates:
         GEM5_BIN,
         CONFIG_SCRIPT,
         "--network=garnet",
-        "--num-cpus=16",
-        "--num-dirs=16",
+        f"--num-cpus={num_cpus}",
+        f"--num-dirs={num_cpus}",
         "--topology=Mesh_XY",
-        "--mesh-rows=4",
+        f"--mesh-rows={int(num_cpus**0.5)}",
         "--synthetic=uniform_random",
         f"--injectionrate={rate_str}",
-        "--vcs-per-vnet=4",
+        # "--inj-vnet=0",
+        f"--num-l2caches={num_cpus}",
         f"--sim-cycles={SIM_CYCLES}",
     ]
     

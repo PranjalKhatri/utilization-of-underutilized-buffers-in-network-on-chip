@@ -97,10 +97,14 @@ def define_options(parser):
         action="store",
         type=int,
         default=0,
+        ##PRANJAL.
         help="""routing algorithm in network.
             0: weight-based table
             1: XY (for Mesh. see garnet/RoutingUnit.cc)
-            2: Custom (see garnet/RoutingUnit.cc""",
+            2: Custom (see garnet/RoutingUnit.cc
+            3: Odd-Even routing
+            4: DyXY routing
+            """,
     )
     parser.add_argument(
         "--network-fault-model",
@@ -122,6 +126,26 @@ def define_options(parser):
         default=False,
         help="""SimpleNetwork links uses a separate physical
             channel for each virtual network""",
+    )
+    ##PRANJAL
+    parser.add_argument(
+        "--packet-trace-file",
+        action="store",
+        type=str,
+        default="",
+        help="File path to output recorded packet routes/paths",
+    )
+    parser.add_argument(
+        "--buffers-per-ctrl-vc",
+        type=int,
+        default=1,
+        help="Number of buffers per ctrl VC",
+    )
+    parser.add_argument(
+        "--buffers-per-data-vc",
+        type=int,
+        default=4,
+        help="Number of buffers per data VC",
     )
 
 
@@ -172,6 +196,13 @@ def init_network(options, network, InterfaceClass):
         network.ni_flit_size = options.link_width_bits / 8
         network.routing_algorithm = options.routing_algorithm
         network.garnet_deadlock_threshold = options.garnet_deadlock_threshold
+
+        ##PRANJAL
+        network.buffers_per_ctrl_vc = options.buffers_per_ctrl_vc
+        network.buffers_per_data_vc = options.buffers_per_data_vc
+        ##PRANJAL
+        if hasattr(options, "packet_trace_file") and options.packet_trace_file:
+            network.packet_trace_file = options.packet_trace_file
 
         # Create Bridges and connect them to the corresponding links
         for intLink in network.int_links:

@@ -60,6 +60,8 @@ parser.add_argument(
         "neighbor",
         "shuffle",
         "transpose",
+        ##PRANJAL
+        "poisson",
     ],
 )
 

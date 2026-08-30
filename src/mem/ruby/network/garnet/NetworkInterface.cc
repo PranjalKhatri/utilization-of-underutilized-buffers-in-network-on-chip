@@ -254,6 +254,10 @@ NetworkInterface::wakeup()
                     Credit *cFlit = new Credit(t_flit->get_vc(),
                                                true, curTick());
                     iPort->sendCredit(cFlit);
+
+                    //PRANJAL
+                    m_net_ptr->printPacketPath(t_flit->getPacketID());
+
                     // Update stats and delete flit pointer
                     incrementStats(t_flit);
                     delete t_flit;

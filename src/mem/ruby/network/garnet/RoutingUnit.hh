@@ -68,6 +68,9 @@ class RoutingUnit
     void addInDirection(PortDirection inport_dirn, int inport);
     void addOutDirection(PortDirection outport_dirn, int outport);
 
+    //PRANJAL
+    int getCongestionMetric(int outport) const;
+    int getFreeCredits(PortDirection dirn, int vnet);
     // Routing for Mesh
     int outportComputeXY(RouteInfo route,
                          int inport,
@@ -75,6 +78,14 @@ class RoutingUnit
 
     // Custom Routing Algorithm using Port Directions
     int outportComputeCustom(RouteInfo route,
+                             int inport,
+                             PortDirection inport_dirn);
+    //PRANJAL
+    int outportComputeOddEven(RouteInfo route,
+                             int inport,
+                             PortDirection inport_dirn);
+    // Routing for DyXY paper
+    int outportComputeDYXY(RouteInfo route,
                              int inport,
                              PortDirection inport_dirn);
 

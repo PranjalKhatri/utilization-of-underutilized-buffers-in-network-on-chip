@@ -34,6 +34,8 @@
 
 #include <iostream>
 #include <vector>
+//PRANJAL
+#include <unordered_map>
 
 #include "mem/ruby/network/Network.hh"
 #include "mem/ruby/network/fault_model/FaultModel.hh"
@@ -156,7 +158,15 @@ class GarnetNetwork : public Network
 
     void update_traffic_distribution(RouteInfo route);
     int getNextPacketID() { return m_next_packet_id++; }
-
+    //PRANJAL
+    void 
+    recordPacketRouter(int packet_id, int router_id)
+    {
+        if(!m_packet_trace_file.empty())
+            m_packet_paths[packet_id].push_back(router_id);
+    }
+    void printPacketPath(int packet_id);
+    //PRANJAL
   protected:
     // Configuration
     int m_num_rows;
@@ -214,6 +224,9 @@ class GarnetNetwork : public Network
     std::vector<CreditLink *> m_creditlinks; // All credit links in the network
     std::vector<NetworkInterface *> m_nis;   // All NI's in Network
     int m_next_packet_id; // static vairable for packet id allocation
+    //PRANJAL
+    std::unordered_map<int, std::vector<int>> m_packet_paths;
+    std::string m_packet_trace_file;
 };
 
 inline std::ostream&

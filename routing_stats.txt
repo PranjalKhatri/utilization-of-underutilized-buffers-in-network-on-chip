@@ -1,0 +1,52 @@
+====================================================================================================
+EXPERIMENT 1: LATENCY VS NUMBER OF CORES
+====================================================================================================
+
+Traffic Pattern     Algorithm           Cores       Mesh        Injection Rate    Average Latency     
+----------------------------------------------------------------------------------------------------
+uniform_random      XY                  4           2           0.06              nan                 
+uniform_random      XY                  16          4           0.06              nan                 
+uniform_random      Odd-Even            4           2           0.06              nan                 
+uniform_random      Odd-Even            16          4           0.06              nan                 
+uniform_random      DyXY                4           2           0.06              nan                 
+uniform_random      DyXY                16          4           0.06              nan                 
+
+
+====================================================================================================
+EXPERIMENT 2: LATENCY VS INJECTION RATE
+====================================================================================================
+
+Traffic Pattern     Algorithm           Injection Rate    Average Latency     
+--------------------------------------------------------------------------------
+uniform_random      XY                  0.1               6.365616268         
+uniform_random      XY                  0.2               7.520409757         
+uniform_random      XY                  0.3               21.576896945        
+uniform_random      XY                  0.325             143.80318312        
+uniform_random      Odd-Even            0.1               6.395995033         
+uniform_random      Odd-Even            0.2               7.824594004         
+uniform_random      Odd-Even            0.3               279.326470842       
+uniform_random      Odd-Even            0.325             457.433065144       
+uniform_random      DyXY                0.1               6.333095312         
+uniform_random      DyXY                0.2               7.441926014         
+uniform_random      DyXY                0.3               6.154781524         
+uniform_random      DyXY                0.325             6.278510723999999   
+
+
+====================================================================================================
+EXPERIMENT 3: RESPONSE TIME VS INJECTION RATE
+====================================================================================================
+
+Traffic Pattern     Algorithm           Injection Rate    Mean Queueing Latency    
+-------------------------------------------------------------------------------------
+uniform_random      XY                  0.1               1.224961192              
+uniform_random      XY                  0.2               1.849956276              
+uniform_random      XY                  0.3               14.615478692             
+uniform_random      XY                  0.325             136.512363054            
+uniform_random      Odd-Even            0.1               1.2230828939999998       
+uniform_random      Odd-Even            0.2               1.968746096              
+uniform_random      Odd-Even            0.3               271.462454963            
+uniform_random      Odd-Even            0.325             449.59262273300004       
+uniform_random      DyXY                0.1               1.216237193              
+uniform_random      DyXY                0.2               1.7795640160000001       
+uniform_random      DyXY                0.3               1.5830009090000001       
+uniform_random      DyXY                0.325             1.693825548              

@@ -78,6 +78,16 @@ class OutputUnit : public Consumer
         return outVcState[vc].get_credit_count();
     }
 
+    //PRANJAL
+    int get_total_credit_count() 
+    {
+        int total_credit_count = 0;
+        for (auto& vc_state : outVcState) {
+            total_credit_count += vc_state.get_credit_count();
+        }
+        return total_credit_count;
+    }
+
     inline int
     get_outlink_id()
     {

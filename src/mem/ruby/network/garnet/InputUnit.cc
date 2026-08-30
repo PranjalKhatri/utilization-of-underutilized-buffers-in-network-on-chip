@@ -94,6 +94,10 @@ InputUnit::wakeup()
             set_vc_active(vc, curTick());
             //PRANJAL
             m_local_packets_generated += isLocalPacket();
+            m_router->get_net_ptr()->recordPacketRouter(
+                t_flit->getPacketID(),
+                m_router->get_id());
+
             // Route computation for this vc
             int outport = m_router->route_compute(t_flit->get_route(),
                 m_id, m_direction);

@@ -1,3 +1,5 @@
+ scons build/Garnet_standalone/gem5.opt  PROTOCOL=Garnet_standalone -j$(nproc)
+
 In **GEM5**, Network-on-Chip (NoC) simulations are typically handled by the Ruby memory system, which provides two primary network models: the detailed **Garnet** model and the **Simple Network** model.
 
 Here are the key files related to packet transmission for both models.

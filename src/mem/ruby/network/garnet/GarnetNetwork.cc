@@ -32,7 +32,7 @@
 #include "mem/ruby/network/garnet/GarnetNetwork.hh"
 
 #include <cassert>
-
+// #include <iostream>
 #include "base/cast.hh"
 #include "base/compiler.hh"
 #include "debug/RubyNetwork.hh"
@@ -70,6 +70,10 @@ GarnetNetwork::GarnetNetwork(const Params &p)
     m_buffers_per_data_vc = p.buffers_per_data_vc;
     m_buffers_per_ctrl_vc = p.buffers_per_ctrl_vc;
     m_routing_algorithm = p.routing_algorithm;
+    //PRANJAL
+    m_packet_trace_file = p.packet_trace_file;
+    // std::cout << "DEBUG: GarnetNetwork initialized with algorithm ID: " 
+    //           << m_routing_algorithm << std::endl;
     m_next_packet_id = 0;
 
     m_enable_fault_model = p.enable_fault_model;
@@ -660,6 +664,35 @@ GarnetNetwork::functionalWrite(Packet *pkt)
     }
 
     return num_functional_writes;
+}
+
+//PRANJAL
+void
+GarnetNetwork::printPacketPath(int packet_id)
+{
+    auto it = m_packet_paths.find(packet_id);
+    if (it == m_packet_paths.end())
+        return;
+    if(!m_packet_trace_file.empty()){
+    
+        static std::ofstream out(m_packet_trace_file, std::ios::app);
+
+
+        out << "Packet " << packet_id << ": ";
+
+        const auto& path = it->second;
+
+        for (size_t i = 0; i < path.size(); ++i) {
+            if (i != 0)
+                out << " -> ";
+
+            out << path[i];
+        }
+
+        out << '\n';
+    }
+    // Once printed, we don't need it anymore.
+    m_packet_paths.erase(it);
 }
 
 } // namespace garnet

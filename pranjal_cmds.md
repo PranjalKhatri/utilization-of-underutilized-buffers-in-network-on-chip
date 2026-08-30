@@ -5,6 +5,12 @@ define scalar variable in statistics
 python3 -m pip install --break-system-packages matplotlib
 apt install -y python3-pip
 export PYTHONPATH=/docker_mounted_gem5/configs:$PYTHONPATH
+docker exec -it gem5_dev bash
+tmux
+Ctrl-B, then D
+and next time
+docker exec -it gem5_dev bash
+docker exec -it gem5_dev tmux attach -t gem5
 
 docker run -it -v /home/pranjal/gem5:/docker_mounted_gem5 --name gem5_dev gem5 bin/bash
 docker start -ai gem5_dev
@@ -19,7 +25,7 @@ a> src/mem/ruby/network/garnet/     NetworkInterface.cc
 GARNET STANDALONE BUIKD
 # 1. Build the standalone Garnet binary
 scons build/NULL/gem5.opt PROTOCOL=Garnet_standalone -j$(nproc)
-
+scons build/Garnet_standalone/gem5.opt  PROTOCOL=Garnet_standalone -j$(nproc)
 # 2. Run the synthetic simulation
 ./build/NULL/gem5.opt configs/example/garnet_synth_traffic.py \
     --network=garnet \
