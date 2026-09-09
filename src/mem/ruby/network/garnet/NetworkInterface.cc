@@ -241,6 +241,19 @@ NetworkInterface::wakeup()
             // credits.
             if (t_flit->get_type() == TAIL_ ||
                 t_flit->get_type() == HEAD_TAIL_) {
+                    //PRANJAL
+                if (t_flit->isAck()) {
+                    m_net_ptr->printPacketPath(t_flit->getPacketID());
+                    
+                    // Send a credit back to free the network VC
+                    Credit *cFlit = new Credit(t_flit->get_vc(), true, curTick());
+                    iPort->sendCredit(cFlit);
+                    
+                    incrementStats(t_flit);
+                    delete t_flit;
+                    
+                    continue; // Skip the rest of this loop iteration!
+                }
                 if (!iPort->messageEnqueuedThisCycle &&
                     outNode_ptr[vnet]->areNSlotsAvailable(1, curTime)) {
                     // Space is available. Enqueue to protocol buffer.
@@ -257,7 +270,73 @@ NetworkInterface::wakeup()
 
                     //PRANJAL
                     m_net_ptr->printPacketPath(t_flit->getPacketID());
+                    if (!t_flit->isAck()) {
+                            
+                            // 1. Create a unique packet ID for the ACK (negate the original so it tracks separately)
+                            int ack_packet_id = 10000+(t_flit->getPacketID()); 
+                            
+                            // 2. Setup the reverse route
+                            int ack_vnet = 0; 
+                            RouteInfo route;
+                            route.vnet = ack_vnet;
+                            // Swap source and destination NI
+                            route.src_ni = t_flit->get_route().dest_ni;
+                            route.dest_ni = t_flit->get_route().src_ni;
+                            // Swap source and destination Routers
+                            route.src_router = t_flit->get_route().dest_router;
+                            route.dest_router = t_flit->get_route().src_router;
+                            // Reset hops
+                            route.hops_traversed = -1;
+                            // Properly construct the NetDest for the router's routing table lookups
+                            NodeID ack_dest_id = route.dest_ni;
+                            NetDest ack_net_dest(m_net_ptr->getRubySystem());
 
+                            // Loop through MachineTypes to find the matching MachineID for our destination
+                            for (int m = 0; m < (int) MachineType_NUM; m++) {
+                                if ((ack_dest_id >= MachineType_base_number((MachineType) m)) &&
+                                    (ack_dest_id < MachineType_base_number((MachineType) (m+1)))) {
+                                    MachineID tempID;
+                                    tempID.type = (MachineType)m;
+                                    tempID.num = ack_dest_id - MachineType_base_number((MachineType)m);
+                                    ack_net_dest.add(tempID);
+                                    break;
+                                }
+                            }
+                            route.net_dest = ack_net_dest;
+                            // 3. Extract original metadata to feed custom constructor
+                            MsgPtr msg_ptr = t_flit->get_msg_ptr();
+                            
+
+                            uint32_t bWidth = m_net_ptr->getNiFlitSize(); 
+
+                            // 4. Request a free Virtual Channel (VC) for the ACK
+                            int ack_vc = calculateVC(ack_vnet);
+
+                            if (ack_vc != -1) {
+                                // 5. Create the ACK flit using the allocated ack_vc
+                                flit *ack_flit = new flit(
+                                    ack_packet_id,   // packet_id
+                                    0,               // id (0 since it is a single flit HEAD_TAIL)
+                                    ack_vc,          // vc (MUST use the allocated ack_vc)
+                                    ack_vnet,        // vnet
+                                    route,           // route
+                                    1,               // size (ACK is only 1 flit)
+                                    msg_ptr,         // msg_ptr
+                                    1,               // MsgSize (1 flit)
+                                    bWidth,          // bWidth
+                                    curTick()        // curTime
+                                );
+                                ack_flit->setAck(true); // Mark the flit as an ACK
+                                // 6. Inject the ACK flit into the NI's output buffers and wake it up
+                                niOutVcs[ack_vc].insert(ack_flit);
+                                m_ni_out_vcs_enqueue_time[ack_vc] = curTick();
+                                outVcState[ack_vc].setState(ACTIVE_, curTick());
+                            } else {
+                                // Optional: Print a warning if the network is too congested to send an ACK this cycle
+                                DPRINTF(RubyNetwork, "Dropped ACK because no VC was available on vnet %d\n", ack_vnet);
+                            }
+                        }
+                    //PRANJAL
                     // Update stats and delete flit pointer
                     incrementStats(t_flit);
                     delete t_flit;

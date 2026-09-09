@@ -42,3 +42,6 @@ cpu2017/
 experiment_results
 m5out/
 =m5out_sweep/
+downloads/
+gem5-resources/
+parsec_results

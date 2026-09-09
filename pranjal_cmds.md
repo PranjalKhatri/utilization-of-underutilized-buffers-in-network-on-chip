@@ -37,3 +37,25 @@ scons build/Garnet_standalone/gem5.opt  PROTOCOL=Garnet_standalone -j$(nproc)
     --injectionrate=0.02 \
     --vcs-per-vnet=4 \
     --sim-cycles=20000
+
+
+week6 for fs emulation created new container
+docker run -d \
+  --name gem5_fs_dev \
+  --device=/dev/kvm \
+  -v /home/pranjal/gem5:/docker_mounted_gem5 \
+  gem5 \
+  sleep infinity
+
+  docker exec -it gem5_fs_dev bash
+
+docker stop gem5_fs_dev 2>/dev/null
+docker rm gem5_fs_dev 2>/dev/null
+
+docker run -d \
+  --name gem5_fs_dev \
+  --device=/dev/kvm \
+  --cap-add=PERFMON \
+  -v /home/pranjal/gem5:/docker_mounted_gem5 \
+  gem5 \
+  sleep infinity

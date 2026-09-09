@@ -46,6 +46,9 @@ namespace garnet
 flit::flit(int packet_id, int id, int  vc, int vnet, RouteInfo route, int size,
     MsgPtr msg_ptr, int MsgSize, uint32_t bWidth, Tick curTime)
 {
+    //PRANJAL
+    m_is_ack = false;
+    
     m_size = size;
     m_msg_ptr = msg_ptr;
     m_enqueue_time = curTime;

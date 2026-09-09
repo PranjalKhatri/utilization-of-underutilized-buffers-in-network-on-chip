@@ -88,7 +88,9 @@ class flit
         return (stage == m_stage.first &&
                 time >= m_stage.second);
     }
-
+    //PRANJAL
+    bool isAck() const { return m_is_ack; }
+    void setAck(bool ack) { m_is_ack = ack; }
     void
     advance_stage(flit_stage t_stage, Tick newTime)
     {
@@ -116,6 +118,7 @@ class flit
     uint32_t m_width;
     int msgSize;
   protected:
+    bool m_is_ack;//PRANJAL
     int m_packet_id;
     int m_id;
     int m_vnet;

@@ -396,32 +396,33 @@ CacheMemory::recordSetAccess(Addr address)
 void
 CacheMemory::updateTopNSetAccesses()
 {
-    if (m_top_n_set <= 0 || m_set_access_counts.empty()) {
-        return;
-    }
+    //PRANJAL disable for now
+    // if (m_top_n_set <= 0 || m_set_access_counts.empty()) {
+    //     return;
+    // }
 
-    std::vector<std::pair<int, uint64_t>> ranked_sets;
-    ranked_sets.reserve(m_set_access_counts.size());
-    for (int set = 0; set < static_cast<int>(m_set_access_counts.size()); ++set) {
-        ranked_sets.emplace_back(set, m_set_access_counts[set]);
-    }
+    // std::vector<std::pair<int, uint64_t>> ranked_sets;
+    // ranked_sets.reserve(m_set_access_counts.size());
+    // for (int set = 0; set < static_cast<int>(m_set_access_counts.size()); ++set) {
+    //     ranked_sets.emplace_back(set, m_set_access_counts[set]);
+    // }
 
-    std::sort(ranked_sets.begin(), ranked_sets.end(),
-        [](const std::pair<int, uint64_t>& a,
-           const std::pair<int, uint64_t>& b) {
-            if (a.second != b.second) {
-                return a.second > b.second;
-            }
-            return a.first < b.first;
-        });
+    // std::sort(ranked_sets.begin(), ranked_sets.end(),
+    //     [](const std::pair<int, uint64_t>& a,
+    //        const std::pair<int, uint64_t>& b) {
+    //         if (a.second != b.second) {
+    //             return a.second > b.second;
+    //         }
+    //         return a.first < b.first;
+    //     });
 
-    const int limit = std::min(m_top_n_set,
-                              static_cast<int>(ranked_sets.size()));
+    // const int limit = std::min(m_top_n_set,
+    //                           static_cast<int>(ranked_sets.size()));
 
-    for (int i = 0; i < limit; ++i) {
-        cacheMemoryStats.topNSetIds[i] = ranked_sets[i].first;
-        cacheMemoryStats.topNSetCounts[i] = ranked_sets[i].second;
-    }
+    // for (int i = 0; i < limit; ++i) {
+    //     cacheMemoryStats.topNSetIds[i] = ranked_sets[i].first;
+    //     cacheMemoryStats.topNSetCounts[i] = ranked_sets[i].second;
+    // }
 }
 //PRANJAL
 

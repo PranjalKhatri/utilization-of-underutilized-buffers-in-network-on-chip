@@ -58,7 +58,7 @@ from gem5.components.processors.simple_switchable_processor import (
     SimpleSwitchableProcessor,
 )
 from gem5.isas import ISA
-from gem5.resources.resource import obtain_resource
+from gem5.resources.resource import obtain_resource, DiskImageResource
 from gem5.simulate.exit_event import ExitEvent
 from gem5.simulate.simulator import Simulator
 from gem5.utils.requires import requires
@@ -68,7 +68,7 @@ from gem5.utils.requires import requires
 requires(
     isa_required=ISA.X86,
     coherence_protocol_required=CoherenceProtocol.MESI_TWO_LEVEL,
-    kvm_required=True,
+    # kvm_required=True, ##PRANJAL COMMENT
 )
 
 # Following are the list of benchmark programs for parsec.
@@ -114,6 +114,79 @@ parser.add_argument(
     help="Simulation size the benchmark program.",
     choices=size_choices,
 )
+##########PRANJAL
+parser.add_argument(
+    "--l1d-size",
+    type=str,
+    default="32KiB",
+    help="L1D cache size.",
+)
+
+parser.add_argument(
+    "--l1d-assoc",
+    type=int,
+    default=8,
+    help="L1D associativity.",
+)
+
+parser.add_argument(
+    "--l1i-size",
+    type=str,
+    default="32KiB",
+    help="L1I cache size.",
+)
+
+parser.add_argument(
+    "--l1i-assoc",
+    type=int,
+    default=8,
+    help="L1I associativity.",
+)
+
+parser.add_argument(
+    "--l2-size",
+    type=str,
+    default="256KiB",
+    help="L2 cache size.",
+)
+
+parser.add_argument(
+    "--l2-assoc",
+    type=int,
+    default=16,
+    help="L2 associativity.",
+)
+
+parser.add_argument(
+    "--num-l2-banks",
+    type=int,
+    default=2,
+    help="Number of L2 banks.",
+)
+
+parser.add_argument(
+    "--num-cores",
+    type=int,
+    default=2,
+    help="Number of CPU cores.",
+)
+
+parser.add_argument(
+    "--memory-size",
+    type=str,
+    default="3GiB",
+    help="Main memory size.",
+)
+
+parser.add_argument(
+    "--clock",
+    type=str,
+    default="3GHz",
+    help="CPU clock frequency.",
+)
+
+
+##########PRANJAL
 args = parser.parse_args()
 
 # Setting up all the fixed system parameters here
@@ -123,16 +196,30 @@ from gem5.components.cachehierarchies.ruby.mesi_two_level_cache_hierarchy import
     MESITwoLevelCacheHierarchy,
 )
 
+# cache_hierarchy = MESITwoLevelCacheHierarchy(
+#     # l1d_size="32KiB",##PRANAJAL
+#     l1d_size=args.l1d_size,
+#     l1d_assoc=8,
+#     l1i_size="32KiB",
+#     l1i_assoc=8,
+#     l2_size="256KiB",
+#     l2_assoc=16,
+#     num_l2_banks=2,
+# )
+##########PRANJAL
+
 cache_hierarchy = MESITwoLevelCacheHierarchy(
-    l1d_size="32KiB",
-    l1d_assoc=8,
-    l1i_size="32KiB",
-    l1i_assoc=8,
-    l2_size="256KiB",
-    l2_assoc=16,
-    num_l2_banks=2,
+    l1d_size=args.l1d_size,
+    l1d_assoc=args.l1d_assoc,
+    l1i_size=args.l1i_size,
+    l1i_assoc=args.l1i_assoc,
+    l2_size=args.l2_size,
+    l2_assoc=args.l2_assoc,
+    num_l2_banks=args.num_l2_banks,
 )
 
+
+##############PRANJAL
 # Memory: Dual Channel DDR4 2400 DRAM device.
 # The X86 board only supports 3 GiB of main memory.
 
@@ -146,16 +233,19 @@ memory = DualChannelDDR4_2400(size="3GiB")
 # cores for the command we wish to run after boot.
 
 processor = SimpleSwitchableProcessor(
-    starting_core_type=CPUTypes.KVM,
+    starting_core_type=CPUTypes.KVM,##PRANJAL comment
+    # starting_core_type=CPUTypes.ATOMIC,###PRANJAL add
     switch_core_type=CPUTypes.TIMING,
     isa=ISA.X86,
-    num_cores=2,
+    # num_cores=2,###PRANJAL comment
+    num_cores=args.num_cores
 )
 
 # Here we setup the board. The X86Board allows for Full-System X86 simulations
 
 board = X86Board(
-    clk_freq="3GHz",
+    # clk_freq="3GHz",###PRANJAL comment
+    clk_freq=args.clock,
     processor=processor,
     memory=memory,
     cache_hierarchy=cache_hierarchy,
@@ -173,11 +263,11 @@ board = X86Board(
 # Also, we sleep the system for some time so that the output is printed
 # properly.
 
-
+##PRANJAL change n 2 to n {args.num_cores}
 command = (
     f"cd /home/gem5/parsec-benchmark;"
     + "source env.sh;"
-    + f"parsecmgmt -a run -p {args.benchmark} -c gcc-hooks -i {args.size}         -n 2;"
+    + f"parsecmgmt -a run -p {args.benchmark} -c gcc-hooks -i {args.size}         -n {args.num_cores};"
     + "sleep 5;"
     + "m5 exit;"
 )
@@ -192,6 +282,11 @@ board.set_kernel_disk_workload(
     # `~/.cache/gem5` directory if not already present.
     disk_image=obtain_resource("x86-parsec", resource_version="1.0.0"),
     readfile_contents=command,
+    ####PRANJAL
+    # disk_image=DiskImageResource(
+    # local_path="/docker_mounted_gem5/gem5-resources/src/parsec/disk-image/parsec/parsec-image/parsec",
+    # root_partition="1",
+    # ),
 )
 
 
