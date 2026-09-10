@@ -270,6 +270,8 @@ NetworkInterface::wakeup()
 
                     //PRANJAL
                     m_net_ptr->printPacketPath(t_flit->getPacketID());
+                    //PRANJAL, ack sending logic. commented.
+                    /*
                     if (!t_flit->isAck()) {
                             
                             // 1. Create a unique packet ID for the ACK (negate the original so it tracks separately)
@@ -336,6 +338,7 @@ NetworkInterface::wakeup()
                                 DPRINTF(RubyNetwork, "Dropped ACK because no VC was available on vnet %d\n", ack_vnet);
                             }
                         }
+                        ***///PRANJAL ACK
                     //PRANJAL
                     // Update stats and delete flit pointer
                     incrementStats(t_flit);
