@@ -154,7 +154,9 @@ parser.add_argument(
     help="Top N sets to be monitored for cache occupancy"
 )
 ####PRANJAL
-Options.addCommonOptions(parser)
+# Options.addCommonOptions(parser)
+##PRANJAL added default isa
+Options.addCommonOptions(parser, default_isa=ISA.X86)
 Options.addSEOptions(parser)
 
 if "--ruby" in sys.argv:
@@ -265,6 +267,9 @@ for i in range(np):
     elif len(multiprocesses) == 1:
         system.cpu[i].workload = multiprocesses[0]
     else:
+        ##PRANJAL: Prevent PID collision when running multiple processes
+        multiprocesses[i].pid = 100 + i  # Prevent PID 100 collision
+        ##PRANJAL
         system.cpu[i].workload = multiprocesses[i]
 
     if args.simpoint_profile:

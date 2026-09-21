@@ -59,3 +59,5 @@ docker run -d \
   -v /home/pranjal/gem5:/docker_mounted_gem5 \
   gem5 \
   sleep infinity
+
+docker exec -it gem5_fs_dev bash
