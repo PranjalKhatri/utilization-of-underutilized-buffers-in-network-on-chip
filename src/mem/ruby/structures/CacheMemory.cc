@@ -354,6 +354,16 @@ CacheMemory::allocate(Addr address, AbstractCacheEntry *entry)
             return entry;
         }
     }
+    //PRANJAL
+    // --- PAPER IMPLEMENTATION: Calculate Re-reference Latency ---
+    auto it = m_eviction_cycle.find(address);
+    if (it != m_eviction_cycle.end()) {
+        uint64_t cycles = (uint64_t)curTick() - it->second;
+        cacheMemoryStats.m_re_reference_cycles.sample(cycles);
+        m_eviction_cycle.erase(it); // Clean up the entry
+    }
+    // ------------------------------------------------------------
+    //PRANJAL
     panic("Allocate didn't find an available entry");
 }
 
@@ -364,6 +374,9 @@ CacheMemory::deallocate(Addr address)
     //PRANJAL
     if (m_print_evictions)
         cacheMemoryStats.numEvictions++;
+    // --- PAPER IMPLEMENTATION: Record Eviction Cycle ---
+    m_eviction_cycle[address] = (uint64_t)curTick();
+    // ---------------------------------------------------
     //PRANJAL
     AbstractCacheEntry* entry = lookup(address);
     assert(entry != nullptr);
@@ -697,6 +710,9 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
       ADD_STAT(misses_per_set, "Number of misses per cache set"),
       ADD_STAT(hits_per_way, "Number of hits per cache way"),
       ADD_STAT(misses_per_way, "Number of misses per cache way"),
+      // --- PAPER IMPLEMENTATION: Add Re-reference Stat ---
+      ADD_STAT(m_re_reference_cycles, "Cycles between block eviction and re-reference"),
+      // ---------------------------------------------------
       /////////////////PRANJAL
       ADD_STAT(m_prefetch_accesses, "Number of cache prefetch accesses",
                m_prefetch_hits + m_prefetch_misses),
@@ -762,6 +778,12 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
     m_accessModeType
         .init(RubyRequestType_NUM)
         .flags(statistics::pdf | statistics::total);
+
+    // --- PAPER IMPLEMENTATION: Configure Histogram ---
+    m_re_reference_cycles
+        .init(20) // Number of buckets
+        .flags(statistics::pdf | statistics::dist | statistics::nozero | statistics::nonan);
+    // -------------------------------------------------
 
     for (int i = 0; i < RubyAccessMode_NUM; i++) {
         m_accessModeType

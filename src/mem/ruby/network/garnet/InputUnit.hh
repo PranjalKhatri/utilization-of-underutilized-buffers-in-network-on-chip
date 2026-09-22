@@ -35,6 +35,9 @@
 #include <iostream>
 #include <vector>
 
+//PRANJAL
+#include "base/statistics.hh"
+
 #include "mem/ruby/common/Consumer.hh"
 #include "mem/ruby/network/garnet/CommonTypes.hh"
 #include "mem/ruby/network/garnet/CreditLink.hh"
@@ -159,7 +162,8 @@ class InputUnit : public Consumer
     uint32_t functionalWrite(Packet *pkt);
 
     void resetStats();
-
+    //PRANJAL paper
+    void regStats();
   private:
     //PRANJAL
     bool isLocalPacket() const {
@@ -175,6 +179,14 @@ class InputUnit : public Consumer
     flitBuffer creditQueue;
     //PRANJAL
     uint64_t m_local_packets_generated;
+    //PRANJAL PAPER
+    // --- PAPER IMPLEMENTATION: VC Availability Tracking ---
+    int m_free_vcs;
+    uint64_t m_last_vc_update_cycle;
+    gem5::statistics::Vector vc_availability_stat; 
+
+    void update_vc_availability();
+    //PRANJAL end
     // Input Virtual channels
     std::vector<VirtualChannel> virtualChannels;
 

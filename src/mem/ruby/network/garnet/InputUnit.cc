@@ -61,6 +61,11 @@ InputUnit::InputUnit(int id, PortDirection direction, Router *router)
     for (int i=0; i < m_num_vcs; i++) {
         virtualChannels.emplace_back();
     }
+
+    //PRANJAL
+    // --- PAPER IMPLEMENTATION: Initialize VC Tracking ---
+    m_free_vcs = m_num_vcs;
+    m_last_vc_update_cycle = 0;
 }
 
 /*
@@ -92,6 +97,11 @@ InputUnit::wakeup()
             
             assert(virtualChannels[vc].get_state() == IDLE_);
             set_vc_active(vc, curTick());
+            //PRANJAL
+            // --- PAPER IMPLEMENTATION: VC Allocated ---
+            update_vc_availability();
+            m_free_vcs--;
+            // ------------------------------------------
             //PRANJAL
             m_local_packets_generated += isLocalPacket();
             m_router->get_net_ptr()->recordPacketRouter(
@@ -151,6 +161,12 @@ InputUnit::increment_credit(int in_vc, bool free_signal, Tick curTime)
 {
     DPRINTF(RubyNetwork, "Router[%d]: Sending a credit vc:%d free:%d to %s\n",
     m_router->get_id(), in_vc, free_signal, m_credit_link->name());
+    // --- PAPER IMPLEMENTATION: VC Freed PRANJAL---
+    if (free_signal) {
+        update_vc_availability();
+        m_free_vcs++;
+    }
+    // --------------------------------------
     Credit *t_credit = new Credit(in_vc, free_signal, curTime);
     creditQueue.insert(t_credit);
     m_credit_link->scheduleEventAbsolute(m_router->clockEdge(Cycles(1)));
@@ -189,6 +205,44 @@ InputUnit::resetStats()
 
     //PRANJAL
     m_local_packets_generated = 0;
+    // --- PAPER IMPLEMENTATION: Drop Fast-Forward Cycles ---
+    if (m_direction == "Local") {
+        m_last_vc_update_cycle = (uint64_t)m_router->curCycle();
+        for (int i = 0; i <= m_router->get_num_vcs(); i++) {
+            vc_availability_stat[i] = 0;
+        }
+    }
+}
+
+//PRANJAL
+
+void
+InputUnit::regStats()
+{
+    // Name and initialize the stat for ALL directions so gem5 doesn't crash
+    vc_availability_stat
+        .init(m_router->get_num_vcs() + 1)
+        .name(m_router->name() + ".vc_avail_" + m_direction + "_port" + std::to_string(m_id))
+        .desc("Cycles where exactly n VCs are free (index = n)")
+        .flags(gem5::statistics::pdf);
+}
+
+// --- PAPER IMPLEMENTATION: Update & Register Stats ---
+void
+InputUnit::update_vc_availability()
+{
+    if (m_direction == "Local") {
+        uint64_t current_cycle = (uint64_t)m_router->curCycle();
+        if (m_last_vc_update_cycle == 0) {
+            m_last_vc_update_cycle = current_cycle;
+            return;
+        }
+        uint64_t delta = current_cycle - m_last_vc_update_cycle;
+        if (delta > 0) {
+            vc_availability_stat[m_free_vcs] += delta;
+            m_last_vc_update_cycle = current_cycle;
+        }
+    }
 }
 
 } // namespace garnet

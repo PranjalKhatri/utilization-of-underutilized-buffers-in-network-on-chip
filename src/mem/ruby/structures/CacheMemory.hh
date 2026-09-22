@@ -59,6 +59,8 @@
 #include "params/RubyCache.hh"
 #include "sim/sim_object.hh"
 
+#include <unordered_map>
+
 namespace gem5
 {
 
@@ -176,23 +178,23 @@ namespace gem5
     // Private copy constructor and assignment operator
     CacheMemory(const CacheMemory& obj);
     CacheMemory& operator=(const CacheMemory& obj);
-
-  private:
+    
+    private:
     // Data Members (m_prefix)
     bool m_is_instruction_only_cache;
-
+    
     // The first index is the # of cache lines.
     // The second index is the the amount associativity.
     std::unordered_map<Addr, int> m_tag_index;
     std::vector<std::vector<AbstractCacheEntry*> > m_cache;
-
+    
     /** We use the replacement policies from the Classic memory system. */
     replacement_policy::Base *m_replacementPolicy_ptr;
-
+    
     BankedArray dataArray;
     BankedArray tagArray;
     ALUFreeListArray atomicALUArray;
-
+    
     int m_cache_size;
     int m_cache_num_sets;
     int m_cache_num_set_bits;
@@ -200,7 +202,10 @@ namespace gem5
     int m_start_index_bit;
     bool m_resource_stalls;
     int m_block_size;
-
+    
+    //PRANJAL paper implementaiton
+    std::unordered_map<Addr, uint64_t> m_eviction_cycle;
+    
     /**
      * We store all the ReplacementData in a 2-dimensional array. By doing
      * this, we can use all replacement policies from Classic system. Ruby
@@ -224,19 +229,19 @@ namespace gem5
     Addr m_last_accessed_address;  // Track last address for hit/miss statistics
     //PRANJAL
     RubySystem *m_ruby_system = nullptr;
-
+    
     Addr
     makeLineAddress(Addr addr) const
     {
-        return ruby::makeLineAddress(addr, floorLog2(m_block_size));
+      return ruby::makeLineAddress(addr, floorLog2(m_block_size));
     }
-
+    
     private:
-      struct CacheMemoryStats : public statistics::Group
-      {
-          CacheMemoryStats(statistics::Group *parent, int topNSetCount);
-
-          statistics::Scalar numDataArrayReads;
+    struct CacheMemoryStats : public statistics::Group
+    {
+      CacheMemoryStats(statistics::Group *parent, int topNSetCount);
+      
+      statistics::Scalar numDataArrayReads;
           statistics::Scalar numDataArrayWrites;
           statistics::Scalar numTagArrayReads;
           statistics::Scalar numTagArrayWrites;
@@ -277,10 +282,12 @@ namespace gem5
           statistics::Vector misses_per_set;
           statistics::Vector hits_per_way;
           statistics::Vector misses_per_way;
+          //PAPER implementation
+          statistics::Histogram m_re_reference_cycles;
           //PRANJAL
-
+          
           statistics::Vector m_accessModeType;
-      } cacheMemoryStats;
+        } cacheMemoryStats;
 
     public:
       // These function increment the number of demand hits/misses by one

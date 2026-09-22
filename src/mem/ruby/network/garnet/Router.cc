@@ -222,6 +222,11 @@ Router::regStats()
         .name(name() + ".local_packets_generated")
         .flags(statistics::nozero)
     ;
+    // --- PAPER IMPLEMENTATION: Push to stats.txt ---
+    for (int i = 0; i < m_input_unit.size(); i++) {
+        m_input_unit[i]->regStats();
+    }
+    // -----------------------------------------------
 }
 
 void
