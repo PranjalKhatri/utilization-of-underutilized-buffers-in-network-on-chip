@@ -284,6 +284,10 @@ namespace gem5
           statistics::Vector misses_per_way;
           //PAPER implementation
           statistics::Histogram m_re_reference_cycles;
+          // Add these inside your CacheMemory public or protected stats group:
+          statistics::Scalar m_total_re_reference_cycles; // Sum of all cycles
+          statistics::Scalar m_total_re_references;       // Count of references
+          statistics::Formula m_avg_re_reference_cycles;  // The calculated average
           //PRANJAL
           
           statistics::Vector m_accessModeType;

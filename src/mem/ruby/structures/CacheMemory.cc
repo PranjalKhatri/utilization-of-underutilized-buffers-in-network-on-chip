@@ -321,6 +321,23 @@ CacheMemory::allocate(Addr address, AbstractCacheEntry *entry)
     assert(cacheAvail(address));
     DPRINTF(RubyCache, "allocating address: %#x\n", address);
 
+
+        //PRANJAL
+    // --- PAPER IMPLEMENTATION: Calculate Re-reference Latency ---
+    auto it = m_eviction_cycle.find(address);
+    if (it != m_eviction_cycle.end()) {
+        uint64_t cycles = (uint64_t)curTick() - it->second;
+
+        // Increment the totals (the Formula stat handles the division automatically!)
+        cacheMemoryStats.m_total_re_reference_cycles += cycles;
+        cacheMemoryStats.m_total_re_references++;
+
+        cacheMemoryStats.m_re_reference_cycles.sample(cycles);
+        m_eviction_cycle.erase(it); // Clean up the entry
+    }
+    // ------------------------------------------------------------
+    //PRANJAL
+
     entry->initBlockSize(m_block_size);
     entry->setRubySystem(m_ruby_system);
 
@@ -354,16 +371,7 @@ CacheMemory::allocate(Addr address, AbstractCacheEntry *entry)
             return entry;
         }
     }
-    //PRANJAL
-    // --- PAPER IMPLEMENTATION: Calculate Re-reference Latency ---
-    auto it = m_eviction_cycle.find(address);
-    if (it != m_eviction_cycle.end()) {
-        uint64_t cycles = (uint64_t)curTick() - it->second;
-        cacheMemoryStats.m_re_reference_cycles.sample(cycles);
-        m_eviction_cycle.erase(it); // Clean up the entry
-    }
-    // ------------------------------------------------------------
-    //PRANJAL
+
     panic("Allocate didn't find an available entry");
 }
 
@@ -712,6 +720,9 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
       ADD_STAT(misses_per_way, "Number of misses per cache way"),
       // --- PAPER IMPLEMENTATION: Add Re-reference Stat ---
       ADD_STAT(m_re_reference_cycles, "Cycles between block eviction and re-reference"),
+      ADD_STAT(m_total_re_reference_cycles, "Total sum of all re-reference cycles"),
+      ADD_STAT(m_total_re_references, "Total count of successfully tracked re-references"),
+      ADD_STAT(m_avg_re_reference_cycles, "Running average of cycles between block eviction and re-reference"),
       // ---------------------------------------------------
       /////////////////PRANJAL
       ADD_STAT(m_prefetch_accesses, "Number of cache prefetch accesses",
@@ -783,6 +794,12 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
     m_re_reference_cycles
         .init(20) // Number of buckets
         .flags(statistics::pdf | statistics::dist | statistics::nozero | statistics::nonan);
+    m_total_re_reference_cycles.flags(statistics::nozero);
+    m_total_re_references.flags(statistics::nozero);
+    
+    // Calculate the running average dynamically
+    m_avg_re_reference_cycles = m_total_re_reference_cycles / m_total_re_references;
+    m_avg_re_reference_cycles.flags(statistics::nozero);
     // -------------------------------------------------
 
     for (int i = 0; i < RubyAccessMode_NUM; i++) {

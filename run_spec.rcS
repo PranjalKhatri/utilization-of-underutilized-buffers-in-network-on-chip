@@ -1,0 +1,22 @@
+#!/bin/sh
+echo "gem5 Linux booting..."
+sleep 5 
+
+# Mount the secondary ISO disk inside the simulated OS
+mkdir -p /mnt/spec
+mount /dev/hdb /mnt/spec || mount /dev/sdb /mnt/spec
+
+# Navigate to the mounted binaries
+cd /mnt/spec/binaries/
+
+echo "Starting 16 instances of NAMD..."
+for i in $(seq 1 16); do
+    # Execute and ensure output writes to /tmp since the ISO is read-only
+    ./namd +p1 > /tmp/namd_out_${i}.log &
+done
+
+wait
+
+echo "SPEC execution complete. Dumping stats and exiting."
+m5 dumpstats
+m5 exit
