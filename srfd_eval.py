@@ -17,41 +17,42 @@ DATA_DIR = f"{GEM5_DIR}/cpu2017/cpu2017/data"
 BENCHMARKS = {
     "namd": {
         "exe": f"{BIN_DIR}/namd",
-        # Using the standard 'ref' dataset namd.in
-        "input_flag": f"--input {DATA_DIR}/namd/ref/input/namd.in --iterations 1",
+        "input_flag": f"--input {DATA_DIR}/namd/all/input/namd.input --iterations 1",
         "output_flag": "--output /tmp/namd.{}.output"
     },
     "cactus": {
         "exe": f"{BIN_DIR}/cactus",
-        # Using the spec_ref.par from the ref dataset
         "input_flag": f"{DATA_DIR}/cactus/ref/input/spec_ref.par",
         "output_flag": ""
     },
     "blender": {
         "exe": f"{BIN_DIR}/blender",
-        # Passes the blend file, restricts to 1 thread (since each core runs an instance), and sets frame 849
         "input_flag": f"{DATA_DIR}/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849",
         "output_flag": "--render-output /tmp/blender_out_{}_"
     },
-    "xalancbmk": {
-        "exe": f"{BIN_DIR}/xalancbmk",
-        # Standard SPEC xalancbmk run: -v <xml_file> <xsl_file>
-        "input_flag": f"-v {DATA_DIR}/xalancbmk/ref/input/t5.xml {DATA_DIR}/xalancbmk/ref/input/xalanc.xsl",
-        "output_flag": ""
-    },
+    
+    # --- COMMENTED OUT: xalancbmk ---
+    # The SPEC 'ref' dataset for xalancbmk is incredibly memory-hungry and attempts to 
+    # allocate ~40GB of RAM across 16 instances. Running this at 32GB causes gem5's VMA 
+    # (Virtual Memory Allocator) to fail and panic during the simulation.
+    # "xalancbmk": {
+    #     "exe": f"{BIN_DIR}/xalancbmk",
+    #     "input_flag": f"-v {DATA_DIR}/xalancbmk/ref/input/t5.xml {DATA_DIR}/xalancbmk/ref/input/xalanc.xsl",
+    #     "output_flag": ""
+    # },
+    
     "omnetpp": {
         "exe": f"{BIN_DIR}/omnetpp",
-        # OMNeT++ requires the -n flag to locate the 'ned' directory, followed by the ini file
         "input_flag": f"-c General -r 0 -n {DATA_DIR}/omnetpp/all/input/ned {DATA_DIR}/omnetpp/ref/input/omnetpp.ini",
         "output_flag": ""
     }
 }
 
-def run_benchmarks(results_dir):
+def run_benchmarks(results_dir, target_benchmarks):
     os.makedirs(results_dir, exist_ok=True)
     print(f"[*] Starting data collection. Results will be saved to {results_dir}")
 
-    for bench, config in BENCHMARKS.items():
+    for bench, config in target_benchmarks.items():
         print(f"\n=========================================")
         print(f"[*] Running Benchmark: {bench}")
         print(f"=========================================")
@@ -70,13 +71,13 @@ def run_benchmarks(results_dir):
             opt_list.append(opt.strip())
         opt_str = ";".join(opt_list)
 
-        # Base SE command with PAPER PARAMETERS
+        # Base SE command kept at 32GB Memory
         gem5_cmd = [
             f"{GEM5_DIR}/build/X86_MOESI_CMP_directory/gem5.opt",
             f"{GEM5_DIR}/configs/deprecated/example/se.py",
             "--cpu-type=TimingSimpleCPU",
             "--sys-clock=2GHz",
-            "--mem-size=2GB",
+            "--mem-size=32GB",
             "--num-cpus=16",
             "--num-dirs=16",
             "--num-l2caches=16",
@@ -96,8 +97,9 @@ def run_benchmarks(results_dir):
             "--maxinsts=10000000"
         ]
         
+        # Use --options= explicitly to prevent argparse from eating flags like `-c General`
         if opt_str.strip(";"):
-            gem5_cmd.extend(["-o", opt_str])
+            gem5_cmd.append(f"--options={opt_str}")
 
         print(f"[*] Executing gem5 for {bench}...")
         subprocess.run(gem5_cmd)
@@ -111,7 +113,7 @@ def run_benchmarks(results_dir):
             print(f"[-] ERROR: stats.txt not generated for {bench}.")
 
 def extract_metric(file_path, regex_pattern):
-    """Averages a specific metric using regex capture groups (capturing group 1)."""
+    """Averages a specific metric using regex capture groups."""
     values = []
     pattern = re.compile(regex_pattern)
     with open(file_path, 'r') as f:
@@ -119,15 +121,14 @@ def extract_metric(file_path, regex_pattern):
             match = pattern.search(line)
             if match:
                 try:
-                    # Extract the first capture group and convert to float
                     values.append(float(match.group(1)))
                 except ValueError:
                     pass
     return sum(values) / len(values) if values else 0.0
 
-def plot_data(results_dir):
+def plot_data(results_dir, target_benchmarks):
     print(f"[*] Parsing data from {results_dir} and generating plots...")
-    benchmarks = list(BENCHMARKS.keys())
+    benchmarks = list(target_benchmarks.keys())
     
     re_ref_data = []
     vc_avail_data = []
@@ -142,15 +143,8 @@ def plot_data(results_dir):
             llc_miss_data.append(0)
             continue
             
-        # 1. Re-Reference Average (Catches the value column)
         re_ref_avg = extract_metric(stats_path, r"avg_re_reference_cycles\s+(\d+\.?\d*)")
-        
-        # 2. VC Availability (Catches the percentage time that 12 VCs are free)
-        # Matches: system.ruby.network.routers00.vc_avail_Local_port0::12   39021721   99.63%   100.00%
         vc_avail_avg = extract_metric(stats_path, r"vc_avail_.*::12\s+\d+\s+(\d+\.\d+)%") 
-        
-        # 3. LLC Miss Penalty (Catches the global mean miss latency)
-        # Matches: system.ruby.m_missLatencyHistSeqr::mean      56.331765
         llc_miss_avg = extract_metric(stats_path, r"system\.ruby\.m_missLatencyHistSeqr::mean\s+(\d+\.?\d*)")
         
         re_ref_data.append(re_ref_avg)
@@ -195,6 +189,7 @@ if __name__ == "__main__":
     parser.add_argument("--run", action="store_true", help="Run the gem5 benchmarks and collect data")
     parser.add_argument("--plot", action="store_true", help="Parse stats and generate plots")
     parser.add_argument("--results-dir", type=str, default=f"{GEM5_DIR}/results_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}", help="Directory to save/read results")
+    parser.add_argument("--benchmark", type=str, help="Comma-separated list of specific benchmarks to run (e.g. omnetpp,namd). Defaults to all active benchmarks.")
     args = parser.parse_args()
 
     if not args.run and not args.plot:
@@ -202,11 +197,21 @@ if __name__ == "__main__":
         print("\nError: You must specify either --run, --plot, or both.")
         exit(1)
 
+    # Filter benchmarks if the --benchmark flag is used
+    if args.benchmark:
+        selected_keys = [b.strip() for b in args.benchmark.split(',')]
+        target_benchmarks = {k: v for k, v in BENCHMARKS.items() if k in selected_keys}
+        if not target_benchmarks:
+            print(f"[-] Error: None of the specified benchmarks ({args.benchmark}) were found in the configuration.")
+            exit(1)
+    else:
+        target_benchmarks = BENCHMARKS
+
     if args.run:
-        run_benchmarks(args.results_dir)
+        run_benchmarks(args.results_dir, target_benchmarks)
         
     if args.plot:
         if not os.path.exists(args.results_dir):
             print(f"[-] Error: Results directory {args.results_dir} does not exist. Cannot plot.")
             exit(1)
-        plot_data(args.results_dir)
+        plot_data(args.results_dir, target_benchmarks)
