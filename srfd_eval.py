@@ -2,6 +2,7 @@
 import os
 import subprocess
 import argparse
+import csv
 import re
 import datetime
 import matplotlib
@@ -41,11 +42,11 @@ BENCHMARKS = {
     #     "output_flag": ""
     # },
     
-    "omnetpp": {
-        "exe": f"{BIN_DIR}/omnetpp",
-        "input_flag": f"-c General -r 0 -n {DATA_DIR}/omnetpp/all/input/ned {DATA_DIR}/omnetpp/ref/input/omnetpp.ini",
-        "output_flag": ""
-    }
+    # "omnetpp": {
+    #     "exe": f"{BIN_DIR}/omnetpp",
+    #     "input_flag": f"-c General -r 0 -n {DATA_DIR}/omnetpp/all/input/ned {DATA_DIR}/omnetpp/ref/input/omnetpp.ini",
+    #     "output_flag": ""
+    # }
 }
 
 def run_benchmarks(results_dir, target_benchmarks):
@@ -59,7 +60,7 @@ def run_benchmarks(results_dir, target_benchmarks):
         
         subprocess.run(["rm", "-rf", f"{GEM5_DIR}/m5out"])
         
-        # Build command string (16 cores)
+        # Build command string (one workload per core in the 4x4 NoC)
         cmd_str = ";".join([config["exe"]] * 16)
         
         # Build option string
@@ -71,7 +72,7 @@ def run_benchmarks(results_dir, target_benchmarks):
             opt_list.append(opt.strip())
         opt_str = ";".join(opt_list)
 
-        # Base SE command kept at 32GB Memory
+        # Base SE command for a 16-core, 4x4 NoC
         gem5_cmd = [
             f"{GEM5_DIR}/build/X86_MOESI_CMP_directory/gem5.opt",
             f"{GEM5_DIR}/configs/deprecated/example/se.py",
@@ -102,87 +103,192 @@ def run_benchmarks(results_dir, target_benchmarks):
             gem5_cmd.append(f"--options={opt_str}")
 
         print(f"[*] Executing gem5 for {bench}...")
-        subprocess.run(gem5_cmd)
+        subprocess.run(gem5_cmd, check=True)
         
         stats_file = f"{GEM5_DIR}/m5out/stats.txt"
         target_file = f"{results_dir}/{bench}_stats.txt"
         if os.path.exists(stats_file):
-            subprocess.run(["cp", stats_file, target_file])
+            subprocess.run(["cp", stats_file, target_file], check=True)
             print(f"[+] Saved stats to {target_file}")
         else:
-            print(f"[-] ERROR: stats.txt not generated for {bench}.")
+            raise FileNotFoundError(
+                f"gem5 completed without generating {stats_file}"
+            )
 
-def extract_metric(file_path, regex_pattern):
-    """Averages a specific metric using regex capture groups."""
-    values = []
-    pattern = re.compile(regex_pattern)
-    with open(file_path, 'r') as f:
-        for line in f:
-            match = pattern.search(line)
-            if match:
-                try:
-                    values.append(float(match.group(1)))
-                except ValueError:
-                    pass
-    return sum(values) / len(values) if values else 0.0
+def parse_stats(file_path):
+    """Parse the final statistics section into a name/value mapping."""
+    with open(file_path, "r", encoding="utf-8") as stats_file:
+        contents = stats_file.read()
+
+    marker = "---------- Begin Simulation Statistics ----------"
+    section = contents.rsplit(marker, 1)[-1]
+    values = {}
+    for line in section.splitlines():
+        fields = line.split()
+        if len(fields) < 2 or fields[0].startswith("-"):
+            continue
+        try:
+            values[fields[0]] = float(fields[1])
+        except ValueError:
+            continue
+    return values
+
+
+def aggregate_cache_level(stats, level):
+    cache_patterns = {
+        "L1I": re.compile(r"system\.ruby\.l1_cntrl\d+\.L1Icache$"),
+        "L1D": re.compile(r"system\.ruby\.l1_cntrl\d+\.L1Dcache$"),
+        "L2": re.compile(r"system\.ruby\.l2_cntrl\d+\.L2cache$"),
+    }
+    suffixes = {
+        "accepted_cycles": ".m_total_re_reference_cycles",
+        "accepted_count": ".m_total_re_references",
+        "rejected_count": ".m_re_reference_over_limit",
+        "tracked_addresses": ".m_tracked_re_reference_addresses",
+    }
+    totals = {name: 0.0 for name in suffixes}
+    caches = set()
+
+    for stat_name, value in stats.items():
+        for field, suffix in suffixes.items():
+            if not stat_name.endswith(suffix):
+                continue
+            cache_name = stat_name[:-len(suffix)]
+            if cache_patterns[level].fullmatch(cache_name):
+                totals[field] += value
+                caches.add(cache_name)
+
+    if not caches:
+        raise ValueError(f"No {level} re-reference statistics found")
+
+    accepted = totals["accepted_count"]
+    rejected = totals["rejected_count"]
+    observed = accepted + rejected
+    totals["accepted_mean_cycles"] = (
+        totals["accepted_cycles"] / accepted if accepted else 0.0
+    )
+    totals["rejected_percentage"] = (
+        100.0 * rejected / observed if observed else 0.0
+    )
+    totals["cache_count"] = len(caches)
+    return totals
+
+
+def aggregate_vc_availability(stats):
+    pattern = re.compile(r"(.+\.vc_avail_Local_port\d+)::(\d+)$")
+    ports = {}
+    for stat_name, value in stats.items():
+        match = pattern.fullmatch(stat_name)
+        if match:
+            ports.setdefault(match.group(1), {})[int(match.group(2))] = value
+
+    if not ports:
+        raise ValueError("No local-port VC availability statistics found")
+
+    percentages = []
+    for buckets in ports.values():
+        total_cycles = sum(buckets.values())
+        if total_cycles <= 0:
+            continue
+        all_free_index = max(buckets)
+        percentages.append(100.0 * buckets[all_free_index] / total_cycles)
+
+    if not percentages:
+        raise ValueError("Local-port VC availability contains no sampled cycles")
+    return sum(percentages) / len(percentages)
+
+
+def require_stat(stats, name):
+    value = stats.get(name)
+    if value is None or not np.isfinite(value):
+        raise ValueError(f"Missing or invalid statistic: {name}")
+    return value
+
 
 def plot_data(results_dir, target_benchmarks):
     print(f"[*] Parsing data from {results_dir} and generating plots...")
     benchmarks = list(target_benchmarks.keys())
-    
-    re_ref_data = []
+    levels = ("L1I", "L1D", "L2")
+    re_ref_data = {level: [] for level in levels}
     vc_avail_data = []
     llc_miss_data = []
-    
+    summary_rows = []
+
     for bench in benchmarks:
         stats_path = f"{results_dir}/{bench}_stats.txt"
-        if not os.path.exists(stats_path):
-            print(f"[-] Missing data for {bench}, substituting 0.")
-            re_ref_data.append(0)
-            vc_avail_data.append(0)
-            llc_miss_data.append(0)
-            continue
-            
-        re_ref_avg = extract_metric(stats_path, r"avg_re_reference_cycles\s+(\d+\.?\d*)")
-        vc_avail_avg = extract_metric(stats_path, r"vc_avail_.*::12\s+\d+\s+(\d+\.\d+)%") 
-        llc_miss_avg = extract_metric(stats_path, r"system\.ruby\.m_missLatencyHistSeqr::mean\s+(\d+\.?\d*)")
-        
-        re_ref_data.append(re_ref_avg)
-        vc_avail_data.append(vc_avail_avg)
-        llc_miss_data.append(llc_miss_avg)
+        if not os.path.isfile(stats_path):
+            raise FileNotFoundError(f"Missing statistics for {bench}: {stats_path}")
 
-    # Plot 1: Re-Reference Cycles
-    plt.figure(figsize=(8, 5))
-    plt.bar(benchmarks, re_ref_data, color='skyblue', edgecolor='black')
-    plt.title('Average Re-Reference Cycles')
-    plt.ylabel('Cycles')
-    plt.xticks(rotation=45)
+        stats = parse_stats(stats_path)
+        level_data = {
+            level: aggregate_cache_level(stats, level) for level in levels
+        }
+        if level_data["L2"]["accepted_count"] <= 0:
+            raise ValueError(f"{bench} has zero accepted LLC re-reference samples")
+
+        vc_availability = aggregate_vc_availability(stats)
+        llc_miss = require_stat(
+            stats, "system.ruby.m_missLatencyHistSeqr::mean"
+        )
+        vc_avail_data.append(vc_availability)
+        llc_miss_data.append(llc_miss)
+
+        for level in levels:
+            data = level_data[level]
+            re_ref_data[level].append(data["accepted_mean_cycles"])
+            summary_rows.append({
+                "benchmark": bench,
+                "cache_level": level,
+                "accepted_mean_cycles": data["accepted_mean_cycles"],
+                "accepted_count": int(data["accepted_count"]),
+                "rejected_count": int(data["rejected_count"]),
+                "rejected_percentage": data["rejected_percentage"],
+                "tracked_addresses": int(data["tracked_addresses"]),
+                "vc_all_free_percentage": vc_availability,
+                "llc_miss_penalty_cycles": llc_miss,
+            })
+
+    csv_path = f"{results_dir}/summary.csv"
+    with open(csv_path, "w", newline="", encoding="utf-8") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=summary_rows[0].keys())
+        writer.writeheader()
+        writer.writerows(summary_rows)
+
+    x_positions = np.arange(len(benchmarks))
+    width = 0.25
+    plt.figure(figsize=(10, 5))
+    for index, level in enumerate(levels):
+        offset = (index - 1) * width
+        plt.bar(x_positions + offset, re_ref_data[level], width, label=level)
+    plt.title("Accepted Re-Reference Interval by Cache Level (<=100,000 cycles)")
+    plt.ylabel("Cache cycles")
+    plt.xticks(x_positions, benchmarks, rotation=45)
+    plt.legend()
     plt.tight_layout()
     plt.savefig(f"{results_dir}/re_reference_cycles.png")
     plt.close()
 
-    # Plot 2: VC Availability (% time all 12 VCs are free)
     plt.figure(figsize=(8, 5))
-    plt.bar(benchmarks, vc_avail_data, color='lightgreen', edgecolor='black')
-    plt.title('VC Availability (% Time All VCs Free)')
-    plt.ylabel('Percentage (%)')
+    plt.bar(benchmarks, vc_avail_data, color="lightgreen", edgecolor="black")
+    plt.title("Local Input-Port VC Availability (All VCs Free)")
+    plt.ylabel("Percentage (%)")
     plt.ylim(0, 100)
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(f"{results_dir}/vc_availability.png")
     plt.close()
 
-    # Plot 3: LLC Miss Penalty
     plt.figure(figsize=(8, 5))
-    plt.bar(benchmarks, llc_miss_data, color='salmon', edgecolor='black')
-    plt.title('LLC Miss Latency (Mean Penalty)')
-    plt.ylabel('Latency (Cycles)')
+    plt.bar(benchmarks, llc_miss_data, color="salmon", edgecolor="black")
+    plt.title("LLC Miss Latency (Mean Penalty)")
+    plt.ylabel("Cycles")
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(f"{results_dir}/llc_miss_penalty.png")
     plt.close()
-    
-    print(f"[+] Plots successfully saved in {results_dir} as PNGs.")
+
+    print(f"[+] Wrote {csv_path} and three plots.")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Baseline Evaluation Framework")

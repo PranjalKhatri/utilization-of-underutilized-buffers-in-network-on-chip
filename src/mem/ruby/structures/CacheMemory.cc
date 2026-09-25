@@ -76,13 +76,14 @@ CacheMemory::CacheMemory(const Params &p)
     dataArray(p.dataArrayBanks, p.dataAccessLatency, p.start_index_bit),
     tagArray(p.tagArrayBanks, p.tagAccessLatency, p.start_index_bit),
     atomicALUArray(p.atomicALUs, p.atomicLatency),
-    cacheMemoryStats(this, p.top_n_set)
+    cacheMemoryStats(this, p.top_n_set, p.max_re_reference_cycles)
 {
     m_cache_size = p.size;
     m_cache_assoc = p.assoc;
     //PRANJAL
-    // m_print_evictions = p.print_evictions;
-    // m_top_n_set = p.top_n_set;
+    m_print_evictions = p.print_evictions;
+    m_top_n_set = p.top_n_set;
+    m_max_re_reference_cycles = p.max_re_reference_cycles;
     m_last_accessed_address = 0;
     //PRANJAL
     m_replacementPolicy_ptr = p.replacement_policy;
@@ -92,6 +93,14 @@ CacheMemory::CacheMemory(const Params &p)
     m_block_size = p.block_size;  // may be 0 at this point. Updated in init()
     m_use_occupancy = dynamic_cast<replacement_policy::WeightedLRU*>(
                                     m_replacementPolicy_ptr) ? true : false;
+}
+
+void
+CacheMemory::resetStats()
+{
+    SimObject::resetStats();
+    m_re_reference_cycle.clear();
+    cacheMemoryStats.m_tracked_re_reference_addresses = 0;
 }
 
 void
@@ -324,16 +333,21 @@ CacheMemory::allocate(Addr address, AbstractCacheEntry *entry)
 
         //PRANJAL
     // --- PAPER IMPLEMENTATION: Calculate Re-reference Latency ---
-    auto it = m_eviction_cycle.find(address);
-    if (it != m_eviction_cycle.end()) {
-        uint64_t cycles = (uint64_t)curTick() - it->second;
+    const uint64_t current_cycle = m_ruby_system->curCycle();
+    auto it = m_re_reference_cycle.find(address);
+    if (it != m_re_reference_cycle.end()) {
+        const uint64_t cycles = current_cycle - it->second;
 
-        // Increment the totals (the Formula stat handles the division automatically!)
-        cacheMemoryStats.m_total_re_reference_cycles += cycles;
-        cacheMemoryStats.m_total_re_references++;
+        if (cycles > 0 && cycles <= m_max_re_reference_cycles) {
+            cacheMemoryStats.m_total_re_reference_cycles += cycles;
+            cacheMemoryStats.m_total_re_references++;
+            cacheMemoryStats.m_re_reference_cycles.sample(cycles);
+        } else if (cycles > m_max_re_reference_cycles) {
+            cacheMemoryStats.m_re_reference_over_limit++;
+        }
 
-        cacheMemoryStats.m_re_reference_cycles.sample(cycles);
-        m_eviction_cycle.erase(it); // Clean up the entry
+        // Retain the address and begin a new interval for every observation.
+        it->second = current_cycle;
     }
     // ------------------------------------------------------------
     //PRANJAL
@@ -383,7 +397,9 @@ CacheMemory::deallocate(Addr address)
     if (m_print_evictions)
         cacheMemoryStats.numEvictions++;
     // --- PAPER IMPLEMENTATION: Record Eviction Cycle ---
-    m_eviction_cycle[address] = (uint64_t)curTick();
+    m_re_reference_cycle[address] = m_ruby_system->curCycle();
+    cacheMemoryStats.m_tracked_re_reference_addresses =
+        m_re_reference_cycle.size();
     // ---------------------------------------------------
     //PRANJAL
     AbstractCacheEntry* entry = lookup(address);
@@ -685,7 +701,8 @@ CacheMemory::isLocked(Addr address, int context)
 
 CacheMemory::
 CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
-                                 int topNSetCount)
+                                 int topNSetCount,
+                                 uint64_t maxReReferenceCycles)
     : statistics::Group(parent),
       ADD_STAT(numDataArrayReads, "Number of data array reads"),
       ADD_STAT(numDataArrayWrites, "Number of data array writes"),
@@ -722,6 +739,10 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
       ADD_STAT(m_re_reference_cycles, "Cycles between block eviction and re-reference"),
       ADD_STAT(m_total_re_reference_cycles, "Total sum of all re-reference cycles"),
       ADD_STAT(m_total_re_references, "Total count of successfully tracked re-references"),
+      ADD_STAT(m_re_reference_over_limit,
+               "Re-reference intervals greater than the configured limit"),
+      ADD_STAT(m_tracked_re_reference_addresses,
+               "Addresses retained for continued re-reference tracking"),
       ADD_STAT(m_avg_re_reference_cycles, "Running average of cycles between block eviction and re-reference"),
       // ---------------------------------------------------
       /////////////////PRANJAL
@@ -792,10 +813,12 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
 
     // --- PAPER IMPLEMENTATION: Configure Histogram ---
     m_re_reference_cycles
-        .init(20) // Number of buckets
+        .init(1, maxReReferenceCycles, 5000)
         .flags(statistics::pdf | statistics::dist | statistics::nozero | statistics::nonan);
     m_total_re_reference_cycles.flags(statistics::nozero);
     m_total_re_references.flags(statistics::nozero);
+    m_re_reference_over_limit.flags(statistics::nozero);
+    m_tracked_re_reference_addresses.flags(statistics::nozero);
     
     // Calculate the running average dynamically
     m_avg_re_reference_cycles = m_total_re_reference_cycles / m_total_re_references;

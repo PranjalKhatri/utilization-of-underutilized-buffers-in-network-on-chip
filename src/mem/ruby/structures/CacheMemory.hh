@@ -76,6 +76,7 @@ namespace gem5
       ~CacheMemory();
       
       void init();
+      void resetStats() override;
       //PRANJAL
       void recordSetAccess(Addr address);
       void recordHitWithAddress(Addr address);
@@ -204,7 +205,9 @@ namespace gem5
     int m_block_size;
     
     //PRANJAL paper implementaiton
-    std::unordered_map<Addr, uint64_t> m_eviction_cycle;
+    // Last eviction/re-reference time, expressed in Ruby clock cycles.
+    std::unordered_map<Addr, uint64_t> m_re_reference_cycle;
+    uint64_t m_max_re_reference_cycles;
     
     /**
      * We store all the ReplacementData in a 2-dimensional array. By doing
@@ -239,7 +242,8 @@ namespace gem5
     private:
     struct CacheMemoryStats : public statistics::Group
     {
-      CacheMemoryStats(statistics::Group *parent, int topNSetCount);
+      CacheMemoryStats(statistics::Group *parent, int topNSetCount,
+                       uint64_t maxReReferenceCycles);
       
       statistics::Scalar numDataArrayReads;
           statistics::Scalar numDataArrayWrites;
@@ -283,11 +287,12 @@ namespace gem5
           statistics::Vector hits_per_way;
           statistics::Vector misses_per_way;
           //PAPER implementation
-          statistics::Histogram m_re_reference_cycles;
-          // Add these inside your CacheMemory public or protected stats group:
-          statistics::Scalar m_total_re_reference_cycles; // Sum of all cycles
-          statistics::Scalar m_total_re_references;       // Count of references
-          statistics::Formula m_avg_re_reference_cycles;  // The calculated average
+          statistics::Distribution m_re_reference_cycles;
+          statistics::Scalar m_total_re_reference_cycles;
+          statistics::Scalar m_total_re_references;
+          statistics::Scalar m_re_reference_over_limit;
+          statistics::Scalar m_tracked_re_reference_addresses;
+          statistics::Formula m_avg_re_reference_cycles;
           //PRANJAL
           
           statistics::Vector m_accessModeType;

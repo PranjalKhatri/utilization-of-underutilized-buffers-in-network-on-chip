@@ -66,6 +66,8 @@ InputUnit::InputUnit(int id, PortDirection direction, Router *router)
     // --- PAPER IMPLEMENTATION: Initialize VC Tracking ---
     m_free_vcs = m_num_vcs;
     m_last_vc_update_cycle = 0;
+    statistics::registerDumpCallback(
+        [this]() { update_vc_availability(); });
 }
 
 /*
