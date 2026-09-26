@@ -175,8 +175,6 @@ InputUnit::wakeup()
              t_flit->get_type() == HEAD_TAIL_))
             m_srfd[vc].complete = true;
 
-        if (m_router->srfdEnabled() && isLocalPacket())
-            applySrfdPressure(vc / m_vc_per_vnet);
 
         int vnet = vc/m_vc_per_vnet;
         // number of writes same as reads
@@ -278,30 +276,24 @@ InputUnit::releaseSrfd(int vc, bool drop)
     --m_srfd_stored_count;
 }
 
-void
+bool
 InputUnit::applySrfdPressure(int vnet)
 {
     const int begin = vnet * m_vc_per_vnet;
     const int end = begin + m_vc_per_vnet;
-    int free = 0;
     int stored = 0;
-    int active_nonstored = 0;
     for (int vc = begin; vc < end; ++vc) {
-        free += virtualChannels[vc].get_state() == IDLE_;
         stored += m_srfd[vc].held && m_srfd[vc].complete;
-        active_nonstored += virtualChannels[vc].get_state() != IDLE_ &&
-                            !m_srfd[vc].held;
     }
     const bool pressure = m_router->srfdDefensive() ?
-        (free == 0 && stored > 0) :
-        (stored == m_vc_per_vnet ||
-         (stored > 0 && active_nonstored > 0));
-    if (!pressure) return;
+        (stored > 0) : (stored == m_vc_per_vnet);
+    if (!pressure) return false;
     const int victim = oldestStored(vnet);
     if (victim >= 0) {
         ++m_srfd_pressure_events;
         releaseSrfd(victim, !m_srfd[victim].dirty);
     }
+    return victim >= 0;
 }
 
 bool

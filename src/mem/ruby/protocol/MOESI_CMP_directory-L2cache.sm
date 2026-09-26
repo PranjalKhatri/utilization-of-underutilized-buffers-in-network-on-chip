@@ -176,6 +176,7 @@ machine(MachineType:L2Cache, "Token protocol")
     Data,            desc="Received a data message, responder has a shared copy";
     Data_Exclusive,  desc="Received a data message";
     SRFD_Data, desc="Received locally stored SRFD data";
+    SRFD_Data_Clean, desc="Received clean locally stored SRFD data";
     L1_WBCLEANDATA,       desc="Writeback from L1, with data";
     L1_WBDIRTYDATA,       desc="Writeback from L1, with data";
 
@@ -672,8 +673,13 @@ machine(MachineType:L2Cache, "Token protocol")
         } else if (in_msg.Type == CoherenceResponseType:SRFD_DATA &&
                    in_msg.SRFDReply) {
           assert(TBEs.isPresent(in_msg.addr));
-          trigger(Event:SRFD_Data, in_msg.addr,
-                  getCacheEntry(in_msg.addr), TBEs[in_msg.addr]);
+          if (in_msg.SRFDDirty) {
+            trigger(Event:SRFD_Data, in_msg.addr,
+                    getCacheEntry(in_msg.addr), TBEs[in_msg.addr]);
+          } else {
+            trigger(Event:SRFD_Data_Clean, in_msg.addr,
+                    getCacheEntry(in_msg.addr), TBEs[in_msg.addr]);
+          }
         } else {
           error("Unexpected message");
         }
@@ -1480,7 +1486,7 @@ machine(MachineType:L2Cache, "Token protocol")
 
 
   action(qq_sendDataFromTBEToMemory, "qq", desc="Send data from TBE to directory") {
-    if (srfd_enabled && (tbe.Dirty || srfd_store_clean)) {
+    if (srfd_enabled && tbe.Dirty) {
       enqueue(responseNetwork_out, ResponseMsg, response_latency) {
         assert(is_valid(tbe));
         out_msg.addr := address;
@@ -1491,7 +1497,7 @@ machine(MachineType:L2Cache, "Token protocol")
         out_msg.DataBlk := tbe.DataBlk;
         out_msg.MessageSize := MessageSizeType:Writeback_Data;
         out_msg.SRFDStore := true;
-        out_msg.SRFDDirty := tbe.Dirty;
+        out_msg.SRFDDirty := true;
       }
     } else {
       enqueue(globalRequestNetwork_out, RequestMsg, response_latency) {
@@ -1508,6 +1514,19 @@ machine(MachineType:L2Cache, "Token protocol")
           out_msg.Type := CoherenceRequestType:WRITEBACK_CLEAN_ACK;
           out_msg.DataBlk := tbe.DataBlk;
           out_msg.MessageSize := MessageSizeType:Writeback_Control;
+        }
+      }
+      if (srfd_enabled && srfd_store_clean && !tbe.Dirty) {
+        enqueue(responseNetwork_out, ResponseMsg, response_latency) {
+          out_msg.addr := address;
+          out_msg.Type := CoherenceResponseType:SRFD_DATA;
+          out_msg.Sender := machineID;
+          out_msg.SenderMachine := MachineType:L2Cache;
+          out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
+          out_msg.DataBlk := tbe.DataBlk;
+          out_msg.MessageSize := MessageSizeType:Writeback_Data;
+          out_msg.SRFDStore := true;
+          out_msg.SRFDDirty := false;
         }
       }
     }
@@ -1700,6 +1719,7 @@ machine(MachineType:L2Cache, "Token protocol")
   transition({IGM, IGS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {Own_GETX}) {
     zz_recycleGlobalRequestQueue;
   }
+
 
   // must happened because we forwarded GETX to local exclusive trying to do wb
   transition({M, O, ILS, ILOX, OLS, OLSX, SLS, S}, L1_PUTX) {
@@ -2404,10 +2424,19 @@ machine(MachineType:L2Cache, "Token protocol")
     n_popResponseQueue;
   }
 
-  transition(IGS, SRFD_Data, IGS_SRFD) {
+  transition(IGS, SRFD_Data_Clean, IGS_SRFD) {
     srfd_copyData;
     srfd_sendCanPut;
     c_sendDataFromTBEToL1GETS;
+    n_popResponseQueue;
+  }
+
+  // The paper requires a dirty local reply to remain modified even for
+  // GETS, so return exclusive data and wait for an exclusive unblock.
+  transition(IGS, SRFD_Data, IGMOU_SRFD) {
+    srfd_copyData;
+    srfd_sendCanPut;
+    c_sendExclusiveDataFromTBEToL1GETS;
     n_popResponseQueue;
   }
 

@@ -1077,6 +1077,15 @@ machine(MachineType:Directory, "Directory protocol")
     i_popIncomingRequestQueue;
   }
 
+
+  // A clean SRFD packet is additional data: the ordinary clean-writeback
+  // control message still performs the directory transition.  The two use
+  // different virtual networks, so the data packet may arrive first.  Consume
+  // it in-place and let Clean_Writeback complete the existing transient.
+  transition({MI, MIS, OS, OSS}, SRFD_Clean_Drop) {
+    j_popIncomingUnblockQueue;
+  }
+
   transition(MI, SRFD_Dirty_Forward, WBI) {
     c_clearOwner;
     cc_clearSharers;

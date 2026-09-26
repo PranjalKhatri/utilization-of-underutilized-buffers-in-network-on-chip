@@ -75,6 +75,18 @@ Router::Router(const Params &p)
 }
 
 bool
+Router::applySrfdPressure(int vnet)
+{
+    if (!srfdEnabled() || srfdDisabledAtThisRouter()) return false;
+    for (int port = 0; port < m_input_unit.size(); ++port) {
+        if (getInportDirection(port) == "Local" &&
+            m_input_unit[port]->applySrfdPressure(vnet))
+            return true;
+    }
+    return false;
+}
+
+bool
 Router::srfdStoresClean() const
 {
     return m_srfd_mode == SrfdMode::CbDbDefensive ||

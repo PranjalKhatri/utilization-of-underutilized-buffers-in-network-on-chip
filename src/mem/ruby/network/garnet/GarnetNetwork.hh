@@ -96,6 +96,7 @@ class GarnetNetwork : public Network
     }
     int getNumRouters();
     int get_router_id(int ni, int vnet);
+    bool applySrfdPressure(int router_id, int vnet);
 
 
     // Methods used by Topology to setup the network

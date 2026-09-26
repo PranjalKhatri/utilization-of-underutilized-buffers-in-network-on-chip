@@ -385,6 +385,13 @@ GarnetNetwork::get_router_id(int global_ni, int vnet)
     return m_nis[local_ni]->get_router_id(vnet);
 }
 
+bool
+GarnetNetwork::applySrfdPressure(int router_id, int vnet)
+{
+    assert(router_id >= 0 && router_id < m_routers.size());
+    return m_routers[router_id]->applySrfdPressure(vnet);
+}
+
 void
 GarnetNetwork::regStats()
 {

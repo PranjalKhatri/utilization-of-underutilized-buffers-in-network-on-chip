@@ -567,6 +567,7 @@ NetworkInterface::calculateVC(int vnet)
         }
     }
 
+    m_net_ptr->applySrfdPressure(get_router_id(vnet), vnet);
     vc_busy_counter[vnet] += 1;
     panic_if(vc_busy_counter[vnet] > m_deadlock_threshold,
         "%s: Possible network deadlock in vnet: %d at time: %llu \n",

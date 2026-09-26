@@ -97,6 +97,7 @@ class Router : public BasicRouter, public Consumer
     bool srfdStoresClean() const;
     bool srfdDefensive() const;
     bool srfdDisabledAtThisRouter() const;
+    bool applySrfdPressure(int vnet);
 
     void init_net_ptr(GarnetNetwork* net_ptr)
     {

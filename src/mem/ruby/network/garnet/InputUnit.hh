@@ -110,6 +110,7 @@ class InputUnit : public Consumer
     }
 
     void increment_credit(int in_vc, bool free_signal, Tick curTime);
+    bool applySrfdPressure(int vnet);
 
     inline flit*
     peekTopFlit(int vc)
@@ -178,7 +179,6 @@ class InputUnit : public Consumer
 
     bool trySrfdRequest(flit *request);
     void releaseSrfd(int vc, bool drop);
-    void applySrfdPressure(int vnet);
     int oldestStored(int vnet, bool complete_only = true) const;
     void returnDroppedRequestCredit(int vc);
     //PRANJAL
