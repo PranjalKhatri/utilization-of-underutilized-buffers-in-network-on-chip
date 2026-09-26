@@ -71,10 +71,13 @@ BENCHMARKS = {
     # }
 }
 
-def run_benchmarks(results_dir, target_benchmarks):
+def run_benchmarks(results_dir, target_benchmarks, srfd_mode="baseline", profile="development"):
+    profiles = {"development": (16, 16, 4, "Mesh_XY"), "paper": (64, 4, 8, "MeshDirCorners_XY")}
+    num_cpus, num_dirs, mesh_rows, topology = profiles[profile]
     os.makedirs(results_dir, exist_ok=True)
     print(f"[*] Starting data collection. Results will be saved to {results_dir}")
     successful_benchmarks = {}
+    status_rows = []
 
     for bench, config in target_benchmarks.items():
         print(f"\n=========================================")
@@ -88,11 +91,11 @@ def run_benchmarks(results_dir, target_benchmarks):
         subprocess.run(["rm", "-rf", f"{GEM5_DIR}/m5out"])
         
         # Build command string (one workload per core in the 4x4 NoC)
-        cmd_str = ";".join([config["exe"]] * 16)
+        cmd_str = ";".join([config["exe"]] * num_cpus)
         
         # Build option string
         opt_list = []
-        for i in range(16):
+        for i in range(num_cpus):
             opt = config["input_flag"]
             if config["output_flag"]:
                 opt += " " + config["output_flag"].format(i)
@@ -106,20 +109,22 @@ def run_benchmarks(results_dir, target_benchmarks):
             "--cpu-type=TimingSimpleCPU",
             "--sys-clock=2GHz",
             "--mem-size=32GB",
-            "--num-cpus=16",
-            "--num-dirs=16",
-            "--num-l2caches=16",
+            f"--num-cpus={num_cpus}",
+            f"--num-dirs={num_dirs}",
+            f"--num-l2caches={num_cpus}",
             "--l1i_size=16kB", "--l1i_assoc=4",
             "--l1d_size=16kB", "--l1d_assoc=4",
             "--l2_size=128kB", "--l2_assoc=8",
             "--ruby",
             "--network=garnet",
-            "--topology=Mesh_XY",
-            "--mesh-rows=4",
+            f"--topology={topology}",
+            f"--mesh-rows={mesh_rows}",
             "--vcs-per-vnet=4",
+            "--buffers-per-data-vc=5",
             "--link-width-bits=128",
             "--router-latency=2",
             "--routing-algorithm=1",
+            f"--srfd-mode={srfd_mode}",
             "-c", cmd_str,
             "-F", str(config.get("fast_forward", 1000000)),
             "--maxinsts=10000000"
@@ -137,19 +142,38 @@ def run_benchmarks(results_dir, target_benchmarks):
                 f"[-] {bench} failed with return code {error.returncode}; "
                 "continuing with the remaining benchmarks."
             )
+            status_rows.append({"benchmark": bench, "mode": srfd_mode, "profile": profile, "status": "failed", "returncode": error.returncode, "error": "gem5 failed"})
             continue
         
         stats_file = f"{GEM5_DIR}/m5out/stats.txt"
         if os.path.exists(stats_file):
             subprocess.run(["cp", stats_file, target_file], check=True)
             print(f"[+] Saved stats to {target_file}")
+            try:
+                parsed = parse_stats(target_file)
+                for cache_level in ("L1I", "L1D", "L2"):
+                    aggregate_cache_level(parsed, cache_level)
+                aggregate_srfd(parsed, srfd_mode)
+            except (OSError, ValueError) as error:
+                os.remove(target_file)
+                print(f"[-] {bench} produced invalid statistics: {error}")
+                status_rows.append({"benchmark": bench, "mode": srfd_mode, "profile": profile, "status": "failed", "returncode": 0, "error": str(error)})
+                continue
             successful_benchmarks[bench] = config
+            status_rows.append({"benchmark": bench, "mode": srfd_mode, "profile": profile, "status": "ok", "returncode": 0, "error": ""})
         else:
             print(
                 f"[-] {bench} completed without generating {stats_file}; "
                 "continuing with the remaining benchmarks."
             )
+            status_rows.append({"benchmark": bench, "mode": srfd_mode, "profile": profile, "status": "failed", "returncode": 0, "error": "missing stats.txt"})
 
+    status_path = os.path.join(results_dir, "run_status.csv")
+    with open(status_path, "w", newline="", encoding="utf-8") as status_file:
+        fields = ("benchmark", "mode", "profile", "status", "returncode", "error")
+        writer = csv.DictWriter(status_file, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(status_rows)
     return successful_benchmarks
 
 def parse_stats(file_path):
@@ -158,6 +182,8 @@ def parse_stats(file_path):
         contents = stats_file.read()
 
     marker = "---------- Begin Simulation Statistics ----------"
+    if marker not in contents:
+        raise ValueError(f"Missing simulation statistics section in {file_path}")
     section = contents.rsplit(marker, 1)[-1]
     values = {}
     for line in section.splitlines():
@@ -242,7 +268,29 @@ def require_stat(stats, name):
     return value
 
 
-def plot_data(results_dir, target_benchmarks):
+def aggregate_srfd(stats, mode):
+    suffixes = ("dirty_offered", "clean_offered", "dirty_stored", "clean_stored",
+                "dirty_forwarded", "clean_dropped", "gets_lookups", "getx_lookups",
+                "clean_hits", "dirty_hits", "getx_clean_conflicts",
+                "incomplete_misses", "pressure_events", "avoided_requests",
+                "max_stored")
+    result = {}
+    for suffix in suffixes:
+        values = [value for name, value in stats.items()
+                  if ".srfd_" in name and name.endswith("." + suffix)]
+        if not values:
+            raise ValueError(f"Missing SRFD statistic: *.{suffix}")
+        result[suffix] = max(values) if suffix == "max_stored" else sum(values)
+    attempts = result["gets_lookups"] + result["getx_lookups"]
+    result["local_reply_rate_percentage"] = (
+        100.0 * (result["clean_hits"] + result["dirty_hits"]) / attempts
+        if attempts else 0.0)
+    if mode == "baseline" and any(result[name] for name in suffixes):
+        raise ValueError("Baseline contains nonzero SRFD actions")
+    return result
+
+
+def plot_data(results_dir, target_benchmarks, mode="baseline"):
     print(f"[*] Parsing data from {results_dir} and generating plots...")
     benchmarks = list(target_benchmarks.keys())
     levels = ("L1I", "L1D", "L2")
@@ -267,6 +315,15 @@ def plot_data(results_dir, target_benchmarks):
         llc_miss = require_stat(
             stats, "system.ruby.m_missLatencyHistSeqr::mean"
         )
+        srfd = aggregate_srfd(stats, mode)
+        ipc_values = [value for name, value in stats.items()
+                      if re.fullmatch(r"system\.cpu\d+\.ipc", name)]
+        if not ipc_values:
+            raise ValueError(f"{bench} has no system IPC statistics")
+        system_ipc = sum(ipc_values)
+        network_latency = require_stat(stats, "system.ruby.network.average_packet_latency")
+        stall_ticks = sum(value for name, value in stats.items()
+                          if name.endswith(".m_stall_time"))
         vc_avail_data.append(vc_availability)
         llc_miss_data.append(llc_miss)
 
@@ -283,6 +340,10 @@ def plot_data(results_dir, target_benchmarks):
                 "tracked_addresses": int(data["tracked_addresses"]),
                 "vc_all_free_percentage": vc_availability,
                 "llc_miss_penalty_cycles": llc_miss,
+                "system_ipc": system_ipc,
+                "network_packet_latency": network_latency,
+                "message_stall_ticks": stall_ticks,
+                **srfd,
             })
 
     csv_path = f"{results_dir}/summary.csv"
@@ -333,6 +394,8 @@ if __name__ == "__main__":
     parser.add_argument("--plot", action="store_true", help="Parse stats and generate plots")
     parser.add_argument("--results-dir", type=str, default=f"{GEM5_DIR}/results_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}", help="Directory to save/read results")
     parser.add_argument("--benchmark", type=str, help="Comma-separated list of specific benchmarks to run (e.g. omnetpp,namd). Defaults to all active benchmarks.")
+    parser.add_argument("--srfd-modes", default="baseline", help="Comma-separated SRFD modes")
+    parser.add_argument("--profile", choices=("development", "paper"), default="development")
     args = parser.parse_args()
 
     if not args.run and not args.plot:
@@ -350,11 +413,17 @@ if __name__ == "__main__":
     else:
         target_benchmarks = BENCHMARKS
 
+    valid = {"baseline", "db-defensive", "db-aggressive", "cbdb-defensive", "cbdb-aggressive", "cbdb-nocorner"}
+    modes = [m.strip() for m in args.srfd_modes.split(",") if m.strip()]
+    if not modes or set(modes) - valid:
+        parser.error("Unknown or empty SRFD mode list")
+
     completed_benchmarks = target_benchmarks
     if args.run:
-        completed_benchmarks = run_benchmarks(
-            args.results_dir, target_benchmarks
-        )
+        completed_benchmarks = {}
+        for mode in modes:
+            mode_dir = os.path.join(args.results_dir, args.profile, mode)
+            completed_benchmarks.update(run_benchmarks(mode_dir, target_benchmarks, mode, args.profile))
         
     if args.plot:
         if not os.path.exists(args.results_dir):
@@ -362,4 +431,7 @@ if __name__ == "__main__":
             exit(1)
         if not completed_benchmarks:
             raise RuntimeError("No benchmarks completed successfully; nothing to plot")
-        plot_data(args.results_dir, completed_benchmarks)
+        if len(modes) != 1:
+            raise ValueError("--plot requires exactly one SRFD mode")
+        plot_data(os.path.join(args.results_dir, args.profile, modes[0]),
+                  completed_benchmarks, modes[0])

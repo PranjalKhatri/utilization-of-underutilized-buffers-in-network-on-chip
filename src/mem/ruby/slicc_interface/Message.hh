@@ -45,6 +45,7 @@
 #include <memory>
 #include <stack>
 
+#include "base/types.hh"
 #include "mem/packet.hh"
 #include "mem/ruby/common/NetDest.hh"
 #include "mem/ruby/common/WriteMask.hh"
@@ -117,6 +118,17 @@ class Message
     virtual NetDest& getDestination()
     { panic("getDestination() called on wrong message!"); }
 
+    /* Protocol-independent SRFD hooks; generated SLICC accessors override these. */
+    virtual const bool& getSRFDStore() const { return m_srfd_false; }
+    virtual const bool& getSRFDDirty() const { return m_srfd_false; }
+    virtual const bool& getSRFDGetS() const { return m_srfd_false; }
+    virtual const bool& getSRFDGetX() const { return m_srfd_false; }
+    virtual const bool& getSRFDReply() const { return m_srfd_false; }
+    virtual void setSRFDReply(const bool&)
+    { panic("setSRFDReply() called on message without SRFD metadata"); }
+    virtual const Addr& getaddr() const
+    { panic("getaddr() called on message without an address"); }
+
     int getIncomingLink() const { return incoming_link; }
     void setIncomingLink(int link) { incoming_link = link; }
     int getVnet() const { return vnet; }
@@ -134,6 +146,7 @@ class Message
     // Variables for required network traversal
     int incoming_link;
     int vnet;
+    inline static const bool m_srfd_false = false;
 };
 
 inline bool

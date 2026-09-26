@@ -66,6 +66,9 @@ class OutputUnit;
 class Router : public BasicRouter, public Consumer
 {
   public:
+    enum class SrfdMode { Baseline, DbDefensive, DbAggressive,
+        CbDbDefensive, CbDbAggressive, CbDbNoCorner };
+
     typedef GarnetRouterParams Params;
     Router(const Params &p);
 
@@ -89,6 +92,11 @@ class Router : public BasicRouter, public Consumer
     int get_num_inports()   { return m_input_unit.size(); }
     int get_num_outports()  { return m_output_unit.size(); }
     int get_id()            { return m_id; }
+    SrfdMode getSrfdMode() const { return m_srfd_mode; }
+    bool srfdEnabled() const { return m_srfd_mode != SrfdMode::Baseline; }
+    bool srfdStoresClean() const;
+    bool srfdDefensive() const;
+    bool srfdDisabledAtThisRouter() const;
 
     void init_net_ptr(GarnetNetwork* net_ptr)
     {
@@ -146,6 +154,8 @@ class Router : public BasicRouter, public Consumer
     Cycles m_latency;
     uint32_t m_virtual_networks, m_vc_per_vnet, m_num_vcs;
     uint32_t m_bit_width;
+    SrfdMode m_srfd_mode;
+    int m_mesh_rows;
     GarnetNetwork *m_network_ptr;
 
     RoutingUnit routingUnit;

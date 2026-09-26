@@ -49,6 +49,7 @@ from .Ruby import (
     send_evicts,
 )
 
+from m5.util import panic
 
 #
 # Declare caches used by the protocol
@@ -76,6 +77,20 @@ def create_system(
         )
 
     cpu_sequencers = []
+
+    if options.srfd_mode != "baseline":
+        if options.network != "garnet":
+            panic("SRFD requires the Garnet network")
+        if options.routing_algorithm != 1:
+            panic("SRFD local replies currently require XY routing")
+        if options.buffers_per_data_vc < 5:
+            panic("SRFD requires at least five buffers per data VC")
+        if options.topology not in ("Mesh_XY", "MeshDirCorners_XY"):
+            panic("SRFD requires a mesh with colocated L2 controllers")
+        if options.num_l2caches != options.num_cpus:
+            panic("SRFD requires one distributed L2 bank per router")
+        if options.srfd_mode == "cbdb-nocorner" and options.mesh_rows <= 0:
+            panic("cbdb-nocorner requires a rectangular mesh")
 
     #
     # The ruby network creation expects the list of nodes in the system to be
@@ -179,6 +194,8 @@ def create_system(
 
         l2_cntrl = MOESI_CMP_directory_L2Cache_Controller(
             version=i,
+            srfd_enabled=options.srfd_mode != "baseline",
+            srfd_store_clean=options.srfd_mode.startswith("cbdb-"),
             L2cache=l2_cache,
             transitions_per_cycle=options.ports,
             ruby_system=ruby_system,

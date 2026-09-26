@@ -42,6 +42,8 @@ machine(MachineType:L2Cache, "Token protocol")
 : CacheMemory * L2cache;
   Cycles response_latency := 1;
   Cycles request_latency := 1;
+  bool srfd_enabled := "False";
+  bool srfd_store_clean := "False";
 
   // L2 BANK QUEUES
   // From local bank of L2 cache TO the network
@@ -118,6 +120,8 @@ machine(MachineType:L2Cache, "Token protocol")
     IGMLS, AccessPermission:Busy, desc="Blocked, issued local GETX to directory but may need to INV local sharers";
     IGMO, AccessPermission:Read_Only, desc="Blocked, have data for local GETX but need all acks";
     IGMOU, AccessPermission:Busy, desc="Blocked, responded to GETX, waiting unblock";
+    IGS_SRFD, AccessPermission:Busy, desc="SRFD GETS reply waiting for L1 unblock";
+    IGMOU_SRFD, AccessPermission:Busy, desc="SRFD GETX reply waiting for L1 unblock";
     IGMIO, AccessPermission:Busy, desc="Blocked, issued local GETX, local owner with possible local sharer, may need to INV";
     OGMIO, AccessPermission:Busy, desc="Blocked, issued local GETX, was owner, may need to INV";
     IGMIOF, AccessPermission:Busy,       desc="Blocked, issued local GETX, local owner, waiting for global acks, got Fwd_GETX";
@@ -171,6 +175,7 @@ machine(MachineType:L2Cache, "Token protocol")
     All_Acks,         desc="Received all ack messages";
     Data,            desc="Received a data message, responder has a shared copy";
     Data_Exclusive,  desc="Received a data message";
+    SRFD_Data, desc="Received locally stored SRFD data";
     L1_WBCLEANDATA,       desc="Writeback from L1, with data";
     L1_WBDIRTYDATA,       desc="Writeback from L1, with data";
 
@@ -664,6 +669,11 @@ machine(MachineType:L2Cache, "Token protocol")
         } else if (in_msg.Type == CoherenceResponseType:DMA_ACK) {
           trigger(Event:DmaAck, in_msg.addr,
                   getCacheEntry(in_msg.addr), TBEs[in_msg.addr]);
+        } else if (in_msg.Type == CoherenceResponseType:SRFD_DATA &&
+                   in_msg.SRFDReply) {
+          assert(TBEs.isPresent(in_msg.addr));
+          trigger(Event:SRFD_Data, in_msg.addr,
+                  getCacheEntry(in_msg.addr), TBEs[in_msg.addr]);
         } else {
           error("Unexpected message");
         }
@@ -769,6 +779,7 @@ machine(MachineType:L2Cache, "Token protocol")
         out_msg.Requestor := machineID;
         out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
         out_msg.MessageSize := MessageSizeType:Request_Control;
+        out_msg.SRFDGetS := srfd_enabled;
       }
     }
   }
@@ -782,6 +793,7 @@ machine(MachineType:L2Cache, "Token protocol")
         out_msg.Requestor := machineID;
         out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
         out_msg.MessageSize := MessageSizeType:Request_Control;
+        out_msg.SRFDGetX := srfd_enabled;
       }
     }
   }
@@ -1467,23 +1479,59 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
 
-  action( qq_sendDataFromTBEToMemory, "qq", desc="Send data from TBE to directory") {
-    enqueue(globalRequestNetwork_out, RequestMsg, response_latency) {
-      assert(is_valid(tbe));
-      out_msg.addr := address;
-      out_msg.Requestor := machineID;
-      out_msg.RequestorMachine := MachineType:L2Cache;
-      out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
-      if (tbe.Dirty) {
-        out_msg.Type := CoherenceRequestType:WRITEBACK_DIRTY_DATA;
+  action(qq_sendDataFromTBEToMemory, "qq", desc="Send data from TBE to directory") {
+    if (srfd_enabled && (tbe.Dirty || srfd_store_clean)) {
+      enqueue(responseNetwork_out, ResponseMsg, response_latency) {
+        assert(is_valid(tbe));
+        out_msg.addr := address;
+        out_msg.Type := CoherenceResponseType:SRFD_DATA;
+        out_msg.Sender := machineID;
+        out_msg.SenderMachine := MachineType:L2Cache;
+        out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
         out_msg.DataBlk := tbe.DataBlk;
         out_msg.MessageSize := MessageSizeType:Writeback_Data;
-      } else {
-         out_msg.Type := CoherenceRequestType:WRITEBACK_CLEAN_ACK;
-        // NOTE: in a real system this would not send data.  We send
-        // data here only so we can check it at the memory
-         out_msg.DataBlk := tbe.DataBlk;
-         out_msg.MessageSize := MessageSizeType:Writeback_Control;
+        out_msg.SRFDStore := true;
+        out_msg.SRFDDirty := tbe.Dirty;
+      }
+    } else {
+      enqueue(globalRequestNetwork_out, RequestMsg, response_latency) {
+        assert(is_valid(tbe));
+        out_msg.addr := address;
+        out_msg.Requestor := machineID;
+        out_msg.RequestorMachine := MachineType:L2Cache;
+        out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
+        if (tbe.Dirty) {
+          out_msg.Type := CoherenceRequestType:WRITEBACK_DIRTY_DATA;
+          out_msg.DataBlk := tbe.DataBlk;
+          out_msg.MessageSize := MessageSizeType:Writeback_Data;
+        } else {
+          out_msg.Type := CoherenceRequestType:WRITEBACK_CLEAN_ACK;
+          out_msg.DataBlk := tbe.DataBlk;
+          out_msg.MessageSize := MessageSizeType:Writeback_Control;
+        }
+      }
+    }
+  }
+
+  action(srfd_copyData, "srd", desc="Copy locally replied SRFD data") {
+    peek(responseNetwork_in, ResponseMsg) {
+      assert(is_valid(tbe));
+      assert(in_msg.SRFDReply);
+      tbe.DataBlk := in_msg.DataBlk;
+      tbe.Dirty := in_msg.SRFDDirty;
+    }
+  }
+
+  action(srfd_sendCanPut, "src", desc="Cancel pending directory writeback") {
+    peek(responseNetwork_in, ResponseMsg) {
+      enqueue(globalRequestNetwork_out, RequestMsg, request_latency) {
+        out_msg.addr := address;
+        out_msg.Type := CoherenceRequestType:CAN_PUT;
+        out_msg.Requestor := machineID;
+        out_msg.RequestorMachine := MachineType:L2Cache;
+        out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
+        out_msg.MessageSize := MessageSizeType:Writeback_Control;
+        out_msg.SRFDDirty := in_msg.SRFDDirty;
       }
     }
   }
@@ -2354,6 +2402,37 @@ machine(MachineType:L2Cache, "Token protocol")
     m_decrementNumberOfMessagesExt;
     o_checkForExtCompletion;
     n_popResponseQueue;
+  }
+
+  transition(IGS, SRFD_Data, IGS_SRFD) {
+    srfd_copyData;
+    srfd_sendCanPut;
+    c_sendDataFromTBEToL1GETS;
+    n_popResponseQueue;
+  }
+
+  transition(IGS_SRFD, Unblock, ILS) {
+    g_recordLocalSharer;
+    s_deallocateTBE;
+    n_popResponseQueue; //PRANJAL commented
+    wa_wakeUpDependents;
+  }
+  //GEMINI PRANJAL addition
+  //transition(IGMLS, SRFD_Data) {
+  //  st_stallAndWaitL1RequestQueue;
+  //}
+  transition(IGM, SRFD_Data, IGMOU_SRFD) {
+    srfd_copyData;
+    srfd_sendCanPut;
+    c_sendDataFromTBEToL1GETX;
+    n_popResponseQueue;
+  }
+
+  transition(IGMOU_SRFD, Exclusive_Unblock, ILX) {
+    g_recordLocalExclusive;
+    s_deallocateTBE;
+    n_popResponseQueue;//PRANJAL commented
+    wa_wakeUpDependents;
   }
 
   transition(IGS, Data) {

@@ -33,6 +33,7 @@
 #define __MEM_RUBY_NETWORK_GARNET_0_INPUTUNIT_HH__
 
 #include <iostream>
+#include <limits>
 #include <vector>
 
 //PRANJAL
@@ -125,6 +126,7 @@ class InputUnit : public Consumer
     inline bool
     need_stage(int vc, flit_stage stage, Tick time)
     {
+        if (m_srfd[vc].held) return false;
         return virtualChannels[vc].need_stage(stage, time);
     }
 
@@ -165,6 +167,20 @@ class InputUnit : public Consumer
     //PRANJAL paper
     void regStats();
   private:
+    struct SrfdEntry {
+        bool held = false;
+        bool complete = false;
+        bool dirty = false;
+        Addr address = 0;
+        uint64_t sequence = 0;
+        Tick stored_tick = 0;
+    };
+
+    bool trySrfdRequest(flit *request);
+    void releaseSrfd(int vc, bool drop);
+    void applySrfdPressure(int vnet);
+    int oldestStored(int vnet, bool complete_only = true) const;
+    void returnDroppedRequestCredit(int vc);
     //PRANJAL
     bool isLocalPacket() const {
         return m_direction == "Local";
@@ -189,6 +205,26 @@ class InputUnit : public Consumer
     //PRANJAL end
     // Input Virtual channels
     std::vector<VirtualChannel> virtualChannels;
+    std::vector<SrfdEntry> m_srfd;
+    uint64_t m_srfd_sequence = 0;
+    unsigned m_srfd_stored_count = 0;
+
+    statistics::Scalar m_srfd_dirty_offered;
+    statistics::Scalar m_srfd_clean_offered;
+    statistics::Scalar m_srfd_dirty_stored;
+    statistics::Scalar m_srfd_clean_stored;
+    statistics::Scalar m_srfd_dirty_forwarded;
+    statistics::Scalar m_srfd_clean_dropped;
+    statistics::Scalar m_srfd_gets_lookups;
+    statistics::Scalar m_srfd_getx_lookups;
+    statistics::Scalar m_srfd_clean_hits;
+    statistics::Scalar m_srfd_dirty_hits;
+    statistics::Scalar m_srfd_getx_clean_conflicts;
+    statistics::Scalar m_srfd_incomplete_misses;
+    statistics::Scalar m_srfd_pressure_events;
+    statistics::Scalar m_srfd_avoided_requests;
+    statistics::Scalar m_srfd_max_stored;
+    statistics::Distribution m_srfd_residence_cycles;
 
     // Statistical variables
     std::vector<double> m_num_buffer_writes;

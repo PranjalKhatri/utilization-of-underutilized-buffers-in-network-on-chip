@@ -48,15 +48,60 @@ namespace ruby
 namespace garnet
 {
 
+namespace
+{
+Router::SrfdMode parseSrfdMode(const std::string &mode)
+{
+    if (mode == "baseline") return Router::SrfdMode::Baseline;
+    if (mode == "db-defensive") return Router::SrfdMode::DbDefensive;
+    if (mode == "db-aggressive") return Router::SrfdMode::DbAggressive;
+    if (mode == "cbdb-defensive") return Router::SrfdMode::CbDbDefensive;
+    if (mode == "cbdb-aggressive") return Router::SrfdMode::CbDbAggressive;
+    if (mode == "cbdb-nocorner") return Router::SrfdMode::CbDbNoCorner;
+    fatal("Unknown SRFD mode %s", mode);
+}
+}// anonymous namespace
+
 Router::Router(const Params &p)
   : BasicRouter(p), Consumer(this), m_latency(p.latency),
     m_virtual_networks(p.virt_nets), m_vc_per_vnet(p.vcs_per_vnet),
     m_num_vcs(m_virtual_networks * m_vc_per_vnet), m_bit_width(p.width),
+    m_srfd_mode(parseSrfdMode(p.srfd_mode)), m_mesh_rows(p.mesh_rows),
     m_network_ptr(nullptr), routingUnit(this), switchAllocator(this),
     crossbarSwitch(this)
 {
     m_input_unit.clear();
     m_output_unit.clear();
+}
+
+bool
+Router::srfdStoresClean() const
+{
+    return m_srfd_mode == SrfdMode::CbDbDefensive ||
+           m_srfd_mode == SrfdMode::CbDbAggressive ||
+           m_srfd_mode == SrfdMode::CbDbNoCorner;
+}
+
+bool
+Router::srfdDefensive() const
+{
+    return m_srfd_mode == SrfdMode::DbDefensive ||
+           m_srfd_mode == SrfdMode::CbDbDefensive;
+}
+
+bool
+Router::srfdDisabledAtThisRouter() const
+{
+    if (m_srfd_mode != SrfdMode::CbDbNoCorner) return false;
+    const int routers = m_network_ptr ? m_network_ptr->getNumRouters() : 0;
+    fatal_if(m_mesh_rows <= 0 || routers <= 0,
+             "cbdb-nocorner requires a rectangular mesh");
+    const int columns = routers / m_mesh_rows;
+    fatal_if(columns * m_mesh_rows != routers,
+             "cbdb-nocorner requires a rectangular mesh");
+    const int last = routers - 1;
+    return m_id == 0 || m_id == columns - 1 ||
+           m_id == last - columns + 1 || m_id == last;
 }
 
 void

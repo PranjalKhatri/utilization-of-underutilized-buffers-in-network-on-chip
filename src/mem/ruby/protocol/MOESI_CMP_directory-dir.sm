@@ -106,6 +106,10 @@ machine(MachineType:Directory, "Directory protocol")
     Exclusive_Unblock, desc="The processor become the exclusive owner (E or M) of the line";
     Clean_Writeback, desc="The final message as part of a PutX/PutS, no data";
     Dirty_Writeback, desc="The final message as part of a PutX/PutS, contains data";
+    SRFD_Clean_Drop, desc="Clean stored data forwarded under pressure";
+    SRFD_Dirty_Forward, desc="Dirty stored data forwarded on response vnet";
+    CAN_PUT_Dirty, desc="Cancel pending dirty SRFD writeback";
+    CAN_PUT_Clean, desc="Record clean SRFD local reply";
     Memory_Data_DMA,   desc="Fetched data from memory arrives; original requestor is DMA";
     Memory_Data_Cache, desc="Fetched data from memory arrives; original requestor is Cache";
     Memory_Ack,    desc="Writeback Ack from memory arrives";
@@ -331,6 +335,12 @@ machine(MachineType:Directory, "Directory protocol")
         } else if (in_msg.Type == CoherenceResponseType:DMA_ACK) {
           trigger(Event:DMA_ACK, in_msg.addr,
                   TBEs[in_msg.addr]);
+        } else if (in_msg.Type == CoherenceResponseType:SRFD_DATA) {
+          if (in_msg.SRFDDirty) {
+            trigger(Event:SRFD_Dirty_Forward, in_msg.addr, TBEs[in_msg.addr]);
+          } else {
+            trigger(Event:SRFD_Clean_Drop, in_msg.addr, TBEs[in_msg.addr]);
+          }
         } else {
           error("Invalid message");
         }
@@ -354,6 +364,18 @@ machine(MachineType:Directory, "Directory protocol")
         } else if (in_msg.Type == CoherenceRequestType:WRITEBACK_DIRTY_DATA) {
           trigger(Event:Dirty_Writeback, in_msg.addr,
                   TBEs[in_msg.addr]);
+        } else if (in_msg.Type == CoherenceRequestType:SRFD_DATA) {
+          if (in_msg.SRFDDirty) {
+            trigger(Event:Dirty_Writeback, in_msg.addr, TBEs[in_msg.addr]);
+          } else {
+            trigger(Event:SRFD_Clean_Drop, in_msg.addr, TBEs[in_msg.addr]);
+          }
+        } else if (in_msg.Type == CoherenceRequestType:CAN_PUT) {
+          if (in_msg.SRFDDirty) {
+            trigger(Event:CAN_PUT_Dirty, in_msg.addr, TBEs[in_msg.addr]);
+          } else {
+            trigger(Event:CAN_PUT_Clean, in_msg.addr, TBEs[in_msg.addr]);
+          }
         } else if (in_msg.Type == CoherenceRequestType:WRITEBACK_CLEAN_ACK) {
           trigger(Event:Clean_Writeback, in_msg.addr,
                   TBEs[in_msg.addr]);
@@ -557,6 +579,28 @@ machine(MachineType:Directory, "Directory protocol")
     }
   }
 
+  action(srfd_restoreDirtyOwner, "sro", desc="Restore owner after dirty local reply") {
+    peek(requestQueue_in, RequestMsg) {
+      getDirectoryEntry(address).Owner.clear();
+      getDirectoryEntry(address).Sharers.clear();
+      getDirectoryEntry(address).Owner.add(in_msg.Requestor);
+      if (TBEs.isPresent(address)) {
+        TBEs.deallocate(address);
+        unset_tbe();
+      }
+    }
+  }
+
+  action(srfd_recordCleanSharer, "srs", desc="Record clean local reply") {
+    peek(requestQueue_in, RequestMsg) {
+      Entry entry := allocateDirectoryEntry(address);
+      entry.Owner.clear();
+      entry.Sharers.clear();
+      entry.Sharers.add(in_msg.Requestor);
+      entry.WaitingUnblocks := 0;
+    }
+  }
+
   action(i_popIncomingRequestQueue, "i", desc="Pop incoming request queue") {
     requestQueue_in.dequeue(clockEdge());
   }
@@ -621,6 +665,22 @@ machine(MachineType:Directory, "Directory protocol")
         out_msg.addr := address;
         out_msg.Type := MemoryRequestType:MEMORY_WB;
         out_msg.Sender := in_msg.Requestor;
+        out_msg.MessageSize := MessageSizeType:Writeback_Data;
+        out_msg.DataBlk := in_msg.DataBlk;
+        out_msg.Len := 0;
+      }
+      tbe.DataBlk := in_msg.DataBlk;
+      tbe.WaitingWBAck := true;
+    }
+  }
+
+  action(srfd_queueMemoryWB, "srq", desc="Queue forwarded SRFD writeback") {
+    peek(unblockNetwork_in, ResponseMsg) {
+      assert(is_valid(tbe));
+      enqueue(memQueue_out, MemoryMsg, to_memory_controller_latency) {
+        out_msg.addr := address;
+        out_msg.Type := MemoryRequestType:MEMORY_WB;
+        out_msg.Sender := in_msg.Sender;
         out_msg.MessageSize := MessageSizeType:Writeback_Data;
         out_msg.DataBlk := in_msg.DataBlk;
         out_msg.Len := 0;
@@ -1004,6 +1064,47 @@ machine(MachineType:Directory, "Directory protocol")
   transition(OO, Last_Unblock, O) {
     m_addUnlockerToSharers;
     o_decrementOutstanding;
+    j_popIncomingUnblockQueue;
+  }
+
+  transition({MI, MIS, OS, OSS}, CAN_PUT_Dirty, M) {
+    srfd_restoreDirtyOwner;
+    i_popIncomingRequestQueue;
+  }
+
+  transition(I, CAN_PUT_Clean, S) {
+    srfd_recordCleanSharer;
+    i_popIncomingRequestQueue;
+  }
+
+  transition(MI, SRFD_Dirty_Forward, WBI) {
+    c_clearOwner;
+    cc_clearSharers;
+    srfd_queueMemoryWB;
+    j_popIncomingUnblockQueue;
+  }
+
+  transition(MIS, SRFD_Dirty_Forward, WBS) {
+    c_moveOwnerToSharer;
+    srfd_queueMemoryWB;
+    j_popIncomingUnblockQueue;
+  }
+
+  transition(OS, SRFD_Dirty_Forward, WBS) {
+    c_clearOwner;
+    v_allocateTBE;
+    srfd_queueMemoryWB;
+    j_popIncomingUnblockQueue;
+  }
+
+  transition(OSS, SRFD_Dirty_Forward, WBS) {
+    c_moveOwnerToSharer;
+    v_allocateTBE;
+    srfd_queueMemoryWB;
+    j_popIncomingUnblockQueue;
+  }
+
+  transition(I, SRFD_Clean_Drop) {
     j_popIncomingUnblockQueue;
   }
 

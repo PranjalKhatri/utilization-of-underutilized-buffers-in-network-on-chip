@@ -147,6 +147,13 @@ def define_options(parser):
         default=4,
         help="Number of buffers per data VC",
     )
+    parser.add_argument(
+        "--srfd-mode",
+        choices=["baseline", "db-defensive", "db-aggressive",
+                 "cbdb-defensive", "cbdb-aggressive", "cbdb-nocorner"],
+        default="baseline",
+        help="SRFD router-buffer policy (baseline disables SRFD)",
+    )
 
 
 def create_network(options, ruby):
@@ -200,6 +207,7 @@ def init_network(options, network, InterfaceClass):
         ##PRANJAL
         network.buffers_per_ctrl_vc = options.buffers_per_ctrl_vc
         network.buffers_per_data_vc = options.buffers_per_data_vc
+        network.srfd_mode = options.srfd_mode
         ##PRANJAL
         if hasattr(options, "packet_trace_file") and options.packet_trace_file:
             network.packet_trace_file = options.packet_trace_file

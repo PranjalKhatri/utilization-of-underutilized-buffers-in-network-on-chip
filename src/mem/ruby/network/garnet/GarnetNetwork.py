@@ -53,6 +53,7 @@ class GarnetNetwork(RubyNetwork):
         50000, "network-level deadlock threshold"
     )
     packet_trace_file = Param.String("", "File path to output packet traces")
+    srfd_mode = Param.String("baseline", "SRFD operating mode")
 
 
 class GarnetNetworkInterface(ClockedObject):
@@ -85,6 +86,8 @@ class GarnetRouter(BasicRouter):
     width = Param.UInt32(
         Parent.ni_flit_size, "bit width supported by the router"
     )
+    srfd_mode = Param.String(Parent.srfd_mode, "SRFD operating mode")
+    mesh_rows = Param.Int(Parent.num_rows, "Rows in the mesh")
 
 
 add_citation(
