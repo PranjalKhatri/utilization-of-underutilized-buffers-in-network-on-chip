@@ -16,6 +16,28 @@ BIN_DIR = f"{GEM5_DIR}/cpu2017/cpu2017/binaries"
 DATA_DIR = f"{GEM5_DIR}/cpu2017/cpu2017/data"
 
 BENCHMARKS = {
+    "gcc": {
+        "exe": f"{BIN_DIR}/gcc",
+        "input_flag": f"{DATA_DIR}/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2",
+        "output_flag": "-o /tmp/gcc_{}.s"
+    },
+    "mcf": {
+        "exe": f"{BIN_DIR}/mcf",
+        "input_flag": f"{DATA_DIR}/mcf/ref/input/inp.in",
+        "output_flag": "",
+        "fast_forward": 100000
+    },
+    "leela": {
+        "exe": f"{BIN_DIR}/leela",
+        "input_flag": f"{DATA_DIR}/leela/ref/input/ref.sgf",
+        "output_flag": ""
+    },
+    # Disabled: 16 reference Parest instances exhaust memory and abort in SE mode.
+    # "parest": {
+    #     "exe": f"{BIN_DIR}/parest",
+    #     "input_flag": f"{DATA_DIR}/parest/ref/input/ref.prm",
+    #     "output_flag": ""
+    # },
     "namd": {
         "exe": f"{BIN_DIR}/namd",
         "input_flag": f"--input {DATA_DIR}/namd/all/input/namd.input --iterations 1",
@@ -52,11 +74,16 @@ BENCHMARKS = {
 def run_benchmarks(results_dir, target_benchmarks):
     os.makedirs(results_dir, exist_ok=True)
     print(f"[*] Starting data collection. Results will be saved to {results_dir}")
+    successful_benchmarks = {}
 
     for bench, config in target_benchmarks.items():
         print(f"\n=========================================")
         print(f"[*] Running Benchmark: {bench}")
         print(f"=========================================")
+
+        target_file = f"{results_dir}/{bench}_stats.txt"
+        if os.path.exists(target_file):
+            os.remove(target_file)
         
         subprocess.run(["rm", "-rf", f"{GEM5_DIR}/m5out"])
         
@@ -94,7 +121,7 @@ def run_benchmarks(results_dir, target_benchmarks):
             "--router-latency=2",
             "--routing-algorithm=1",
             "-c", cmd_str,
-            "-F", "1000000",
+            "-F", str(config.get("fast_forward", 1000000)),
             "--maxinsts=10000000"
         ]
         
@@ -103,17 +130,27 @@ def run_benchmarks(results_dir, target_benchmarks):
             gem5_cmd.append(f"--options={opt_str}")
 
         print(f"[*] Executing gem5 for {bench}...")
-        subprocess.run(gem5_cmd, check=True)
+        try:
+            subprocess.run(gem5_cmd, check=True)
+        except subprocess.CalledProcessError as error:
+            print(
+                f"[-] {bench} failed with return code {error.returncode}; "
+                "continuing with the remaining benchmarks."
+            )
+            continue
         
         stats_file = f"{GEM5_DIR}/m5out/stats.txt"
-        target_file = f"{results_dir}/{bench}_stats.txt"
         if os.path.exists(stats_file):
             subprocess.run(["cp", stats_file, target_file], check=True)
             print(f"[+] Saved stats to {target_file}")
+            successful_benchmarks[bench] = config
         else:
-            raise FileNotFoundError(
-                f"gem5 completed without generating {stats_file}"
+            print(
+                f"[-] {bench} completed without generating {stats_file}; "
+                "continuing with the remaining benchmarks."
             )
+
+    return successful_benchmarks
 
 def parse_stats(file_path):
     """Parse the final statistics section into a name/value mapping."""
@@ -313,11 +350,16 @@ if __name__ == "__main__":
     else:
         target_benchmarks = BENCHMARKS
 
+    completed_benchmarks = target_benchmarks
     if args.run:
-        run_benchmarks(args.results_dir, target_benchmarks)
+        completed_benchmarks = run_benchmarks(
+            args.results_dir, target_benchmarks
+        )
         
     if args.plot:
         if not os.path.exists(args.results_dir):
             print(f"[-] Error: Results directory {args.results_dir} does not exist. Cannot plot.")
             exit(1)
-        plot_data(args.results_dir, target_benchmarks)
+        if not completed_benchmarks:
+            raise RuntimeError("No benchmarks completed successfully; nothing to plot")
+        plot_data(args.results_dir, completed_benchmarks)

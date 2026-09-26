@@ -1,0 +1,1851 @@
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+warn: Memory mode will be changed to atomic_noncaching
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/ruby/network/garnet/GarnetNetwork.cc:111: info: Garnet version 3.0
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Sep 24 2026 18:16:11
+gem5 started Sep 25 2026 17:42:00
+gem5 executing on 94a8bc2c8e5d, pid 98768
+command line: /docker_mounted_gem5/build/X86_MOESI_CMP_directory/gem5.opt /docker_mounted_gem5/configs/deprecated/example/se.py --cpu-type=TimingSimpleCPU --sys-clock=2GHz --mem-size=32GB --num-cpus=16 --num-dirs=16 --num-l2caches=16 --l1i_size=16kB --l1i_assoc=4 --l1d_size=16kB --l1d_assoc=4 --l2_size=128kB --l2_assoc=8 --ruby --network=garnet --topology=Mesh_XY --mesh-rows=4 --vcs-per-vnet=4 --link-width-bits=128 --router-latency=2 --routing-algorithm=1 -c '/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc;/docker_mounted_gem5/cpu2017/cpu2017/binaries/gcc' -F 1000000 --maxinsts=10000000 '--options=/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_0.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_1.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_2.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_3.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_4.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_5.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_6.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_7.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_8.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_9.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_10.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_11.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_12.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_13.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_14.s;/docker_mounted_gem5/cpu2017/cpu2017/data/gcc/ref/input/gcc-pp.c -O3 -finline-limit=0 -fif-conversion -fif-conversion2 -o /tmp/gcc_15.s'
+
+Switch at instruction count:1000000
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:97: warn: ignoring syscall rt_sigaction(...)
+      (further warnings will be suppressed)
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 5
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+src/sim/syscall_emul.hh:2297: warn: prlimit: unimplemented resource 9
+Switched CPUS @ tick 1121934000
+switching cpus
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+**** REAL SIMULATION ****
+
+========================================
+ Routing Algorithm: XY
+========================================
+
+src/mem/ruby/system/Sequencer.cc:707: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+Exiting @ tick 23971754500 because a thread reached the max instruction count
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+warn: Memory mode will be changed to atomic_noncaching
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/ruby/network/garnet/GarnetNetwork.cc:111: info: Garnet version 3.0
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Sep 24 2026 18:16:11
+gem5 started Sep 25 2026 18:19:44
+gem5 executing on 94a8bc2c8e5d, pid 98793
+command line: /docker_mounted_gem5/build/X86_MOESI_CMP_directory/gem5.opt /docker_mounted_gem5/configs/deprecated/example/se.py --cpu-type=TimingSimpleCPU --sys-clock=2GHz --mem-size=32GB --num-cpus=16 --num-dirs=16 --num-l2caches=16 --l1i_size=16kB --l1i_assoc=4 --l1d_size=16kB --l1d_assoc=4 --l2_size=128kB --l2_assoc=8 --ruby --network=garnet --topology=Mesh_XY --mesh-rows=4 --vcs-per-vnet=4 --link-width-bits=128 --router-latency=2 --routing-algorithm=1 -c '/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf;/docker_mounted_gem5/cpu2017/cpu2017/binaries/mcf' -F 100000 --maxinsts=10000000 '--options=/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in;/docker_mounted_gem5/cpu2017/cpu2017/data/mcf/ref/input/inp.in'
+
+Switch at instruction count:100000
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Switched CPUS @ tick 111959500
+switching cpus
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+**** REAL SIMULATION ****
+
+========================================
+ Routing Algorithm: XY
+========================================
+
+src/mem/ruby/system/Sequencer.cc:707: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+MCF SPEC CPU version 1.11
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 1998-2000 Zuse Institut Berlin (ZIB)
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2000-2002 Andreas Loebel & ZIB
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2003-2005 Andreas Loebel
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+Copyright (c) 2006-2010 Dres. Loebel, Borndoerfer & Weider GbR (LBW)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Exiting @ tick 22348222000 because a thread reached the max instruction count
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+warn: Memory mode will be changed to atomic_noncaching
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/ruby/network/garnet/GarnetNetwork.cc:111: info: Garnet version 3.0
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Sep 24 2026 18:16:11
+gem5 started Sep 25 2026 18:55:41
+gem5 executing on 94a8bc2c8e5d, pid 98804
+command line: /docker_mounted_gem5/build/X86_MOESI_CMP_directory/gem5.opt /docker_mounted_gem5/configs/deprecated/example/se.py --cpu-type=TimingSimpleCPU --sys-clock=2GHz --mem-size=32GB --num-cpus=16 --num-dirs=16 --num-l2caches=16 --l1i_size=16kB --l1i_assoc=4 --l1d_size=16kB --l1d_assoc=4 --l2_size=128kB --l2_assoc=8 --ruby --network=garnet --topology=Mesh_XY --mesh-rows=4 --vcs-per-vnet=4 --link-width-bits=128 --router-latency=2 --routing-algorithm=1 -c '/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela;/docker_mounted_gem5/cpu2017/cpu2017/binaries/leela' -F 1000000 --maxinsts=10000000 '--options=/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf;/docker_mounted_gem5/cpu2017/cpu2017/data/leela/ref/input/ref.sgf'
+
+Switch at instruction count:1000000
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Switched CPUS @ tick 1099147000
+switching cpus
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+**** REAL SIMULATION ****
+
+========================================
+ Routing Algorithm: XY
+========================================
+
+src/mem/ruby/system/Sequencer.cc:707: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+Exiting @ tick 23104896500 because a thread reached the max instruction count
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+warn: Memory mode will be changed to atomic_noncaching
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/ruby/network/garnet/GarnetNetwork.cc:111: info: Garnet version 3.0
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Sep 24 2026 18:16:11
+gem5 started Sep 25 2026 19:24:00
+gem5 executing on 94a8bc2c8e5d, pid 98815
+command line: /docker_mounted_gem5/build/X86_MOESI_CMP_directory/gem5.opt /docker_mounted_gem5/configs/deprecated/example/se.py --cpu-type=TimingSimpleCPU --sys-clock=2GHz --mem-size=32GB --num-cpus=16 --num-dirs=16 --num-l2caches=16 --l1i_size=16kB --l1i_assoc=4 --l1d_size=16kB --l1d_assoc=4 --l2_size=128kB --l2_assoc=8 --ruby --network=garnet --topology=Mesh_XY --mesh-rows=4 --vcs-per-vnet=4 --link-width-bits=128 --router-latency=2 --routing-algorithm=1 -c '/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd;/docker_mounted_gem5/cpu2017/cpu2017/binaries/namd' -F 1000000 --maxinsts=10000000 '--options=--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.0.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.1.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.2.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.3.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.4.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.5.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.6.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.7.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.8.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.9.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.10.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.11.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.12.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.13.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.14.output;--input /docker_mounted_gem5/cpu2017/cpu2017/data/namd/all/input/namd.input --iterations 1 --output /tmp/namd.15.output'
+
+Switch at instruction count:1000000
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Switched CPUS @ tick 1099085000
+switching cpus
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+**** REAL SIMULATION ****
+
+========================================
+ Routing Algorithm: XY
+========================================
+
+src/mem/ruby/system/Sequencer.cc:707: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+Exiting @ tick 22182421500 because a thread reached the max instruction count
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+warn: Memory mode will be changed to atomic_noncaching
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/ruby/network/garnet/GarnetNetwork.cc:111: info: Garnet version 3.0
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Sep 24 2026 18:16:11
+gem5 started Sep 25 2026 19:56:11
+gem5 executing on 94a8bc2c8e5d, pid 98826
+command line: /docker_mounted_gem5/build/X86_MOESI_CMP_directory/gem5.opt /docker_mounted_gem5/configs/deprecated/example/se.py --cpu-type=TimingSimpleCPU --sys-clock=2GHz --mem-size=32GB --num-cpus=16 --num-dirs=16 --num-l2caches=16 --l1i_size=16kB --l1i_assoc=4 --l1d_size=16kB --l1d_assoc=4 --l2_size=128kB --l2_assoc=8 --ruby --network=garnet --topology=Mesh_XY --mesh-rows=4 --vcs-per-vnet=4 --link-width-bits=128 --router-latency=2 --routing-algorithm=1 -c '/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus;/docker_mounted_gem5/cpu2017/cpu2017/binaries/cactus' -F 1000000 --maxinsts=10000000 '--options=/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par;/docker_mounted_gem5/cpu2017/cpu2017/data/cactus/ref/input/spec_ref.par'
+
+Switch at instruction count:1000000
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Switched CPUS @ tick 1099668000
+switching cpus
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+**** REAL SIMULATION ****
+
+========================================
+ Routing Algorithm: XY
+========================================
+
+src/mem/ruby/system/Sequencer.cc:707: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Exiting @ tick 23914574500 because a thread reached the max instruction count
+warn: The se.py script is deprecated. It will be removed in future releases of  gem5.
+warn: Memory mode will be changed to atomic_noncaching
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 16kB will be cast to base 2 size 16KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Base 10 memory/cache size 128kB will be cast to base 2 size 128KiB.
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Directory_Controller is deprecated. Use MOESI_CMP_directory_Directory_Controller instead
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+warn: Base 10 memory/cache size 32GB will be cast to base 2 size 32GiB.
+Global frequency set at 1000000000000 ticks per second
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (2048 Mbytes)
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/mem/ruby/network/garnet/GarnetNetwork.cc:111: info: Garnet version 3.0
+system.remote_gdb: Listening for connections on port 7000
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Sep 24 2026 18:16:11
+gem5 started Sep 25 2026 20:32:47
+gem5 executing on 94a8bc2c8e5d, pid 98837
+command line: /docker_mounted_gem5/build/X86_MOESI_CMP_directory/gem5.opt /docker_mounted_gem5/configs/deprecated/example/se.py --cpu-type=TimingSimpleCPU --sys-clock=2GHz --mem-size=32GB --num-cpus=16 --num-dirs=16 --num-l2caches=16 --l1i_size=16kB --l1i_assoc=4 --l1d_size=16kB --l1d_assoc=4 --l2_size=128kB --l2_assoc=8 --ruby --network=garnet --topology=Mesh_XY --mesh-rows=4 --vcs-per-vnet=4 --link-width-bits=128 --router-latency=2 --routing-algorithm=1 -c '/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender;/docker_mounted_gem5/cpu2017/cpu2017/binaries/blender' -F 1000000 --maxinsts=10000000 '--options=/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_0_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_1_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_2_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_3_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_4_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_5_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_6_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_7_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_8_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_9_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_10_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_11_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_12_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_13_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_14_;/docker_mounted_gem5/cpu2017/cpu2017/data/blender/ref/input/sh3_no_char.blend --threads 1 -b -F Targa -x 1 -f 849 --render-output /tmp/blender_out_15_'
+
+Switch at instruction count:1000000
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall set_robust_list(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall rseq(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Switched CPUS @ tick 1099455000
+switching cpus
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+**** REAL SIMULATION ****
+
+========================================
+ Routing Algorithm: XY
+========================================
+
+src/mem/ruby/system/Sequencer.cc:707: warn: Replacement policy updates recently became the responsibility of SLICC state machines. Make sure to setMRU() near callbacks in .sm files!
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Color management: using fallback mode for management
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Color management: using fallback mode for management
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Color management: using fallback mode for management
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+Color management: using fallback mode for management
+src/sim/syscall_emul.cc:97: warn: ignoring syscall rt_sigaction(...)
+      (further warnings will be suppressed)
+Exiting @ tick 32082487000 because a thread reached the max instruction count
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/new_res
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/new_res/gcc_stats.txt
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/new_res/mcf_stats.txt
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[+] Saved stats to /docker_mounted_gem5/new_res/leela_stats.txt
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[+] Saved stats to /docker_mounted_gem5/new_res/namd_stats.txt
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[+] Saved stats to /docker_mounted_gem5/new_res/cactus_stats.txt
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[+] Saved stats to /docker_mounted_gem5/new_res/blender_stats.txt
+[*] Parsing data from /docker_mounted_gem5/new_res and generating plots...
+[+] Wrote /docker_mounted_gem5/new_res/summary.csv and three plots.
