@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,error
+gcc,cbdb-defensive,development,ok,0,
+mcf,cbdb-defensive,development,ok,0,
+leela,cbdb-defensive,development,ok,0,
+namd,cbdb-defensive,development,ok,0,
+cactus,cbdb-defensive,development,ok,0,
+blender,cbdb-defensive,development,ok,0,

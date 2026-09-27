@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,error
+gcc,baseline,development,ok,0,
+mcf,baseline,development,ok,0,
+leela,baseline,development,ok,0,
+namd,baseline,development,ok,0,
+cactus,baseline,development,ok,0,
+blender,baseline,development,ok,0,

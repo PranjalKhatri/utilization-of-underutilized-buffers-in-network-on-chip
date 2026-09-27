@@ -394,7 +394,10 @@ if __name__ == "__main__":
     parser.add_argument("--plot", action="store_true", help="Parse stats and generate plots")
     parser.add_argument("--results-dir", type=str, default=f"{GEM5_DIR}/results_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}", help="Directory to save/read results")
     parser.add_argument("--benchmark", type=str, help="Comma-separated list of specific benchmarks to run (e.g. omnetpp,namd). Defaults to all active benchmarks.")
-    parser.add_argument("--srfd-modes", default="baseline", help="Comma-separated SRFD modes")
+    parser.add_argument(
+        "--srfd-modes", default="baseline",
+        help=("Comma-separated SRFD modes, or 'all' for baseline plus every "
+              "SRFD variant"))
     parser.add_argument("--profile", choices=("development", "paper"), default="development")
     args = parser.parse_args()
 
@@ -413,9 +416,14 @@ if __name__ == "__main__":
     else:
         target_benchmarks = BENCHMARKS
 
-    valid = {"baseline", "db-defensive", "db-aggressive", "cbdb-defensive", "cbdb-aggressive", "cbdb-nocorner"}
+    valid = (
+        "baseline", "db-defensive", "db-aggressive", "cbdb-defensive",
+        "cbdb-aggressive", "cbdb-nocorner",
+    )
     modes = [m.strip() for m in args.srfd_modes.split(",") if m.strip()]
-    if not modes or set(modes) - valid:
+    if modes == ["all"]:
+        modes = list(valid)
+    if not modes or set(modes) - set(valid) or len(set(modes)) != len(modes):
         parser.error("Unknown or empty SRFD mode list")
 
     completed_benchmarks = target_benchmarks

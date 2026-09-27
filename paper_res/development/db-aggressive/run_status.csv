@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,error
+gcc,db-aggressive,development,ok,0,
+mcf,db-aggressive,development,ok,0,
+leela,db-aggressive,development,ok,0,
+namd,db-aggressive,development,ok,0,
+cactus,db-aggressive,development,ok,0,
+blender,db-aggressive,development,failed,-6,gem5 failed
