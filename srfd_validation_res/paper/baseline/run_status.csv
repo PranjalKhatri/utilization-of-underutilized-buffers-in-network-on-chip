@@ -1,0 +1,2 @@
+benchmark,mode,profile,status,returncode,elapsed_seconds,error
+namd,baseline,paper,ok,0,7168.445015361533,

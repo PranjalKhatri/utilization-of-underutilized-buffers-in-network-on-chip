@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,elapsed_seconds,error
+gcc,db-defensive,development,failed,0,214.17729804106057,No L1I re-reference statistics found
+mcf,db-defensive,development,failed,0,54.07044377550483,No L1I re-reference statistics found
+leela,db-defensive,development,ok,0,1853.9271107651293,
+namd,db-defensive,development,ok,0,2690.868106784299,
+cactus,db-defensive,development,ok,0,3085.0876921024173,
+blender,db-defensive,development,ok,0,3505.042960556224,

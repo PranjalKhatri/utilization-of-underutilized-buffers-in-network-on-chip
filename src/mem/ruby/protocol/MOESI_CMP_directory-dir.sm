@@ -42,6 +42,7 @@ machine(MachineType:Directory, "Directory protocol")
 :  DirectoryMemory * directory;
    Cycles directory_latency := 6;
    Cycles to_memory_controller_latency := 1;
+   bool srfd_store_clean := "False";
 
    // Message Queues
    MessageBuffer * requestToDir, network="From", virtual_network="1",
@@ -78,6 +79,8 @@ machine(MachineType:Directory, "Directory protocol")
     MM, AccessPermission:Busy,      desc="Blocked, req or mem data forwarded, going to modified";
 
     MI, AccessPermission:Busy, desc="Blocked on a writeback";
+    S_CLEAN_SRFD, AccessPermission:Busy,
+        desc="Clean SRFD reply recorded; waiting for original clean writeback";
     MIS, AccessPermission:Busy, desc="Blocked on a writeback, but don't remove from sharers when received";
     OS, AccessPermission:Busy, desc="Blocked on a writeback";
     OSS, AccessPermission:Busy, desc="Blocked on a writeback, but don't remove from sharers when received";
@@ -138,6 +141,10 @@ machine(MachineType:Directory, "Directory protocol")
     MachineID Requestor, desc="original requestor";
     bool WaitingWBAck, desc="DataBlk WB request sent, but no ack from mem yet";
     bool WaitingDMAAck, desc="DMA ack sent, waiting for unblock";
+    // The generic Ruby memory port rebuilds MemoryMsg responses and therefore
+    // does not preserve request-only fields such as ReadX.  Keep the intended
+    // response permission in the directory transaction itself.
+    bool ExclusiveResponse, desc="Return memory data with exclusive permission";
   }
 
   structure(TBETable, external = "yes") {
@@ -496,7 +503,7 @@ machine(MachineType:Directory, "Directory protocol")
         } else {
          out_msg.Acks := getDirectoryEntry(in_msg.addr).Sharers.count();
         }
-        if (in_msg.ReadX) {
+        if (tbe.ExclusiveResponse) {
           out_msg.Type := CoherenceResponseType:DATA_EXCLUSIVE;
         } else {
           out_msg.Type := CoherenceResponseType:DATA;
@@ -601,6 +608,17 @@ machine(MachineType:Directory, "Directory protocol")
     }
   }
 
+  action(srfd_convertToCleanSharer, "srcs",
+         desc="Convert pending exclusive owner to clean SRFD sharer") {
+    peek(requestQueue_in, RequestMsg) {
+      assert(is_valid(tbe));
+      getDirectoryEntry(address).Owner.clear();
+      getDirectoryEntry(address).Sharers.clear();
+      getDirectoryEntry(address).Sharers.add(in_msg.Requestor);
+      getDirectoryEntry(address).WaitingUnblocks := 0;
+    }
+  }
+
   action(i_popIncomingRequestQueue, "i", desc="Pop incoming request queue") {
     requestQueue_in.dequeue(clockEdge());
   }
@@ -648,6 +666,24 @@ machine(MachineType:Directory, "Directory protocol")
   action(qf_queueMemoryFetchRequest, "qf", desc="Queue off-chip fetch request") {
     peek(requestQueue_in, RequestMsg) {
       assert(is_valid(tbe));
+      enqueue(memQueue_out, MemoryMsg, to_memory_controller_latency) {
+        out_msg.addr := address;
+        out_msg.Type := MemoryRequestType:MEMORY_READ;
+        out_msg.Sender := in_msg.Requestor;
+        out_msg.MessageSize := MessageSizeType:Request_Control;
+        out_msg.Len := 0;
+      }
+    }
+  }
+
+  // Only global directory state I proves that a GETS has no other owner or
+  // sharer.  Mark that memory transaction exclusive in CB+DB modes so the
+  // existing DATA_EXCLUSIVE/ILX representation supplies the paper's clean E
+  // victim without changing baseline or DB-only protocol behaviour.
+  action(qfx_queueCleanExclusiveFetch, "qfx", desc="Queue clean-exclusive off-chip GETS") {
+    peek(requestQueue_in, RequestMsg) {
+      assert(is_valid(tbe));
+      tbe.ExclusiveResponse := srfd_store_clean;
       enqueue(memQueue_out, MemoryMsg, to_memory_controller_latency) {
         out_msg.addr := address;
         out_msg.Type := MemoryRequestType:MEMORY_READ;
@@ -792,6 +828,7 @@ machine(MachineType:Directory, "Directory protocol")
       tbe.Requestor := in_msg.Requestor;
       tbe.WaitingWBAck := false;
       tbe.WaitingDMAAck := false;
+      tbe.ExclusiveResponse := false;
     }
   }
 
@@ -892,7 +929,7 @@ machine(MachineType:Directory, "Directory protocol")
   transition(I, GETS, IS_M) {
     allocDirEntry;
     v_allocateTBE;
-    qf_queueMemoryFetchRequest;
+    qfx_queueCleanExclusiveFetch;
     i_popIncomingRequestQueue;
   }
 
@@ -1004,7 +1041,7 @@ machine(MachineType:Directory, "Directory protocol")
   }
 
 
-  transition({MM_M, MM, MO, MI, MIS, OS, OSS, WBI, WBS, XI_M, XI_M_U, XI_U, OI_D, OD, MD}, {GETS, GETX, PUTO, PUTO_SHARERS, PUTX, DMA_READ, DMA_WRITE_LINE, DMA_WRITE_PARTIAL}) {
+  transition({MM_M, MM, MO, MI, MIS, OS, OSS, S_CLEAN_SRFD, WBI, WBS, XI_M, XI_M_U, XI_U, OI_D, OD, MD}, {GETS, GETX, PUTO, PUTO_SHARERS, PUTX, DMA_READ, DMA_WRITE_LINE, DMA_WRITE_PARTIAL}) {
     zz_recycleRequest;
   }
 
@@ -1067,13 +1104,40 @@ machine(MachineType:Directory, "Directory protocol")
     j_popIncomingUnblockQueue;
   }
 
+
+  action(srfd_recordCanPutDirtyAccepted, "sCDA", desc="Record accepted dirty CAN_PUT") {
+    directory.recordSrfdCanPutAccepted(true);
+  }
+
+  action(srfd_recordCanPutCleanAccepted, "sCCA", desc="Record accepted clean CAN_PUT") {
+    directory.recordSrfdCanPutAccepted(false);
+  }
+
   transition({MI, MIS, OS, OSS}, CAN_PUT_Dirty, M) {
+    srfd_recordCanPutDirtyAccepted;
     srfd_restoreDirtyOwner;
     i_popIncomingRequestQueue;
   }
 
+
   transition(I, CAN_PUT_Clean, S) {
+    srfd_recordCanPutCleanAccepted;
     srfd_recordCleanSharer;
+    i_popIncomingRequestQueue;
+  }
+
+  // CAN_PUT and WRITEBACK_CLEAN_ACK travel independently and can arrive in
+  // either order.  If CAN_PUT wins the race, retain the replacement TBE until
+  // the original clean control message arrives; do not silently accept an
+  // unrelated late writeback in stable S.
+  transition(MI, CAN_PUT_Clean, S_CLEAN_SRFD) {
+    srfd_recordCanPutCleanAccepted;
+    srfd_convertToCleanSharer;
+    i_popIncomingRequestQueue;
+  }
+
+  transition(S_CLEAN_SRFD, Clean_Writeback, S) {
+    w_deallocateTBE;
     i_popIncomingRequestQueue;
   }
 

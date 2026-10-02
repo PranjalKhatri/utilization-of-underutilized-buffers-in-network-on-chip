@@ -45,6 +45,7 @@
 #include <string>
 
 #include "base/addr_range.hh"
+#include "base/statistics.hh"
 #include "mem/ruby/common/Address.hh"
 #include "mem/ruby/protocol/DirectoryRequestType.hh"
 #include "mem/ruby/slicc_interface/AbstractCacheEntry.hh"
@@ -90,6 +91,7 @@ class DirectoryMemory : public SimObject
 
     void print(std::ostream& out) const;
     void recordRequestType(DirectoryRequestType requestType);
+    void recordSrfdCanPutAccepted(bool dirty);
 
   private:
     // Private copy constructor and assignment operator
@@ -107,6 +109,9 @@ class DirectoryMemory : public SimObject
     uint32_t m_block_size;
 
     RubySystem *m_ruby_system = nullptr;
+
+    statistics::Scalar m_srfd_can_put_dirty_accepted;
+    statistics::Scalar m_srfd_can_put_clean_accepted;
 
     /**
      * The address range for which the directory responds. Normally

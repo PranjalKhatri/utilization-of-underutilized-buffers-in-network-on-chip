@@ -75,15 +75,15 @@ Router::Router(const Params &p)
 }
 
 bool
-Router::applySrfdPressure(int vnet)
+Router::applySrfdPressure(int inport, int vnet)
 {
     if (!srfdEnabled() || srfdDisabledAtThisRouter()) return false;
-    for (int port = 0; port < m_input_unit.size(); ++port) {
-        if (getInportDirection(port) == "Local" &&
-            m_input_unit[port]->applySrfdPressure(vnet))
-            return true;
-    }
-    return false;
+    panic_if(inport < 0 || inport >= m_input_unit.size(),
+             "Router %d received invalid SRFD input port %d", m_id, inport);
+    panic_if(getInportDirection(inport) != "Local",
+             "Router %d SRFD pressure targeted non-local input port %d",
+             m_id, inport);
+    return m_input_unit[inport]->applySrfdPressure(vnet);
 }
 
 bool
@@ -153,7 +153,7 @@ Router::wakeup()
     crossbarSwitch.wakeup();
 }
 
-void
+int
 Router::addInPort(PortDirection inport_dirn,
                   NetworkLink *in_link, CreditLink *credit_link)
 {
@@ -174,6 +174,7 @@ Router::addInPort(PortDirection inport_dirn,
     m_input_unit.push_back(std::shared_ptr<InputUnit>(input_unit));
 
     routingUnit.addInDirection(inport_dirn, port_num);
+    return port_num;
 }
 
 void

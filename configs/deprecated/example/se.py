@@ -97,6 +97,8 @@ def get_processes(args):
         outputs = args.output.split(";")
     if args.errout != "":
         errouts = args.errout.split(";")
+    workload_cwds = (args.workload_cwds.split(";")
+                     if args.workload_cwds else [])
     if args.options != "":
         pargs = args.options.split(";")
 
@@ -105,7 +107,10 @@ def get_processes(args):
         # process = Process(pid=100 + idx)
         process = Process()
         process.executable = wrkld
-        process.cwd = os.getcwd()
+        process.cwd = (workload_cwds[idx]
+                       if idx < len(workload_cwds) else os.getcwd())
+        if not os.path.isdir(process.cwd):
+            os.makedirs(process.cwd)
         # process.gid = os.getgid()
 
         if args.env:
@@ -153,6 +158,8 @@ parser.add_argument(
     default=0,
     help="Top N sets to be monitored for cache occupancy"
 )
+parser.add_argument("--workload-cwds", default="",
+                    help="Semicolon-separated per-process working directories")
 ####PRANJAL
 # Options.addCommonOptions(parser)
 ##PRANJAL added default isa

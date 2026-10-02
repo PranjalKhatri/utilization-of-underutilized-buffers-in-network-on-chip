@@ -777,6 +777,7 @@ machine(MachineType:L2Cache, "Token protocol")
   // ACTIONS
 
   action(a_issueGETS, "a", desc="issue local request globally") {
+    L2cache.recordLlcMissStart(address);
     peek(L1requestNetwork_in, RequestMsg) {
       enqueue(globalRequestNetwork_out, RequestMsg, request_latency) {
         out_msg.addr := address;
@@ -791,6 +792,7 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   action(a_issueGETX, "\a", desc="issue local request globally") {
+    L2cache.recordLlcMissStart(address);
     peek(L1requestNetwork_in, RequestMsg) {
       enqueue(globalRequestNetwork_out, RequestMsg, request_latency) {
         out_msg.addr := address;
@@ -1500,6 +1502,9 @@ machine(MachineType:L2Cache, "Token protocol")
         out_msg.SRFDDirty := true;
       }
     } else {
+      if (!tbe.Dirty) {
+        L2cache.recordSrfdCleanCandidate();
+      }
       enqueue(globalRequestNetwork_out, RequestMsg, response_latency) {
         assert(is_valid(tbe));
         out_msg.addr := address;
@@ -1517,6 +1522,7 @@ machine(MachineType:L2Cache, "Token protocol")
         }
       }
       if (srfd_enabled && srfd_store_clean && !tbe.Dirty) {
+        L2cache.recordSrfdCleanEmitted();
         enqueue(responseNetwork_out, ResponseMsg, response_latency) {
           out_msg.addr := address;
           out_msg.Type := CoherenceResponseType:SRFD_DATA;
@@ -1532,6 +1538,19 @@ machine(MachineType:L2Cache, "Token protocol")
     }
   }
 
+
+  action(srfd_recordMemoryCompletion, "srm", desc="Record memory LLC miss completion") {
+    L2cache.recordLlcMissComplete(address, 0);
+  }
+
+  action(srfd_recordDirtyCompletion, "sdd", desc="Record dirty local LLC miss completion") {
+    L2cache.recordLlcMissComplete(address, 1);
+  }
+
+  action(srfd_recordCleanCompletion, "sdc", desc="Record clean local LLC miss completion") {
+    L2cache.recordLlcMissComplete(address, 2);
+  }
+
   action(srfd_copyData, "srd", desc="Copy locally replied SRFD data") {
     peek(responseNetwork_in, ResponseMsg) {
       assert(is_valid(tbe));
@@ -1542,16 +1561,16 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   action(srfd_sendCanPut, "src", desc="Cancel pending directory writeback") {
-    peek(responseNetwork_in, ResponseMsg) {
-      enqueue(globalRequestNetwork_out, RequestMsg, request_latency) {
-        out_msg.addr := address;
-        out_msg.Type := CoherenceRequestType:CAN_PUT;
-        out_msg.Requestor := machineID;
-        out_msg.RequestorMachine := MachineType:L2Cache;
-        out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
-        out_msg.MessageSize := MessageSizeType:Writeback_Control;
-        out_msg.SRFDDirty := in_msg.SRFDDirty;
-      }
+    L2cache.recordSrfdCanPutSent(tbe.Dirty);
+    assert(is_valid(tbe));
+    enqueue(globalRequestNetwork_out, RequestMsg, request_latency) {
+      out_msg.addr := address;
+      out_msg.Type := CoherenceRequestType:CAN_PUT;
+      out_msg.Requestor := machineID;
+      out_msg.RequestorMachine := MachineType:L2Cache;
+      out_msg.Destination.add(mapAddressToMachine(address, MachineType:Directory));
+      out_msg.MessageSize := MessageSizeType:Writeback_Control;
+      out_msg.SRFDDirty := tbe.Dirty;
     }
   }
 
@@ -1692,19 +1711,19 @@ machine(MachineType:L2Cache, "Token protocol")
   // TRANSITIONS
   //*****************************************************
 
-  transition({II, IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX, OLSXS, IGS, IGM, IGMLS, IGMO, IGMOU, IGMIO, OGMIO, IGMIOF, IGMIOFD, OGMIOF, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {L1_PUTO, L1_PUTS, L1_PUTS_only, L1_PUTX}) {
+  transition({II, IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX, OLSXS, IGS, IGS_SRFD, IGM, IGMLS, IGMO, IGMOU, IGMOU_SRFD, IGMIO, OGMIO, IGMIOF, IGMIOFD, OGMIOF, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {L1_PUTO, L1_PUTS, L1_PUTS_only, L1_PUTX}) {
     st_stallAndWaitL1RequestQueue;
   }
 
-  transition({II, IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX, OLSXS, IGS, IGM, IGMLS, IGMO, IGMOU, IGMIO, OGMIO, IGMIOF, IGMIOFD, OGMIOF, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {L1_GETX, L1_GETS}) {
+  transition({II, IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX, OLSXS, IGS, IGS_SRFD, IGM, IGMLS, IGMO, IGMOU, IGMOU_SRFD, IGMIO, OGMIO, IGMIOF, IGMIOFD, OGMIOF, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {L1_GETX, L1_GETS}) {
     st_stallAndWaitL1RequestQueue;
   }
 
-  transition({IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, ILXW, OW, SW, OXW, OLSXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX,OLSXS,  IGS, IGM, IGMLS, IGMO, IGMOU, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, L2_Replacement) {
+  transition({IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, ILXW, OW, SW, OXW, OLSXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX,OLSXS,  IGS, IGS_SRFD, IGM, IGMLS, IGMO, IGMOU, IGMOU_SRFD, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, L2_Replacement) {
     zz_recycleL1RequestQueue;
   }
 
-  transition({IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX,OLSXS, IGS, IGM, MM, SS, OO, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {Fwd_GETX, Fwd_GETS, Fwd_DMA}) {
+  transition({IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX,OLSXS, IGS, IGS_SRFD, IGM, IGMOU_SRFD, MM, SS, OO, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {Fwd_GETX, Fwd_GETS, Fwd_DMA}) {
     zz_recycleGlobalRequestQueue;
   }
 
@@ -1712,7 +1731,7 @@ machine(MachineType:L2Cache, "Token protocol")
     zz_recycleGlobalRequestQueue;
   }
 
-  transition({IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX,OLSXS, MM, SS, OO, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {Inv}) {
+  transition({IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX,OLSXS, IGS_SRFD, IGMOU_SRFD, MM, SS, OO, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {Inv}) {
     zz_recycleGlobalRequestQueue;
   }
 
@@ -2385,6 +2404,7 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   transition(IGMIO, All_Acks, IGMOU) {
+    srfd_recordMemoryCompletion;
     hh_countLocalSharersExceptL1GETXRequestorInTBE;
     ee_issueLocalInvExceptL1RequestorInTBE;
     k_forwardLocalGETXToLocalOwner;
@@ -2393,6 +2413,7 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   transition(OGMIO, All_Acks, IGMOU) {
+    srfd_recordMemoryCompletion;
     ee_issueLocalInvExceptL1RequestorInTBE;
     c_sendDataFromTBEToL1GETX;
     n_popTriggerQueue;
@@ -2425,6 +2446,7 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   transition(IGS, SRFD_Data_Clean, IGS_SRFD) {
+    srfd_recordCleanCompletion;
     srfd_copyData;
     srfd_sendCanPut;
     c_sendDataFromTBEToL1GETS;
@@ -2434,6 +2456,7 @@ machine(MachineType:L2Cache, "Token protocol")
   // The paper requires a dirty local reply to remain modified even for
   // GETS, so return exclusive data and wait for an exclusive unblock.
   transition(IGS, SRFD_Data, IGMOU_SRFD) {
+    srfd_recordDirtyCompletion;
     srfd_copyData;
     srfd_sendCanPut;
     c_sendExclusiveDataFromTBEToL1GETS;
@@ -2443,14 +2466,24 @@ machine(MachineType:L2Cache, "Token protocol")
   transition(IGS_SRFD, Unblock, ILS) {
     g_recordLocalSharer;
     s_deallocateTBE;
-    n_popResponseQueue; //PRANJAL commented
+    n_popResponseQueue;
     wa_wakeUpDependents;
   }
-  //GEMINI PRANJAL addition
-  //transition(IGMLS, SRFD_Data) {
-  //  st_stallAndWaitL1RequestQueue;
-  //}
+  // A locally satisfied GETX can still have local L1 sharers.  Preserve the
+  // normal IGMLS invalidation path: the requesting L1 receives the number of
+  // local invalidation acknowledgements in the data response and does not
+  // unblock us until it has collected them.
+  transition(IGMLS, SRFD_Data, IGMOU_SRFD) {
+    srfd_recordDirtyCompletion;
+    ee_issueLocalInvExceptL1RequestorInTBE;
+    srfd_copyData;
+    srfd_sendCanPut;
+    c_sendDataFromTBEToL1GETX;
+    n_popResponseQueue;
+  }
+
   transition(IGM, SRFD_Data, IGMOU_SRFD) {
+    srfd_recordDirtyCompletion;
     srfd_copyData;
     srfd_sendCanPut;
     c_sendDataFromTBEToL1GETX;
@@ -2460,11 +2493,12 @@ machine(MachineType:L2Cache, "Token protocol")
   transition(IGMOU_SRFD, Exclusive_Unblock, ILX) {
     g_recordLocalExclusive;
     s_deallocateTBE;
-    n_popResponseQueue;//PRANJAL commented
+    n_popResponseQueue;
     wa_wakeUpDependents;
   }
 
   transition(IGS, Data) {
+    srfd_recordMemoryCompletion;
     i_copyDataToTBE;
     m_decrementNumberOfMessagesExt;
     c_sendDataFromTBEToL1GETS;
@@ -2472,6 +2506,7 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   transition(IGS, Data_Exclusive) {
+    srfd_recordMemoryCompletion;
     i_copyDataToTBE;
     m_decrementNumberOfMessagesExt;
     c_sendExclusiveDataFromTBEToL1GETS;
@@ -2495,6 +2530,7 @@ machine(MachineType:L2Cache, "Token protocol")
   }
 
   transition(IGMO, All_Acks, IGMOU) {
+    srfd_recordMemoryCompletion;
     c_sendDataFromTBEToL1GETX;
     n_popTriggerQueue;
   }

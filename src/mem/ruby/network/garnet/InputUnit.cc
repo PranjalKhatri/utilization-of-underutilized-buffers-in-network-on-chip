@@ -64,13 +64,14 @@ InputUnit::InputUnit(int id, PortDirection direction, Router *router)
         virtualChannels.emplace_back();
     }
     m_srfd.resize(m_num_vcs);
+    m_srfd_waiting.resize(m_num_vcs, false);
 
     //PRANJAL
     // --- PAPER IMPLEMENTATION: Initialize VC Tracking ---
     m_free_vcs = m_num_vcs;
     m_last_vc_update_cycle = 0;
     statistics::registerDumpCallback(
-        [this]() { update_vc_availability(); });
+        [this]() { update_vc_availability(); update_srfd_occupancy(); });
 }
 
 /*
@@ -97,16 +98,19 @@ InputUnit::wakeup()
         int vc = t_flit->get_vc();
         t_flit->increment_hops(); // for stats
 
+        SrfdRequestResult srfd_result = SrfdRequestResult::Miss;
         if (m_router->srfdEnabled() && isLocalPacket() &&
             t_flit->get_type() == HEAD_TAIL_ &&
             (t_flit->get_msg_ptr()->getSRFDGetS() ||
-             t_flit->get_msg_ptr()->getSRFDGetX()) &&
-            trySrfdRequest(t_flit)) {
-            returnDroppedRequestCredit(vc);
-            delete t_flit;
-            if (m_in_link->isReady(curTick()))
-                m_router->schedule_wakeup(Cycles(1));
-            return;
+             t_flit->get_msg_ptr()->getSRFDGetX())) {
+            srfd_result = trySrfdRequest(t_flit);
+            if (srfd_result == SrfdRequestResult::Hit) {
+                returnDroppedRequestCredit(vc);
+                delete t_flit;
+                if (m_in_link->isReady(curTick()))
+                    m_router->schedule_wakeup(Cycles(1));
+                return;
+            }
         }
 
         if ((t_flit->get_type() == HEAD_) ||
@@ -118,6 +122,7 @@ InputUnit::wakeup()
             // --- PAPER IMPLEMENTATION: VC Allocated ---
             update_vc_availability();
             m_free_vcs--;
+            m_srfd_waiting[vc] = srfd_result == SrfdRequestResult::Wait;
             // ------------------------------------------
 
             const MsgPtr &msg = t_flit->get_msg_ptr();
@@ -130,11 +135,27 @@ InputUnit::wakeup()
                 fatal_if(t_flit->get_size() >
                          m_router->get_net_ptr()->getBuffersPerDataVC(),
                          "SRFD packet does not fit in one data VC");
-                for (int other = 0; other < m_srfd.size(); ++other)
-                    fatal_if(m_srfd[other].held &&
-                             m_srfd[other].address == msg->getaddr(),
-                             "duplicate SRFD block %#x at router %d",
+                for (int other = 0; other < m_srfd.size(); ++other) {
+                    if (!m_srfd[other].held ||
+                        m_srfd[other].address != msg->getaddr()) {
+                        continue;
+                    }
+
+                    // A buffered clean copy is invisible to the directory.
+                    // The same block can consequently be fetched, cleanly
+                    // evicted, and offered again before the first copy leaves
+                    // this router.  Coalesce deterministically by discarding
+                    // the older redundant clean copy.  Dirty duplicates would
+                    // imply two authoritative copies and remain a protocol
+                    // error.
+                    fatal_if(m_srfd[other].dirty,
+                             "duplicate dirty SRFD block %#x at router %d",
                              msg->getaddr(), m_router->get_id());
+                    fatal_if(!m_srfd[other].complete,
+                             "overlapping incomplete SRFD block %#x at router %d",
+                             msg->getaddr(), m_router->get_id());
+                    releaseSrfd(other, true);
+                }
                 auto &entry = m_srfd[vc];
                 entry.held = true;
                 entry.complete = t_flit->get_type() == HEAD_TAIL_;
@@ -142,7 +163,9 @@ InputUnit::wakeup()
                 entry.address = msg->getaddr();
                 entry.sequence = ++m_srfd_sequence;
                 entry.stored_tick = curTick();
+                update_srfd_occupancy();
                 ++m_srfd_stored_count;
+                m_srfd_resident = m_srfd_stored_count;
                 if (entry.dirty) ++m_srfd_dirty_stored;
                 else ++m_srfd_clean_stored;
                 if (m_srfd_stored_count > m_srfd_max_stored.value())
@@ -172,8 +195,11 @@ InputUnit::wakeup()
         virtualChannels[vc].insertFlit(t_flit);
         if (m_srfd[vc].held &&
             (t_flit->get_type() == TAIL_ ||
-             t_flit->get_type() == HEAD_TAIL_))
+             t_flit->get_type() == HEAD_TAIL_)) {
+            const Addr completed_addr = m_srfd[vc].address;
             m_srfd[vc].complete = true;
+            retryWaitingSrfdRequests(completed_addr);
+        }
 
 
         int vnet = vc/m_vc_per_vnet;
@@ -182,21 +208,23 @@ InputUnit::wakeup()
         m_num_buffer_writes[vnet]++;
         m_num_buffer_reads[vnet]++;
 
-        Cycles pipe_stages = m_router->get_pipe_stages();
-        if (pipe_stages == 1) {
-            // 1-cycle router
-            // Flit goes for SA directly
-            t_flit->advance_stage(SA_, curTick());
-        } else {
-            assert(pipe_stages > 1);
-            // Router delay is modeled by making flit wait in buffer for
-            // (pipe_stages cycles - 1) cycles before going for SA
+        if (!m_srfd_waiting[vc]) {
+            Cycles pipe_stages = m_router->get_pipe_stages();
+            if (pipe_stages == 1) {
+                // 1-cycle router
+                // Flit goes for SA directly
+                t_flit->advance_stage(SA_, curTick());
+            } else {
+                assert(pipe_stages > 1);
+                // Router delay is modeled by making flit wait in buffer for
+                // (pipe_stages cycles - 1) cycles before going for SA
 
-            Cycles wait_time = pipe_stages - Cycles(1);
-            t_flit->advance_stage(SA_, m_router->clockEdge(wait_time));
+                Cycles wait_time = pipe_stages - Cycles(1);
+                t_flit->advance_stage(SA_, m_router->clockEdge(wait_time));
 
-            // Wakeup the router in that cycle to perform SA
-            m_router->schedule_wakeup(Cycles(wait_time));
+                // Wakeup the router in that cycle to perform SA
+                m_router->schedule_wakeup(Cycles(wait_time));
+            }
         }
 
         if (m_in_link->isReady(curTick())) {
@@ -216,6 +244,7 @@ InputUnit::increment_credit(int in_vc, bool free_signal, Tick curTime)
     if (free_signal) {
         update_vc_availability();
         m_free_vcs++;
+        assert(m_free_vcs <= m_router->get_num_vcs());
     }
     // --------------------------------------
     Credit *t_credit = new Credit(in_vc, free_signal, curTime);
@@ -273,12 +302,18 @@ InputUnit::releaseSrfd(int vc, bool drop)
     }
     entry = SrfdEntry();
     assert(m_srfd_stored_count > 0);
+    update_srfd_occupancy();
     --m_srfd_stored_count;
+    m_srfd_resident = m_srfd_stored_count;
 }
 
 bool
 InputUnit::applySrfdPressure(int vnet)
 {
+    panic_if(vnet < 0 || vnet >= m_router->get_num_vnets(),
+             "Invalid SRFD pressure vnet %d at router %d input %d", vnet,
+             m_router->get_id(), m_id);
+    ++m_srfd_pressure_attempts;
     const int begin = vnet * m_vc_per_vnet;
     const int end = begin + m_vc_per_vnet;
     int stored = 0;
@@ -287,21 +322,27 @@ InputUnit::applySrfdPressure(int vnet)
     }
     const bool pressure = m_router->srfdDefensive() ?
         (stored > 0) : (stored == m_vc_per_vnet);
-    if (!pressure) return false;
+    if (!pressure) {
+        ++m_srfd_pressure_no_victim;
+        return false;
+    }
     const int victim = oldestStored(vnet);
     if (victim >= 0) {
         ++m_srfd_pressure_events;
         releaseSrfd(victim, !m_srfd[victim].dirty);
     }
+    if (victim < 0) ++m_srfd_pressure_no_victim;
     return victim >= 0;
 }
 
-bool
-InputUnit::trySrfdRequest(flit *request)
+InputUnit::SrfdRequestResult
+InputUnit::trySrfdRequest(flit *request, bool count_lookup)
 {
     const MsgPtr &request_msg = request->get_msg_ptr();
     const bool getx = request_msg->getSRFDGetX();
-    if (getx) ++m_srfd_getx_lookups; else ++m_srfd_gets_lookups;
+    if (count_lookup) {
+        if (getx) ++m_srfd_getx_lookups; else ++m_srfd_gets_lookups;
+    }
     int match = -1;
     uint64_t oldest = std::numeric_limits<uint64_t>::max();
     bool incomplete = false;
@@ -315,13 +356,16 @@ InputUnit::trySrfdRequest(flit *request)
         }
     }
     if (match < 0) {
-        if (incomplete) ++m_srfd_incomplete_misses;
-        return false;
+        if (incomplete) {
+            ++m_srfd_incomplete_misses;
+            return SrfdRequestResult::Wait;
+        }
+        return SrfdRequestResult::Miss;
     }
     if (getx && !m_srfd[match].dirty) {
         ++m_srfd_getx_clean_conflicts;
         releaseSrfd(match, true);
-        return false;
+        return SrfdRequestResult::Miss;
     }
 
     flit *reply = virtualChannels[match].peekTopFlit();
@@ -354,14 +398,46 @@ InputUnit::trySrfdRequest(flit *request)
     grant_outport(match, m_router->route_compute(route, m_id, m_direction));
     m_srfd_residence_cycles.sample(
         (curTick() - m_srfd[match].stored_tick) / m_router->clockPeriod());
-    if (m_srfd[match].dirty) ++m_srfd_dirty_hits;
-    else ++m_srfd_clean_hits;
+    if (m_srfd[match].dirty) {
+        ++m_srfd_dirty_hits;
+        if (getx) ++m_srfd_dirty_getx_hits;
+        else ++m_srfd_dirty_gets_hits;
+    } else {
+        ++m_srfd_clean_hits;
+        ++m_srfd_clean_gets_hits;
+    }
     ++m_srfd_avoided_requests;
     m_srfd[match] = SrfdEntry();
+    update_srfd_occupancy();
     --m_srfd_stored_count;
+    m_srfd_resident = m_srfd_stored_count;
     reply->advance_stage(SA_, curTick());
     m_router->schedule_wakeup(Cycles(1));
-    return true;
+    return SrfdRequestResult::Hit;
+}
+
+void
+InputUnit::retryWaitingSrfdRequests(Addr address)
+{
+    for (int vc = 0; vc < m_srfd_waiting.size(); ++vc) {
+        if (!m_srfd_waiting[vc]) continue;
+        flit *request = virtualChannels[vc].peekTopFlit();
+        if (request->get_msg_ptr()->getaddr() != address) continue;
+
+        const auto result = trySrfdRequest(request, false);
+        assert(result != SrfdRequestResult::Wait);
+        m_srfd_waiting[vc] = false;
+        if (result == SrfdRequestResult::Hit) {
+            flit *removed = virtualChannels[vc].getTopFlit();
+            assert(removed == request);
+            increment_credit(vc, true, curTick());
+            set_vc_idle(vc, curTick());
+            delete request;
+        } else {
+            request->advance_stage(SA_, curTick());
+            m_router->schedule_wakeup(Cycles(1));
+        }
+    }
 }
 
 bool
@@ -399,6 +475,10 @@ InputUnit::resetStats()
     m_local_packets_generated = 0;
     for (auto &entry : m_srfd)
         if (entry.held) entry.stored_tick = curTick();
+    m_srfd_last_occupancy_cycle = (uint64_t)m_router->curCycle();
+    m_srfd_resident = m_srfd_stored_count;
+    for (int i = 0; i <= m_router->get_num_vcs(); ++i)
+        m_srfd_occupancy_cycles[i] = 0;
     // --- PAPER IMPLEMENTATION: Drop Fast-Forward Cycles ---
     if (m_direction == "Local") {
         m_last_vc_update_cycle = (uint64_t)m_router->curCycle();
@@ -432,15 +512,38 @@ InputUnit::regStats()
     m_srfd_getx_lookups.name(prefix + "getx_lookups");
     m_srfd_clean_hits.name(prefix + "clean_hits");
     m_srfd_dirty_hits.name(prefix + "dirty_hits");
+    m_srfd_clean_gets_hits.name(prefix + "clean_gets_hits");
+    m_srfd_dirty_gets_hits.name(prefix + "dirty_gets_hits");
+    m_srfd_dirty_getx_hits.name(prefix + "dirty_getx_hits");
     m_srfd_getx_clean_conflicts.name(prefix + "getx_clean_conflicts");
     m_srfd_incomplete_misses.name(prefix + "incomplete_misses");
     m_srfd_pressure_events.name(prefix + "pressure_events");
+    m_srfd_pressure_attempts.name(prefix + "pressure_attempts");
+    m_srfd_pressure_no_victim.name(prefix + "pressure_no_victim");
     m_srfd_avoided_requests.name(prefix + "avoided_requests");
     m_srfd_max_stored.name(prefix + "max_stored");
+    m_srfd_resident.name(prefix + "resident");
+    m_srfd_occupancy_cycles
+        .init(m_router->get_num_vcs() + 1)
+        .name(prefix + "occupancy_cycles")
+        .desc("Cycles with exactly n SRFD packets resident")
+        .flags(statistics::pdf);
     m_srfd_residence_cycles
         .init(0, 100000, 100)
         .name(prefix + "residence_cycles")
         .desc("SRFD storage residence time in router cycles");
+}
+
+void
+InputUnit::update_srfd_occupancy()
+{
+    const uint64_t current_cycle = (uint64_t)m_router->curCycle();
+    if (m_srfd_last_occupancy_cycle != 0 &&
+        current_cycle > m_srfd_last_occupancy_cycle) {
+        m_srfd_occupancy_cycles[m_srfd_stored_count] +=
+            current_cycle - m_srfd_last_occupancy_cycle;
+    }
+    m_srfd_last_occupancy_cycle = current_cycle;
 }
 
 // --- PAPER IMPLEMENTATION: Update & Register Stats ---

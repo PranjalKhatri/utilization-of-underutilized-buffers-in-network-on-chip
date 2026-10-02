@@ -128,6 +128,15 @@ NetworkInterface::addOutPort(NetworkLink *out_link,
 }
 
 void
+NetworkInterface::bindRouterInport(int router_id, int inport)
+{
+    auto [it, inserted] = m_router_inports.emplace(router_id, inport);
+    panic_if(!inserted && it->second != inport,
+             "%s has conflicting local inports for router %d", name(),
+             router_id);
+}
+
+void
 NetworkInterface::addNode(std::vector<MessageBuffer *>& in,
                           std::vector<MessageBuffer *>& out)
 {
@@ -567,7 +576,12 @@ NetworkInterface::calculateVC(int vnet)
         }
     }
 
-    m_net_ptr->applySrfdPressure(get_router_id(vnet), vnet);
+    const int router_id = get_router_id(vnet);
+    const auto inport = m_router_inports.find(router_id);
+    panic_if(inport == m_router_inports.end(),
+             "%s has no local router inport binding for router %d", name(),
+             router_id);
+    m_net_ptr->applySrfdPressure(router_id, inport->second, vnet);
     vc_busy_counter[vnet] += 1;
     panic_if(vc_busy_counter[vnet] > m_deadlock_threshold,
         "%s: Possible network deadlock in vnet: %d at time: %llu \n",

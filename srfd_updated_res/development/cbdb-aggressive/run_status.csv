@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,elapsed_seconds,error
+gcc,cbdb-aggressive,development,failed,0,190.57634586654603,No L1I re-reference statistics found
+mcf,cbdb-aggressive,development,failed,0,49.48163007199764,No L1I re-reference statistics found
+leela,cbdb-aggressive,development,ok,0,2301.70597515814,
+namd,cbdb-aggressive,development,ok,0,2154.8680630195886,
+cactus,cbdb-aggressive,development,ok,0,2995.29644851014,
+blender,cbdb-aggressive,development,failed,-6,1915.4990549366921,gem5 failed

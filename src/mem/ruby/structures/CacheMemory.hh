@@ -81,6 +81,14 @@ namespace gem5
       void recordSetAccess(Addr address);
       void recordHitWithAddress(Addr address);
       void recordMissWithAddress(Addr address);
+      void recordLlcMissStart(Addr address);
+      void recordLlcMissComplete(Addr address, int source);
+      void recordSrfdCleanCandidate();
+      void recordSrfdCleanEmitted();
+      void recordSrfdL1CleanExclusiveInstall();
+      void recordSrfdL1CleanReplacement();
+      void recordSrfdL1CleanWriteback();
+      void recordSrfdCanPutSent(bool dirty);
       //PRANJAL
       // Public Methods
     // perform a cache access and see if we hit or not.  Return true on a hit.
@@ -207,6 +215,7 @@ namespace gem5
     //PRANJAL paper implementaiton
     // Last eviction/re-reference time, expressed in Ruby clock cycles.
     std::unordered_map<Addr, uint64_t> m_re_reference_cycle;
+    std::unordered_map<Addr, uint64_t> m_llc_miss_start_cycle;
     uint64_t m_max_re_reference_cycles;
     
     /**
@@ -293,6 +302,26 @@ namespace gem5
           statistics::Scalar m_re_reference_over_limit;
           statistics::Scalar m_tracked_re_reference_addresses;
           statistics::Formula m_avg_re_reference_cycles;
+          statistics::Distribution m_llc_miss_cycles;
+          statistics::Distribution m_llc_miss_memory_cycles;
+          statistics::Distribution m_llc_miss_dirty_local_cycles;
+          statistics::Distribution m_llc_miss_clean_local_cycles;
+          statistics::Scalar m_llc_miss_total_cycles;
+          statistics::Scalar m_llc_miss_count;
+          statistics::Scalar m_llc_miss_memory_total_cycles;
+          statistics::Scalar m_llc_miss_memory_count;
+          statistics::Scalar m_llc_miss_dirty_local_total_cycles;
+          statistics::Scalar m_llc_miss_dirty_local_count;
+          statistics::Scalar m_llc_miss_clean_local_total_cycles;
+          statistics::Scalar m_llc_miss_clean_local_count;
+          statistics::Scalar m_llc_miss_untracked_completions;
+          statistics::Scalar m_srfd_clean_candidates;
+          statistics::Scalar m_srfd_clean_emitted;
+          statistics::Scalar m_srfd_l1_clean_exclusive_installs;
+          statistics::Scalar m_srfd_l1_clean_replacements;
+          statistics::Scalar m_srfd_l1_clean_writebacks;
+          statistics::Scalar m_srfd_can_put_dirty_sent;
+          statistics::Scalar m_srfd_can_put_clean_sent;
           //PRANJAL
           
           statistics::Vector m_accessModeType;

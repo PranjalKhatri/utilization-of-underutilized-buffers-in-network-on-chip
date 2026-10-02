@@ -34,6 +34,7 @@
 #define __MEM_RUBY_NETWORK_GARNET_0_NETWORKINTERFACE_HH__
 
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 #include "mem/ruby/common/Consumer.hh"
@@ -69,6 +70,7 @@ class NetworkInterface : public ClockedObject, public Consumer
     void addInPort(NetworkLink *in_link, CreditLink *credit_link);
     void addOutPort(NetworkLink *out_link, CreditLink *credit_link,
         SwitchID router_id, uint32_t consumerVcs);
+    void bindRouterInport(int router_id, int inport);
 
     void dequeueCallback();
     void wakeup();
@@ -276,6 +278,7 @@ class NetworkInterface : public ClockedObject, public Consumer
     std::vector<int> m_vc_allocator;
     std::vector<OutputPort *> outPorts;
     std::vector<InputPort *> inPorts;
+    std::unordered_map<int, int> m_router_inports;
     int m_deadlock_threshold;
     std::vector<OutVcState> outVcState;
 

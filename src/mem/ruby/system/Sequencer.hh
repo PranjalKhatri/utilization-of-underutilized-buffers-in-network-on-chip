@@ -300,6 +300,7 @@ class Sequencer : public RubyPort
     //! Histogram for holding latency profile of all requests that
     //! miss in the controller connected to this sequencer.
     statistics::Histogram m_missLatencyHist;
+    statistics::Scalar m_externalMissWaitCycles;
     std::vector<statistics::Histogram *> m_missTypeLatencyHist;
 
     //! Histograms for profiling the latencies for requests that

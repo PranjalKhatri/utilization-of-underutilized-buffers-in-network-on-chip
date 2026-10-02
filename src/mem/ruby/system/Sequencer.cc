@@ -92,6 +92,10 @@ Sequencer::Sequencer(const Params &p)
     m_latencyHist.init(10);
     m_hitLatencyHist.init(10);
     m_missLatencyHist.init(10);
+    m_externalMissWaitCycles
+        .name(name() + ".external_miss_wait_cycles")
+        .desc("Sum of issue-to-completion cycles for external Ruby misses")
+        .flags(statistics::nozero);
 
     for (int i = 0; i < RubyRequestType_NUM; i++) {
         m_typeLatencyHist.push_back(new statistics::Histogram());
@@ -279,6 +283,7 @@ void Sequencer::resetStats()
     m_latencyHist.reset();
     m_hitLatencyHist.reset();
     m_missLatencyHist.reset();
+    m_externalMissWaitCycles = 0;
     for (int i = 0; i < RubyRequestType_NUM; i++) {
         m_typeLatencyHist[i]->reset();
         m_hitTypeLatencyHist[i]->reset();
@@ -422,6 +427,7 @@ Sequencer::recordMissLatency(SequencerRequest* srequest, bool llscSuccess,
 
     if (isExternalHit) {
         m_missLatencyHist.sample(total_lat);
+        m_externalMissWaitCycles += total_lat;
         m_missTypeLatencyHist[type]->sample(total_lat);
 
         if (respondingMach != MachineType_NUM) {

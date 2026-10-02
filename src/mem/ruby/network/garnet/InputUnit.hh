@@ -127,7 +127,7 @@ class InputUnit : public Consumer
     inline bool
     need_stage(int vc, flit_stage stage, Tick time)
     {
-        if (m_srfd[vc].held) return false;
+        if (m_srfd[vc].held || m_srfd_waiting[vc]) return false;
         return virtualChannels[vc].need_stage(stage, time);
     }
 
@@ -168,6 +168,12 @@ class InputUnit : public Consumer
     //PRANJAL paper
     void regStats();
   private:
+    enum class SrfdRequestResult {
+        Miss,
+        Hit,
+        Wait
+    };
+
     struct SrfdEntry {
         bool held = false;
         bool complete = false;
@@ -177,7 +183,8 @@ class InputUnit : public Consumer
         Tick stored_tick = 0;
     };
 
-    bool trySrfdRequest(flit *request);
+    SrfdRequestResult trySrfdRequest(flit *request, bool count_lookup = true);
+    void retryWaitingSrfdRequests(Addr address);
     void releaseSrfd(int vc, bool drop);
     int oldestStored(int vnet, bool complete_only = true) const;
     void returnDroppedRequestCredit(int vc);
@@ -202,12 +209,16 @@ class InputUnit : public Consumer
     gem5::statistics::Vector vc_availability_stat; 
 
     void update_vc_availability();
+    void update_srfd_occupancy();
+    std::vector<bool> m_srfd_waiting;
     //PRANJAL end
     // Input Virtual channels
     std::vector<VirtualChannel> virtualChannels;
     std::vector<SrfdEntry> m_srfd;
     uint64_t m_srfd_sequence = 0;
     unsigned m_srfd_stored_count = 0;
+    uint64_t m_srfd_last_occupancy_cycle = 0;
+    statistics::Vector m_srfd_occupancy_cycles;
 
     statistics::Scalar m_srfd_dirty_offered;
     statistics::Scalar m_srfd_clean_offered;
@@ -219,11 +230,17 @@ class InputUnit : public Consumer
     statistics::Scalar m_srfd_getx_lookups;
     statistics::Scalar m_srfd_clean_hits;
     statistics::Scalar m_srfd_dirty_hits;
+    statistics::Scalar m_srfd_clean_gets_hits;
+    statistics::Scalar m_srfd_dirty_gets_hits;
+    statistics::Scalar m_srfd_dirty_getx_hits;
     statistics::Scalar m_srfd_getx_clean_conflicts;
     statistics::Scalar m_srfd_incomplete_misses;
     statistics::Scalar m_srfd_pressure_events;
+    statistics::Scalar m_srfd_pressure_attempts;
+    statistics::Scalar m_srfd_pressure_no_victim;
     statistics::Scalar m_srfd_avoided_requests;
     statistics::Scalar m_srfd_max_stored;
+    statistics::Scalar m_srfd_resident;
     statistics::Distribution m_srfd_residence_cycles;
 
     // Statistical variables

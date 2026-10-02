@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,elapsed_seconds,error
+gcc,cbdb-nocorner,development,failed,0,187.1682554408908,No L1I re-reference statistics found
+mcf,cbdb-nocorner,development,failed,0,49.45514144748449,No L1I re-reference statistics found
+leela,cbdb-nocorner,development,failed,-6,306.17227496393025,gem5 failed
+namd,cbdb-nocorner,development,failed,-6,176.00896920450032,gem5 failed
+cactus,cbdb-nocorner,development,failed,-6,570.2380667086691,gem5 failed
+blender,cbdb-nocorner,development,failed,-6,308.8194483332336,gem5 failed

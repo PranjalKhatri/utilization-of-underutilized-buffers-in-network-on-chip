@@ -136,6 +136,7 @@ machine(MachineType:L1Cache, "L1 cache protocol")
     State TBEState,          desc="Transient state";
     DataBlock DataBlk,       desc="data for the block, required for concurrent writebacks";
     bool Dirty,              desc="Is the data dirty (different than memory)?";
+    bool FromL1I, default="false", desc="Writeback originated in L1I";
     int NumPendingMsgs, default="0",     desc="Number of acks/data messages that this processor is waiting for";
   }
 
@@ -703,6 +704,7 @@ machine(MachineType:L1Cache, "L1 cache protocol")
     assert(is_valid(cache_entry));
     tbe.DataBlk := cache_entry.DataBlk; // Data only used for writebacks
     tbe.Dirty := cache_entry.Dirty;
+    tbe.FromL1I := L1Icache.isTagPresent(address);
   }
 
   action(j_popTriggerQueue, "j", desc="Pop trigger queue.") {
@@ -853,9 +855,34 @@ machine(MachineType:L1Cache, "L1 cache protocol")
         out_msg.Type := CoherenceRequestType:WRITEBACK_DIRTY_DATA;
       } else {
         out_msg.Type := CoherenceRequestType:WRITEBACK_CLEAN_DATA;
+        if (tbe.FromL1I) {
+          L1Icache.recordSrfdL1CleanWriteback();
+        } else {
+          L1Dcache.recordSrfdL1CleanWriteback();
+        }
       }
       out_msg.DataBlk := tbe.DataBlk;
       out_msg.MessageSize := MessageSizeType:Writeback_Data;
+    }
+  }
+
+  action(srfd_recordCleanExclusiveInstall, "CI", desc="Record clean exclusive install") {
+    if (!cache_entry.Dirty) {
+      if (L1Dcache.isTagPresent(address)) {
+        L1Dcache.recordSrfdL1CleanExclusiveInstall();
+      } else {
+        L1Icache.recordSrfdL1CleanExclusiveInstall();
+      }
+    }
+  }
+
+  action(srfd_recordCleanReplacement, "CR", desc="Record clean exclusive replacement") {
+    if (!cache_entry.Dirty) {
+      if (L1Dcache.isTagPresent(address)) {
+        L1Dcache.recordSrfdL1CleanReplacement();
+      } else {
+        L1Icache.recordSrfdL1CleanReplacement();
+      }
     }
   }
 
@@ -1105,6 +1132,7 @@ machine(MachineType:L1Cache, "L1 cache protocol")
   }
 
   transition(M, L1_Replacement, MI) {
+    srfd_recordCleanReplacement;
     i_allocateTBE;
     d_issuePUTX;
     forward_eviction_to_cpu;
@@ -1243,6 +1271,7 @@ machine(MachineType:L1Cache, "L1 cache protocol")
 
   transition(IS, Exclusive_Data, M_W) {
     u_writeDataToCache;
+    srfd_recordCleanExclusiveInstall;
     m_decrementNumberOfMessages;
     hx_load_hit;
     gg_sendUnblockExclusive;

@@ -46,3 +46,6 @@ downloads/
 gem5-resources/
 parsec_results
 res_namd_4x4/
+aggressive_res/
+/PAPER_TESTS/
+btp_report/

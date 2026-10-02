@@ -237,6 +237,7 @@ def create_system(
     if rom_dir_cntrl_node is not None:
         dir_cntrl_nodes.append(rom_dir_cntrl_node)
     for dir_cntrl in dir_cntrl_nodes:
+        dir_cntrl.srfd_store_clean = options.srfd_mode.startswith("cbdb-")
         # Connect the directory controllers and the network
         dir_cntrl.requestToDir = MessageBuffer()
         dir_cntrl.requestToDir.in_port = ruby_system.network.out_port

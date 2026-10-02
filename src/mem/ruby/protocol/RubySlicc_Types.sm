@@ -205,6 +205,7 @@ structure (DirectoryMemory, external = "yes") {
   bool isPresent(Addr);
   void invalidateBlock(Addr);
   void recordRequestType(DirectoryRequestType);
+  void recordSrfdCanPutAccepted(bool);
 }
 
 structure (CacheMemory, external = "yes") {
@@ -236,6 +237,14 @@ structure (CacheMemory, external = "yes") {
   void recordSetAccess(Addr);
   void recordHitWithAddress(Addr);
   void recordMissWithAddress(Addr);
+  void recordLlcMissStart(Addr);
+  void recordLlcMissComplete(Addr, int);
+  void recordSrfdCleanCandidate();
+  void recordSrfdCleanEmitted();
+  void recordSrfdL1CleanExclusiveInstall();
+  void recordSrfdL1CleanReplacement();
+  void recordSrfdL1CleanWriteback();
+  void recordSrfdCanPutSent(bool);
   void profileDemandHit();
   void profileDemandMiss();
   void profilePrefetchHit();

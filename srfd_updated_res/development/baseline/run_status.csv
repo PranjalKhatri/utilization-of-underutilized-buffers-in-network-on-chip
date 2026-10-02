@@ -1,0 +1,7 @@
+benchmark,mode,profile,status,returncode,elapsed_seconds,error
+gcc,baseline,development,failed,0,192.9428717419505,No L1I re-reference statistics found
+mcf,baseline,development,failed,0,50.39292921125889,No L1I re-reference statistics found
+leela,baseline,development,ok,0,1766.4494954217225,
+namd,baseline,development,ok,0,2219.8913907930255,
+cactus,baseline,development,ok,0,2601.0192708037794,
+blender,baseline,development,failed,-6,2047.1986354887486,gem5 failed

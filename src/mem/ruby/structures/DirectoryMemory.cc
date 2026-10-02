@@ -56,7 +56,10 @@ namespace ruby
 {
 
 DirectoryMemory::DirectoryMemory(const Params &p)
-    : SimObject(p), addrRanges(p.addr_ranges.begin(), p.addr_ranges.end())
+    : SimObject(p),
+      m_srfd_can_put_dirty_accepted(this, "srfd_can_put_dirty_accepted", "Dirty SRFD CAN_PUT messages accepted"),
+      m_srfd_can_put_clean_accepted(this, "srfd_can_put_clean_accepted", "Clean SRFD CAN_PUT messages accepted"),
+      addrRanges(p.addr_ranges.begin(), p.addr_ranges.end())
 {
     m_size_bytes = 0;
     for (const auto &r: addrRanges) {
@@ -66,6 +69,15 @@ DirectoryMemory::DirectoryMemory(const Params &p)
     m_num_entries = 0;
     m_block_size = p.block_size;
     m_ruby_system = p.ruby_system;
+}
+
+void
+DirectoryMemory::recordSrfdCanPutAccepted(bool dirty)
+{
+    if (dirty)
+        ++m_srfd_can_put_dirty_accepted;
+    else
+        ++m_srfd_can_put_clean_accepted;
 }
 
 void

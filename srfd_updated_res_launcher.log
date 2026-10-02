@@ -1,0 +1,243 @@
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/srfd_updated_res/development/baseline
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/baseline/gcc_stats.txt
+[-] gcc produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/baseline/mcf_stats.txt
+[-] mcf produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/baseline/leela_stats.txt
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/baseline/namd_stats.txt
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/baseline/cactus_stats.txt
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[-] blender failed with return code -6; continuing with the remaining benchmarks.
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/srfd_updated_res/development/db-defensive
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-defensive/gcc_stats.txt
+[-] gcc produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-defensive/mcf_stats.txt
+[-] mcf produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-defensive/leela_stats.txt
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-defensive/namd_stats.txt
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-defensive/cactus_stats.txt
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-defensive/blender_stats.txt
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/srfd_updated_res/development/db-aggressive
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-aggressive/gcc_stats.txt
+[-] gcc produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-aggressive/mcf_stats.txt
+[-] mcf produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-aggressive/leela_stats.txt
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-aggressive/namd_stats.txt
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/db-aggressive/cactus_stats.txt
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[-] blender failed with return code -6; continuing with the remaining benchmarks.
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/srfd_updated_res/development/cbdb-defensive
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-defensive/gcc_stats.txt
+[-] gcc produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-defensive/mcf_stats.txt
+[-] mcf produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-defensive/leela_stats.txt
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-defensive/namd_stats.txt
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-defensive/cactus_stats.txt
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[-] blender failed with return code -6; continuing with the remaining benchmarks.
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/srfd_updated_res/development/cbdb-aggressive
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-aggressive/gcc_stats.txt
+[-] gcc produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-aggressive/mcf_stats.txt
+[-] mcf produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-aggressive/leela_stats.txt
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-aggressive/namd_stats.txt
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-aggressive/cactus_stats.txt
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[-] blender failed with return code -6; continuing with the remaining benchmarks.
+[*] Starting data collection. Results will be saved to /docker_mounted_gem5/srfd_updated_res/development/cbdb-nocorner
+
+=========================================
+[*] Running Benchmark: gcc
+=========================================
+[*] Executing gem5 for gcc...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-nocorner/gcc_stats.txt
+[-] gcc produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: mcf
+=========================================
+[*] Executing gem5 for mcf...
+[+] Saved stats to /docker_mounted_gem5/srfd_updated_res/development/cbdb-nocorner/mcf_stats.txt
+[-] mcf produced invalid statistics: No L1I re-reference statistics found
+
+=========================================
+[*] Running Benchmark: leela
+=========================================
+[*] Executing gem5 for leela...
+[-] leela failed with return code -6; continuing with the remaining benchmarks.
+
+=========================================
+[*] Running Benchmark: namd
+=========================================
+[*] Executing gem5 for namd...
+[-] namd failed with return code -6; continuing with the remaining benchmarks.
+
+=========================================
+[*] Running Benchmark: cactus
+=========================================
+[*] Executing gem5 for cactus...
+[-] cactus failed with return code -6; continuing with the remaining benchmarks.
+
+=========================================
+[*] Running Benchmark: blender
+=========================================
+[*] Executing gem5 for blender...
+[-] blender failed with return code -6; continuing with the remaining benchmarks.
+Traceback (most recent call last):
+  File "/docker_mounted_gem5/srfd_eval.py", line 732, in <module>
+    plot_paper_comparison(args.results_dir, target_benchmarks, modes, args.profile)
+  File "/docker_mounted_gem5/srfd_eval.py", line 568, in plot_paper_comparison
+    all_stats = {mode: _mode_stats(results_dir, profile, mode, benchmarks)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/docker_mounted_gem5/srfd_eval.py", line 555, in _mode_stats
+    raise ValueError(f"{mode}/{benchmark} is not successful: {detail}")
+ValueError: baseline/gcc is not successful: No L1I re-reference statistics found

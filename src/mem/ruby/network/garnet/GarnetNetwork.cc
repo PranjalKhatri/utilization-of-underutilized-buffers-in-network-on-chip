@@ -212,18 +212,20 @@ GarnetNetwork::makeExtInLink(NodeID global_src, SwitchID dest, BasicLink* link,
             m_routers[dest]->get_vc_per_vnet());
     }
 
+    int router_inport = -1;
     if (garnet_link->intBridgeEn) {
         DPRINTF(RubyNetwork, "Enable internal bridge for %s\n",
             garnet_link->name());
         NetworkBridge *n_bridge = garnet_link->intNetBridge[LinkDirection_In];
-        m_routers[dest]->
-            addInPort(dst_inport_dirn,
-                      n_bridge,
-                      garnet_link->intCredBridge[LinkDirection_In]);
+        router_inport = m_routers[dest]->addInPort(
+            dst_inport_dirn, n_bridge,
+            garnet_link->intCredBridge[LinkDirection_In]);
         m_networkbridges.push_back(n_bridge);
     } else {
-        m_routers[dest]->addInPort(dst_inport_dirn, net_link, credit_link);
+        router_inport = m_routers[dest]->addInPort(
+            dst_inport_dirn, net_link, credit_link);
     }
+    m_nis[local_src]->bindRouterInport(dest, router_inport);
 
 }
 
@@ -386,10 +388,10 @@ GarnetNetwork::get_router_id(int global_ni, int vnet)
 }
 
 bool
-GarnetNetwork::applySrfdPressure(int router_id, int vnet)
+GarnetNetwork::applySrfdPressure(int router_id, int inport, int vnet)
 {
     assert(router_id >= 0 && router_id < m_routers.size());
-    return m_routers[router_id]->applySrfdPressure(vnet);
+    return m_routers[router_id]->applySrfdPressure(inport, vnet);
 }
 
 void

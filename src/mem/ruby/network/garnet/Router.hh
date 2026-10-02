@@ -78,8 +78,8 @@ class Router : public BasicRouter, public Consumer
     void print(std::ostream& out) const {};
 
     void init();
-    void addInPort(PortDirection inport_dirn, NetworkLink *link,
-                   CreditLink *credit_link);
+    int addInPort(PortDirection inport_dirn, NetworkLink *link,
+                  CreditLink *credit_link);
     void addOutPort(PortDirection outport_dirn, NetworkLink *link,
                     std::vector<NetDest>& routing_table_entry,
                     int link_weight, CreditLink *credit_link,
@@ -97,7 +97,7 @@ class Router : public BasicRouter, public Consumer
     bool srfdStoresClean() const;
     bool srfdDefensive() const;
     bool srfdDisabledAtThisRouter() const;
-    bool applySrfdPressure(int vnet);
+    bool applySrfdPressure(int inport, int vnet);
 
     void init_net_ptr(GarnetNetwork* net_ptr)
     {

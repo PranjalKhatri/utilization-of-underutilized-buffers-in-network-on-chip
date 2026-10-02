@@ -100,6 +100,7 @@ CacheMemory::resetStats()
 {
     SimObject::resetStats();
     m_re_reference_cycle.clear();
+    m_llc_miss_start_cycle.clear();
     cacheMemoryStats.m_tracked_re_reference_addresses = 0;
 }
 
@@ -516,7 +517,89 @@ CacheMemory::cacheProbe(Addr address) const
                         getVictim(candidates)->getWay()]->m_Address;
 }
 
-// looks an address up in the cache
+// Records the first off-chip issue cycle for this cache line.
+void
+CacheMemory::recordLlcMissStart(Addr address)
+{
+    address = makeLineAddress(address);
+    const auto result = m_llc_miss_start_cycle.emplace(
+        address, m_ruby_system->curCycle());
+    // A duplicate start would silently retain an old timestamp.
+    assert(result.second);
+}
+
+void
+CacheMemory::recordLlcMissComplete(Addr address, int source)
+{
+    address = makeLineAddress(address);
+    auto it = m_llc_miss_start_cycle.find(address);
+    if (it == m_llc_miss_start_cycle.end()) {
+        ++cacheMemoryStats.m_llc_miss_untracked_completions;
+        return;
+    }
+    const uint64_t cycles = m_ruby_system->curCycle() - it->second;
+    m_llc_miss_start_cycle.erase(it);
+    cacheMemoryStats.m_llc_miss_cycles.sample(cycles);
+    cacheMemoryStats.m_llc_miss_total_cycles += cycles;
+    ++cacheMemoryStats.m_llc_miss_count;
+    if (source == 0) {
+        cacheMemoryStats.m_llc_miss_memory_cycles.sample(cycles);
+        cacheMemoryStats.m_llc_miss_memory_total_cycles += cycles;
+        ++cacheMemoryStats.m_llc_miss_memory_count;
+    } else if (source == 1) {
+        cacheMemoryStats.m_llc_miss_dirty_local_cycles.sample(cycles);
+        cacheMemoryStats.m_llc_miss_dirty_local_total_cycles += cycles;
+        ++cacheMemoryStats.m_llc_miss_dirty_local_count;
+    } else if (source == 2) {
+        cacheMemoryStats.m_llc_miss_clean_local_cycles.sample(cycles);
+        cacheMemoryStats.m_llc_miss_clean_local_total_cycles += cycles;
+        ++cacheMemoryStats.m_llc_miss_clean_local_count;
+    } else {
+        panic("Invalid LLC miss completion source %d", source);
+    }
+}
+
+void
+CacheMemory::recordSrfdCleanCandidate()
+{
+    ++cacheMemoryStats.m_srfd_clean_candidates;
+}
+
+
+
+void
+CacheMemory::recordSrfdCleanEmitted()
+{
+    ++cacheMemoryStats.m_srfd_clean_emitted;
+}
+
+void
+CacheMemory::recordSrfdL1CleanExclusiveInstall()
+{
+    ++cacheMemoryStats.m_srfd_l1_clean_exclusive_installs;
+}
+
+void
+CacheMemory::recordSrfdL1CleanReplacement()
+{
+    ++cacheMemoryStats.m_srfd_l1_clean_replacements;
+}
+
+void
+CacheMemory::recordSrfdL1CleanWriteback()
+{
+    ++cacheMemoryStats.m_srfd_l1_clean_writebacks;
+}
+
+void
+CacheMemory::recordSrfdCanPutSent(bool dirty)
+{
+    if (dirty)
+        ++cacheMemoryStats.m_srfd_can_put_dirty_sent;
+    else
+        ++cacheMemoryStats.m_srfd_can_put_clean_sent;
+}
+
 AbstractCacheEntry*
 CacheMemory::lookup(Addr address)
 {
@@ -744,6 +827,26 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
       ADD_STAT(m_tracked_re_reference_addresses,
                "Addresses retained for continued re-reference tracking"),
       ADD_STAT(m_avg_re_reference_cycles, "Running average of cycles between block eviction and re-reference"),
+      ADD_STAT(m_llc_miss_cycles, "L2 off-chip miss completion latency in Ruby cycles"),
+      ADD_STAT(m_llc_miss_memory_cycles, "L2 miss latency for memory replies"),
+      ADD_STAT(m_llc_miss_dirty_local_cycles, "L2 miss latency for dirty SRFD replies"),
+      ADD_STAT(m_llc_miss_clean_local_cycles, "L2 miss latency for clean SRFD replies"),
+      ADD_STAT(m_llc_miss_total_cycles, "Total L2 off-chip miss completion cycles"),
+      ADD_STAT(m_llc_miss_count, "Count of completed L2 off-chip misses"),
+      ADD_STAT(m_llc_miss_memory_total_cycles, "Total cycles for memory L2 miss replies"),
+      ADD_STAT(m_llc_miss_memory_count, "Count of memory L2 miss replies"),
+      ADD_STAT(m_llc_miss_dirty_local_total_cycles, "Total cycles for dirty SRFD replies"),
+      ADD_STAT(m_llc_miss_dirty_local_count, "Count of dirty SRFD replies"),
+      ADD_STAT(m_llc_miss_clean_local_total_cycles, "Total cycles for clean SRFD replies"),
+      ADD_STAT(m_llc_miss_clean_local_count, "Count of clean SRFD replies"),
+      ADD_STAT(m_llc_miss_untracked_completions, "L2 completions whose start preceded a stats reset"),
+      ADD_STAT(m_srfd_clean_candidates, "Acknowledged clean-exclusive eviction candidates"),
+      ADD_STAT(m_srfd_clean_emitted, "Clean PUTE-equivalent SRFD packets emitted"),
+      ADD_STAT(m_srfd_l1_clean_exclusive_installs, "Clean-exclusive lines installed in this L1"),
+      ADD_STAT(m_srfd_l1_clean_replacements, "Clean-exclusive L1 replacement candidates"),
+      ADD_STAT(m_srfd_l1_clean_writebacks, "WRITEBACK_CLEAN_DATA messages emitted by this L1"),
+      ADD_STAT(m_srfd_can_put_dirty_sent, "Dirty SRFD CAN_PUT messages sent"),
+      ADD_STAT(m_srfd_can_put_clean_sent, "Clean SRFD CAN_PUT messages sent"),
       // ---------------------------------------------------
       /////////////////PRANJAL
       ADD_STAT(m_prefetch_accesses, "Number of cache prefetch accesses",
@@ -823,6 +926,15 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
     // Calculate the running average dynamically
     m_avg_re_reference_cycles = m_total_re_reference_cycles / m_total_re_references;
     m_avg_re_reference_cycles.flags(statistics::nozero);
+    auto initLlcLatency = [](statistics::Distribution &dist) {
+        dist.init(1, 100000, 1000)
+            .flags(statistics::pdf | statistics::dist |
+                   statistics::nozero | statistics::nonan);
+    };
+    initLlcLatency(m_llc_miss_cycles);
+    initLlcLatency(m_llc_miss_memory_cycles);
+    initLlcLatency(m_llc_miss_dirty_local_cycles);
+    initLlcLatency(m_llc_miss_clean_local_cycles);
     // -------------------------------------------------
 
     for (int i = 0; i < RubyAccessMode_NUM; i++) {
