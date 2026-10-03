@@ -704,7 +704,9 @@ machine(MachineType:L1Cache, "L1 cache protocol")
     assert(is_valid(cache_entry));
     tbe.DataBlk := cache_entry.DataBlk; // Data only used for writebacks
     tbe.Dirty := cache_entry.Dirty;
-    tbe.FromL1I := L1Icache.isTagPresent(address);
+    // getCacheEntry() selects L1D first if an address is present in both
+    // split caches, so use the same priority for diagnostic attribution.
+    tbe.FromL1I := !L1Dcache.isTagPresent(address);
   }
 
   action(j_popTriggerQueue, "j", desc="Pop trigger queue.") {

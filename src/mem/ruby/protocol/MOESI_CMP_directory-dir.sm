@@ -371,12 +371,6 @@ machine(MachineType:Directory, "Directory protocol")
         } else if (in_msg.Type == CoherenceRequestType:WRITEBACK_DIRTY_DATA) {
           trigger(Event:Dirty_Writeback, in_msg.addr,
                   TBEs[in_msg.addr]);
-        } else if (in_msg.Type == CoherenceRequestType:SRFD_DATA) {
-          if (in_msg.SRFDDirty) {
-            trigger(Event:Dirty_Writeback, in_msg.addr, TBEs[in_msg.addr]);
-          } else {
-            trigger(Event:SRFD_Clean_Drop, in_msg.addr, TBEs[in_msg.addr]);
-          }
         } else if (in_msg.Type == CoherenceRequestType:CAN_PUT) {
           if (in_msg.SRFDDirty) {
             trigger(Event:CAN_PUT_Dirty, in_msg.addr, TBEs[in_msg.addr]);

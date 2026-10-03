@@ -57,7 +57,6 @@ enumeration(CoherenceRequestType, desc="...") {
   WRITEBACK_DIRTY_DATA,   desc="Dirty writeback (contains data)";
   DMA_READ,  desc="DMA Read";
   DMA_WRITE, desc="DMA Write";
-  SRFD_DATA, desc="Evicted LLC data held or forwarded by SRFD";
   CAN_PUT, desc="Cancel a pending SRFD writeback after local reply";
 }
 
@@ -109,11 +108,9 @@ structure(RequestMsg, desc="...", interface="Message") {
   MessageSizeType MessageSize, desc="size category of the message";
   RubyAccessMode AccessMode,    desc="user/supervisor access type";
   PrefetchBit Prefetch,         desc="Is this a prefetch request";
-  bool SRFDStore, default="false", desc="Packet may be stored in local router";
   bool SRFDDirty, default="false", desc="Stored data differs from memory";
   bool SRFDGetS, default="false", desc="GETS eligible for SRFD lookup";
   bool SRFDGetX, default="false", desc="GETX eligible for SRFD lookup";
-  bool SRFDReply, default="false", desc="Packet was replied by local SRFD";
 
   bool functionalRead(Packet *pkt) {
     // Read only those messages that contain the data
@@ -143,14 +140,13 @@ structure(ResponseMsg, desc="...", interface="Message") {
   MessageSizeType MessageSize, desc="size category of the message";
   bool SRFDStore, default="false", desc="Packet may be stored in local router";
   bool SRFDDirty, default="false", desc="Stored data differs from memory";
-  bool SRFDGetS, default="false", desc="GETS eligible for SRFD lookup";
-  bool SRFDGetX, default="false", desc="GETX eligible for SRFD lookup";
   bool SRFDReply, default="false", desc="Packet was replied by local SRFD";
 
   bool functionalRead(Packet *pkt) {
     // Read only those messages that contain the data
     if (Type == CoherenceResponseType:DATA ||
-        Type == CoherenceResponseType:DATA_EXCLUSIVE) {
+        Type == CoherenceResponseType:DATA_EXCLUSIVE ||
+        Type == CoherenceResponseType:SRFD_DATA) {
         return testAndRead(addr, DataBlk, pkt);
     }
     return false;

@@ -78,6 +78,7 @@ def run_benchmarks(results_dir, target_benchmarks, srfd_mode="baseline",
                    profile="development", write_status=True,
                    memory="32GB", fast_forward=None, maxinsts=10000000):
     profiles = {"development": (16, 16, 4, "Mesh_XY", 6),
+                "corners-4x4-6vc": (16, 4, 4, "MeshDirCorners_XY", 6),
                 "paper": (64, 4, 8, "MeshDirCorners_XY", 4),
                 "paper-6vc": (64, 4, 8, "MeshDirCorners_XY", 6),
                 # Diagnostic topology only: the stock Mesh_XY uniformly maps
@@ -691,7 +692,8 @@ if __name__ == "__main__":
               "SRFD variant"))
     parser.add_argument(
         "--profile",
-        choices=("development", "paper", "paper-6vc", "paper-mesh-6vc"),
+        choices=("development", "corners-4x4-6vc", "paper",
+                 "paper-6vc", "paper-mesh-6vc"),
         default="development",
     )
     parser.add_argument("--jobs", type=int, default=1,

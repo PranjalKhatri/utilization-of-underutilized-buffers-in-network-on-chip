@@ -193,12 +193,14 @@ InputUnit::wakeup()
 
         // Buffer the flit
         virtualChannels[vc].insertFlit(t_flit);
+        bool completed_srfd = false;
+        Addr completed_srfd_addr = 0;
         if (m_srfd[vc].held &&
             (t_flit->get_type() == TAIL_ ||
              t_flit->get_type() == HEAD_TAIL_)) {
-            const Addr completed_addr = m_srfd[vc].address;
+            completed_srfd = true;
+            completed_srfd_addr = m_srfd[vc].address;
             m_srfd[vc].complete = true;
-            retryWaitingSrfdRequests(completed_addr);
         }
 
 
@@ -225,6 +227,15 @@ InputUnit::wakeup()
                 // Wakeup the router in that cycle to perform SA
                 m_router->schedule_wakeup(Cycles(wait_time));
             }
+        }
+
+        // Retrying a waiting GETX against a newly completed clean packet can
+        // drop the stored packet.  releaseSrfd() then removes and deletes all
+        // of its flits, including t_flit when this arrival is the tail.  Keep
+        // this callback after the last use of t_flit in wakeup() to avoid a
+        // use-after-free on the advance_stage() path above.
+        if (completed_srfd) {
+            retryWaitingSrfdRequests(completed_srfd_addr);
         }
 
         if (m_in_link->isReady(curTick())) {
