@@ -2078,7 +2078,26 @@ mmapFunc(SyscallDesc *desc, ThreadContext *tc,
                   "will not be propagated to the host or shared mappings");
     }
 
-    length = roundUp(length, page_bytes);
+    /*
+     * Validate the range before doing any address arithmetic.  In
+     * particular, x86-64 mmap regions grow down from mmap_end.  Subtracting
+     * a request larger than that address wraps Addr and used to reach the
+     * VMA constructor with start > end, aborting gem5.  Linux rejects an
+     * allocation which cannot fit in the process virtual address space with
+     * ENOMEM, so do the same here.
+     */
+    const Addr requested_length = static_cast<Addr>(length);
+    if (requested_length > MaxAddr - (page_bytes - 1))
+        return -ENOMEM;
+
+    const Addr map_length = roundUp(requested_length, page_bytes);
+    if (!map_length)
+        return -ENOMEM;
+    length = map_length;
+
+    const Addr requested_start = static_cast<Addr>(start);
+    if (requested_start && map_length > MaxAddr - requested_start)
+        return -ENOMEM;
 
     int sim_fd = -1;
     if (!(tgt_flags & OS::TGT_MAP_ANONYMOUS)) {
@@ -2134,6 +2153,11 @@ mmapFunc(SyscallDesc *desc, ThreadContext *tc,
             /**
             * Extend global mmap region to give us some room for the app.
             */
+            const Addr mmap_end = p->memState->getMmapEnd();
+            if ((p->mmapGrowsDown() && map_length > mmap_end) ||
+                (!p->mmapGrowsDown() && map_length > MaxAddr - mmap_end)) {
+                return -ENOMEM;
+            }
             start = p->memState->extendMmap(length);
         }
     }

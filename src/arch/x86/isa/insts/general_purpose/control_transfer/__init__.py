@@ -39,6 +39,7 @@ categories = [
     "interrupts_and_exceptions",
     "jump",
     "loop",
+    "transactional_memory",
     "xreturn",
 ]
 

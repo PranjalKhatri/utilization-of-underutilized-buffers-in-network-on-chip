@@ -217,6 +217,7 @@ class InputUnit : public Consumer
     std::vector<SrfdEntry> m_srfd;
     uint64_t m_srfd_sequence = 0;
     unsigned m_srfd_stored_count = 0;
+    unsigned m_srfd_opening_count = 0;
     uint64_t m_srfd_last_occupancy_cycle = 0;
     statistics::Vector m_srfd_occupancy_cycles;
 
@@ -241,6 +242,7 @@ class InputUnit : public Consumer
     statistics::Scalar m_srfd_avoided_requests;
     statistics::Scalar m_srfd_max_stored;
     statistics::Scalar m_srfd_resident;
+    statistics::Scalar m_srfd_opening_resident;
     statistics::Distribution m_srfd_residence_cycles;
 
     // Statistical variables

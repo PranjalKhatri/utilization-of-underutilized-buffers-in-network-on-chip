@@ -160,6 +160,10 @@ parser.add_argument(
 )
 parser.add_argument("--workload-cwds", default="",
                     help="Semicolon-separated per-process working directories")
+parser.add_argument("--srfd-roi-insts", type=int,
+                    help="Measure this many instructions on every CPU; pause each at its target")
+parser.add_argument("--srfd-warmup-insts", type=int, default=0,
+                    help="Timing instructions on every CPU before the SRFD ROI reset")
 ####PRANJAL
 # Options.addCommonOptions(parser)
 ##PRANJAL added default isa

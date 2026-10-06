@@ -79,6 +79,13 @@ DMASequencer::init()
 RequestStatus
 DMASequencer::makeRequest(PacketPtr pkt)
 {
+    // DMA bypasses the home-router lookup and can race with a local reply's
+    // CAN_PUT (including clean data fetched before a DMA write).  The current
+    // SRFD protocol does not serialize these transactions.  Reject the
+    // unsupported path before accepting a packet; FS experiments use PIO.
+    fatal_if(m_ruby_system->hasSrfdBuffers(),
+             "DMA memory requests are unsupported with SRFD enabled; "
+             "use PIO disk I/O for full-system SRFD experiments");
     if (m_outstanding_count == m_max_outstanding_requests) {
         return RequestStatus_BufferFull;
     }

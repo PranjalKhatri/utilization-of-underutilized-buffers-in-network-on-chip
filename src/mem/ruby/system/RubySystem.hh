@@ -36,6 +36,7 @@
 #define __MEM_RUBY_SYSTEM_RUBYSYSTEM_HH__
 
 #include <unordered_map>
+#include <unordered_set>
 
 #include "base/callback.hh"
 #include "base/output.hh"
@@ -105,6 +106,15 @@ class RubySystem : public ClockedObject
     bool functionalWrite(Packet *ptr);
 
     void registerNetwork(Network*);
+    bool hasSrfdBuffers() const;
+    // A colocated L2 announces a store before injecting its flits. Requests
+    // for that home-bank line must not overtake the store on another vnet.
+    void beginSrfdStore(Addr address);
+    void completeSrfdStore(Addr address);
+    bool srfdStorePending(Addr address) const;
+    void recordSrfdReply(bool dirty);
+    void recordSrfdCanPutSent(bool dirty);
+    void recordSrfdCanPutAccepted(bool dirty);
     void registerAbstractController(
         AbstractController*, std::unique_ptr<ProtocolInfo>
     );
@@ -157,6 +167,17 @@ class RubySystem : public ClockedObject
 
     //std::vector<Network *> m_networks;
     std::vector<std::unique_ptr<Network>> m_networks;
+    std::unordered_set<Addr> m_srfd_pending_stores;
+    uint64_t m_srfd_replies_pending[2] = {};
+    uint64_t m_srfd_can_puts_pending[2] = {};
+    statistics::Scalar srfd_dirty_replies_pending;
+    statistics::Scalar srfd_clean_replies_pending;
+    statistics::Scalar srfd_dirty_can_puts_pending;
+    statistics::Scalar srfd_clean_can_puts_pending;
+    statistics::Scalar srfd_opening_dirty_replies;
+    statistics::Scalar srfd_opening_clean_replies;
+    statistics::Scalar srfd_opening_dirty_can_puts;
+    statistics::Scalar srfd_opening_clean_can_puts;
     std::vector<AbstractController *> m_abs_cntrl_vec;
     Cycles m_start_cycle;
 

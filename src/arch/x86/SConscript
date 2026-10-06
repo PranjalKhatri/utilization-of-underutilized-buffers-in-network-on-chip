@@ -128,6 +128,7 @@ python_files = (
     'general_purpose/control_transfer/interrupts_and_exceptions.py',
     'general_purpose/control_transfer/jump.py',
     'general_purpose/control_transfer/loop.py',
+    'general_purpose/control_transfer/transactional_memory.py',
     'general_purpose/control_transfer/xreturn.py',
     'general_purpose/data_conversion/__init__.py',
     'general_purpose/data_conversion/ascii_adjust.py',

@@ -508,6 +508,8 @@ class BaseCPU : public ClockedObject
      * @return Number of instructions executed
      */
     uint64_t getCurrentInstCount(ThreadID tid);
+    void setThreadActive(ThreadID tid, bool active);
+    bool isThreadHalted(ThreadID tid) const;
 
   public:
     /**

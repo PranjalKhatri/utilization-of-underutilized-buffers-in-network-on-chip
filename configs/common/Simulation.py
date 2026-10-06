@@ -499,12 +499,22 @@ def run(options, root, testsys, cpu_class):
 
     np = options.num_cpus
     switch_cpus = None
+    srfd_roi = getattr(options, "srfd_roi_insts", None)
+    if srfd_roi is not None:
+        if (srfd_roi <= 0 or options.srfd_warmup_insts < 0 or
+                options.standard_switch or options.repeat_switch or
+                options.checkpoint_restore or options.take_checkpoints or
+                options.checkpoint_at_end or options.take_simpoint_checkpoints or
+                options.restore_simpoint_checkpoint or
+                options.smt or options.simpoint):
+            fatal("SRFD ROI requires positive instructions, nonnegative warmup, "
+                  "and single-thread SE CPUs without checkpoints or other switching")
 
     if options.prog_interval:
         for i in range(np):
             testsys.cpu[i].progress_interval = options.prog_interval
 
-    if options.maxinsts:
+    if options.maxinsts and srfd_roi is None:
         for i in range(np):
             testsys.cpu[i].max_insts_any_thread = options.maxinsts
 
@@ -521,7 +531,7 @@ def run(options, root, testsys, cpu_class):
         ]
 
         for i in range(np):
-            if options.fast_forward:
+            if options.fast_forward and srfd_roi is None:
                 testsys.cpu[i].max_insts_any_thread = int(options.fast_forward)
             switch_cpus[i].system = testsys
             switch_cpus[i].workload = testsys.cpu[i].workload
@@ -529,7 +539,7 @@ def run(options, root, testsys, cpu_class):
             switch_cpus[i].progress_interval = testsys.cpu[i].progress_interval
             switch_cpus[i].isa = testsys.cpu[i].isa
             # simulation period
-            if options.maxinsts:
+            if options.maxinsts and srfd_roi is None:
                 switch_cpus[i].max_insts_any_thread = options.maxinsts
             # Add checker cpu if selected
             if options.checker:
@@ -733,6 +743,11 @@ def run(options, root, testsys, cpu_class):
             maxtick,
             cpt_starttick,
         )
+
+    if srfd_roi is not None:
+        from common.SrfdROI import run_roi
+        run_roi(options, testsys, switch_cpus, maxtick)
+        return
 
     if options.standard_switch or cpu_class:
         if options.standard_switch:

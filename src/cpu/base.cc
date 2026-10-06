@@ -785,6 +785,23 @@ BaseCPU::getCurrentInstCount(ThreadID tid)
     return threadContexts[tid]->getCurrentInstCount();
 }
 
+void
+BaseCPU::setThreadActive(ThreadID tid, bool active)
+{
+    fatal_if(isThreadHalted(tid), "Cannot resume a halted ROI workload");
+    if (active)
+        threadContexts.at(tid)->activate();
+    else
+        threadContexts.at(tid)->suspend();
+}
+
+bool
+BaseCPU::isThreadHalted(ThreadID tid) const
+{
+    const auto status = threadContexts.at(tid)->status();
+    return status == ThreadContext::Halted || status == ThreadContext::Halting;
+}
+
 AddressMonitor::AddressMonitor()
 {
     armed = false;

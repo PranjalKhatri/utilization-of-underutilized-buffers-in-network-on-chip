@@ -411,6 +411,16 @@
             //0x7: group12_Ev_Iz();
             0x7: decode MODRM_REG {
                 0x0: MOV(Ev,Iz);
+                // C7 /7 is XBEGIN rel16/rel32.  gem5 does not model x86
+                // RTM, so XBEGIN is implemented as an immediate transaction
+                // abort which transfers control to the encoded fallback.
+                0x7: decode MODRM_MOD {
+                    0x3: decode MODRM_RM {
+                        0x0: XBEGIN(Iz);
+                        default: UD2();
+                    }
+                    default: UD2();
+                }
                 default: UD2();
             }
         }

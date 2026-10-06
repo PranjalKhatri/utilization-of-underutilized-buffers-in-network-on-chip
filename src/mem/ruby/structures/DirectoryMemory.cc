@@ -74,6 +74,7 @@ DirectoryMemory::DirectoryMemory(const Params &p)
 void
 DirectoryMemory::recordSrfdCanPutAccepted(bool dirty)
 {
+    m_ruby_system->recordSrfdCanPutAccepted(dirty);
     if (dirty)
         ++m_srfd_can_put_dirty_accepted;
     else

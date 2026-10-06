@@ -219,6 +219,8 @@ machine(MachineType:L2Cache, "Token protocol")
     Addr PC,                           desc="Program counter of request";
     DataBlock DataBlk,                    desc="Buffer for the data block";
     bool Dirty,              desc="Is the data dirty (different than memory)?";
+    bool PendingLocalRequest, default="false",
+        desc="An L1 request arrived while this writeback awaited its ack";
 
     int NumExtPendingAcks, default="0",      desc="Number of global acks/data messages waiting for";
     int NumIntPendingAcks, default="0",      desc="Number of global acks/data messages waiting for";
@@ -1294,6 +1296,7 @@ machine(MachineType:L2Cache, "Token protocol")
     }
     tbe.NumIntPendingAcks := 0;  // default value
     tbe.NumExtPendingAcks := 0;  // default value
+    tbe.PendingLocalRequest := false;
     tbe.Fwd_GetS_IDs.clear();
     tbe.L1_GetS_IDs.clear();
   }
@@ -1488,7 +1491,10 @@ machine(MachineType:L2Cache, "Token protocol")
 
 
   action(qq_sendDataFromTBEToMemory, "qq", desc="Send data from TBE to directory") {
+    // Announce the local handoff before releasing the replacement TBE.
+    // The router waits for the tail even if a request arrives before the head.
     if (srfd_enabled && tbe.Dirty) {
+      L2cache.beginSrfdStore(address);
       enqueue(responseNetwork_out, ResponseMsg, response_latency) {
         assert(is_valid(tbe));
         out_msg.addr := address;
@@ -1522,6 +1528,7 @@ machine(MachineType:L2Cache, "Token protocol")
         }
       }
       if (srfd_enabled && srfd_store_clean && !tbe.Dirty) {
+        L2cache.beginSrfdStore(address);
         L2cache.recordSrfdCleanEmitted();
         enqueue(responseNetwork_out, ResponseMsg, response_latency) {
           out_msg.addr := address;
@@ -1690,6 +1697,12 @@ machine(MachineType:L2Cache, "Token protocol")
     stall_and_wait(L1requestNetwork_in, address);
   }
 
+  action(srfd_markPendingLocalRequest, "srp",
+         desc="Remember a request overlapping an acknowledged writeback") {
+    assert(is_valid(tbe));
+    tbe.PendingLocalRequest := true;
+  }
+
   action(wa_wakeUpDependents, "wa", desc="Wake up any requests waiting for this address") {
     wakeUpAllBuffers(address);
   }
@@ -1715,7 +1728,12 @@ machine(MachineType:L2Cache, "Token protocol")
     st_stallAndWaitL1RequestQueue;
   }
 
-  transition({II, IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX, OLSXS, IGS, IGS_SRFD, IGM, IGMLS, IGMO, IGMOU, IGMOU_SRFD, IGMIO, OGMIO, IGMIOF, IGMIOFD, OGMIOF, MM, SS, OO, OI, MI, MII, OLSI, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {L1_GETX, L1_GETS}) {
+  transition({II, IFGX, IFGS, ISFGS, IFGXX, IFGXXD, IFLXO, ILOW, ILOXW, ILOSW, ILOSXW, SLSW, OLSW, ILSW, IW, OW, SW, OXW, OLSXW, ILXW, IFLS, IFLO, IFLOX, IFLOXX, IFLOSX, OLSXS, IGS, IGS_SRFD, IGM, IGMLS, IGMO, IGMOU, IGMOU_SRFD, IGMIO, OGMIO, IGMIOF, IGMIOFD, OGMIOF, MM, SS, OO, MII, ILSI, SLSS, OLSS, OLSF, IGMIOFS, ILOSD, ILOSXD, ILOD, ILXD, ILOXD}, {L1_GETX, L1_GETS}) {
+    st_stallAndWaitL1RequestQueue;
+  }
+
+  transition({MI, OI, OLSI}, {L1_GETX, L1_GETS}) {
+    srfd_markPendingLocalRequest;
     st_stallAndWaitL1RequestQueue;
   }
 

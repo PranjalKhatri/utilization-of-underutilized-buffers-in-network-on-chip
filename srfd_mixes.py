@@ -32,7 +32,9 @@ def expand_mix(name):
     assert len(result) == 64
     return result
 
-def run_one(root, mode, mix, fast_forward, maxinsts, memory):
+def run_one(root, mode, mix, fast_forward, maxinsts, memory,
+            cpu_type="X86O3CPU", warmup_insts=100000):
+    root = os.path.abspath(root)
     mode_dir = os.path.join(root, "paper", mode)
     run_dir = os.path.join(mode_dir, f"{mix}_m5out")
     if os.path.exists(run_dir):
@@ -45,14 +47,8 @@ def run_one(root, mode, mix, fast_forward, maxinsts, memory):
     processes = expand_mix(mix)
     commands, options, outputs, cwds = [], [], [], []
     for index, (name, config) in enumerate(processes):
-        core_dir = os.path.join(run_dir, f"cpu{index:02d}_{name}")
-        os.makedirs(core_dir)
+        core_dir, option = srfd_eval.prepare_workload(run_dir, index, config)
         commands.append(config["exe"])
-        option = config["input_flag"]
-        if config["output_flag"]:
-            output_arg = config["output_flag"].format(index)
-            output_arg = output_arg.replace("/tmp/", core_dir + "/")
-            option = f"{option} {output_arg}"
         options.append(option.strip())
         outputs.append(os.path.join(core_dir, "stdout.txt"))
         cwds.append(core_dir)
@@ -60,7 +56,7 @@ def run_one(root, mode, mix, fast_forward, maxinsts, memory):
         f"{srfd_eval.GEM5_DIR}/build/X86_MOESI_CMP_directory/gem5.opt",
         "-d", run_dir,
         f"{srfd_eval.GEM5_DIR}/configs/deprecated/example/se.py",
-        "--cpu-type=TimingSimpleCPU", "--sys-clock=2GHz",
+        f"--cpu-type={cpu_type}", "--sys-clock=2GHz",
         f"--mem-size={memory}", "--num-cpus=64", "--num-dirs=4",
         "--num-l2caches=64", "--l1i_size=16kB", "--l1i_assoc=4",
         "--l1d_size=16kB", "--l1d_assoc=4",
@@ -73,9 +69,12 @@ def run_one(root, mode, mix, fast_forward, maxinsts, memory):
         "--options=" + ";".join(options),
         "--output=" + ";".join(outputs),
         "--workload-cwds=" + ";".join(cwds),
-        "-F", str(fast_forward), "--maxinsts", str(maxinsts),
+        "-F", str(fast_forward), f"--srfd-roi-insts={maxinsts}",
+        f"--srfd-warmup-insts={warmup_insts}",
+        "--errout=" + ";".join(os.path.join(cwd, "stderr.txt") for cwd in cwds),
     ]
     started = time.monotonic()
+    srfd_eval.write_run_manifest(run_dir, command)
     log_path = os.path.join(run_dir, "run.log")
     with open(log_path, "w", encoding="utf-8") as log:
         result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT)
@@ -93,6 +92,7 @@ def run_one(root, mode, mix, fast_forward, maxinsts, memory):
         status["error"] = "missing run-local stats.txt"
         return status
     try:
+        srfd_eval.validate_roi(run_dir, 64, maxinsts)
         stats = srfd_eval.parse_stats(stats_file)
         for level in ("L1I", "L1D", "L2"):
             srfd_eval.aggregate_cache_level(stats, level)
@@ -131,13 +131,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--results-dir", required=True)
     parser.add_argument("--modes", default="baseline,db-defensive")
-    parser.add_argument("--mixes", default=",".join(MIXES))
+    available = [mix for mix, members in MIXES.items()
+                 if all(name in srfd_eval.BENCHMARKS for name, _ in members)]
+    parser.add_argument("--mixes", default=",".join(available))
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--fast-forward", type=int, default=1000000)
     parser.add_argument("--mcf-fast-forward", type=int, default=100000,
                         help="System-wide fast-forward for mixes containing mcf")
     parser.add_argument("--maxinsts", type=int, default=10000000)
     parser.add_argument("--memory", default="64GB")
+    parser.add_argument("--cpu-type", default="X86O3CPU",
+                        choices=("TimingSimpleCPU", "X86O3CPU"))
+    parser.add_argument("--warmup-insts", type=int, default=100000)
     parser.add_argument("--compare", action="store_true")
     args = parser.parse_args()
     modes = [item.strip() for item in args.modes.split(",") if item.strip()]
@@ -148,13 +153,18 @@ def main():
         parser.error("unknown SRFD mode")
     if set(mixes) - set(MIXES):
         parser.error("unknown workload mix")
+    unavailable = set(mixes) - set(available)
+    if unavailable:
+        parser.error("mixes contain unavailable benchmarks: " + ",".join(sorted(unavailable)))
+    if args.maxinsts < 1 or args.warmup_insts < 0 or args.fast_forward < 0:
+        parser.error("invalid instruction window")
     write_manifest(args.results_dir, mixes)
     rows = {mode: [] for mode in modes}
     with ThreadPoolExecutor(max_workers=args.jobs) as executor:
         futures = {
             executor.submit(run_one, args.results_dir, mode, mix,
                             (args.mcf_fast_forward if any(name == "mcf" for name, _ in MIXES[mix]) else args.fast_forward),
-                            args.maxinsts, args.memory):
+                            args.maxinsts, args.memory, args.cpu_type, args.warmup_insts):
             (mode, mix) for mode in modes for mix in mixes
         }
         for future in as_completed(futures):
@@ -179,6 +189,8 @@ def main():
         targets = {mix: {"members": MIXES[mix]} for mix in mixes}
         srfd_eval.plot_paper_comparison(
             args.results_dir, targets, modes, "paper")
+    if any(row["status"] != "ok" for values in rows.values() for row in values):
+        raise SystemExit("One or more mixes failed; inspect run_status.csv")
 
 if __name__ == "__main__":
     main()

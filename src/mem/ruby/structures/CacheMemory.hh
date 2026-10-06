@@ -139,6 +139,7 @@ namespace gem5
 
     // Hook for checkpointing the contents of the cache
     void recordCacheContents(int cntrl, CacheRecorder* tr) const;
+    void beginSrfdStore(Addr address);
 
     // Set this address to most recently used
     void setMRU(Addr address);
@@ -299,7 +300,7 @@ namespace gem5
           statistics::Distribution m_re_reference_cycles;
           statistics::Scalar m_total_re_reference_cycles;
           statistics::Scalar m_total_re_references;
-          statistics::Scalar m_re_reference_over_limit;
+          statistics::Scalar m_re_reference_histogram_overflows;
           statistics::Scalar m_tracked_re_reference_addresses;
           statistics::Formula m_avg_re_reference_cycles;
           statistics::Distribution m_llc_miss_cycles;

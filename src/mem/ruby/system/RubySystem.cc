@@ -66,11 +66,70 @@ namespace gem5
 namespace ruby
 {
 
+void
+RubySystem::beginSrfdStore(Addr address)
+{
+    fatal_if(!m_srfd_pending_stores.insert(address).second,
+             "Overlapping SRFD store handoffs for address %#x", address);
+}
+
+void
+RubySystem::completeSrfdStore(Addr address)
+{
+    fatal_if(m_srfd_pending_stores.erase(address) != 1,
+             "SRFD store completed without a handoff for address %#x", address);
+}
+
+bool
+RubySystem::srfdStorePending(Addr address) const
+{
+    return m_srfd_pending_stores.count(address) != 0;
+}
+
+void
+RubySystem::recordSrfdReply(bool dirty)
+{
+    ++m_srfd_replies_pending[dirty];
+    (dirty ? srfd_dirty_replies_pending : srfd_clean_replies_pending) =
+        m_srfd_replies_pending[dirty];
+}
+
+void
+RubySystem::recordSrfdCanPutSent(bool dirty)
+{
+    fatal_if(!m_srfd_replies_pending[dirty],
+             "SRFD CAN_PUT without an outstanding local reply");
+    --m_srfd_replies_pending[dirty];
+    ++m_srfd_can_puts_pending[dirty];
+    (dirty ? srfd_dirty_replies_pending : srfd_clean_replies_pending) =
+        m_srfd_replies_pending[dirty];
+    (dirty ? srfd_dirty_can_puts_pending : srfd_clean_can_puts_pending) =
+        m_srfd_can_puts_pending[dirty];
+}
+
+void
+RubySystem::recordSrfdCanPutAccepted(bool dirty)
+{
+    fatal_if(!m_srfd_can_puts_pending[dirty],
+             "SRFD CAN_PUT accepted without an outstanding notification");
+    --m_srfd_can_puts_pending[dirty];
+    (dirty ? srfd_dirty_can_puts_pending : srfd_clean_can_puts_pending) =
+        m_srfd_can_puts_pending[dirty];
+}
+
 // To look forward to allowing multiple RubySystem instances, track the number
 // of RubySystems that need to be warmed up on checkpoint restore.
 
 RubySystem::RubySystem(const Params &p)
     : ClockedObject(p), m_access_backing_store(p.access_backing_store),
+      srfd_dirty_replies_pending(this, "srfd_dirty_replies_pending", "Outstanding dirty local replies"),
+      srfd_clean_replies_pending(this, "srfd_clean_replies_pending", "Outstanding clean local replies"),
+      srfd_dirty_can_puts_pending(this, "srfd_dirty_can_puts_pending", "Outstanding dirty CAN_PUT notifications"),
+      srfd_clean_can_puts_pending(this, "srfd_clean_can_puts_pending", "Outstanding clean CAN_PUT notifications"),
+      srfd_opening_dirty_replies(this, "srfd_opening_dirty_replies", "Dirty replies outstanding at statistics reset"),
+      srfd_opening_clean_replies(this, "srfd_opening_clean_replies", "Clean replies outstanding at statistics reset"),
+      srfd_opening_dirty_can_puts(this, "srfd_opening_dirty_can_puts", "Dirty CAN_PUT notifications outstanding at reset"),
+      srfd_opening_clean_can_puts(this, "srfd_opening_clean_can_puts", "Clean CAN_PUT notifications outstanding at reset"),
       m_cache_recorder(NULL)
 {
     m_randomization = p.randomization;
@@ -220,9 +279,23 @@ RubySystem::makeCacheRecorder(uint8_t *uncompressed_trace,
                                          m_block_size_bytes);
 }
 
+bool
+RubySystem::hasSrfdBuffers() const
+{
+    for (const auto &network : m_networks) {
+        if (network->hasSrfdBuffers())
+            return true;
+    }
+    return false;
+}
+
 void
 RubySystem::memWriteback()
 {
+    for (const auto &network : m_networks)
+        fatal_if(network->hasSrfdBuffers(),
+                 "SRFD checkpoint/writeback is unsupported: router buffers "
+                 "can hold the only dirty copy. Use baseline for checkpoints.");
     m_cooldown_enabled = true;
 
     // Make the trace so we know what to write back.
@@ -332,6 +405,9 @@ RubySystem::writeCompressedTrace(uint8_t *raw_data, std::string filename,
 void
 RubySystem::serialize(CheckpointOut &cp) const
 {
+    for (const auto &network : m_networks)
+        fatal_if(network->hasSrfdBuffers(),
+                 "Cannot serialize SRFD router-buffer coherence state");
     // Store the cache-block size, so we are able to restore on systems
     // with a different cache-block size. CacheRecorder depends on the
     // correct cache-block size upon unserializing.
@@ -419,6 +495,15 @@ RubySystem::unserialize(CheckpointIn &cp)
 
     readCompressedTrace(cache_trace_file, uncompressed_trace,
                         cache_trace_size);
+    // KVM checkpoints can have no Ruby cache records. Replaying an empty
+    // trace needlessly resets time and enters simulate() during startup,
+    // which conflicts with other checkpointed event queues. CPU and memory
+    // state are already restored; there is no cache state to warm.
+    if (cache_trace_size == 0) {
+        delete[] uncompressed_trace;
+        m_warmup_enabled = false;
+        return;
+    }
     m_warmup_enabled = true;
 
     // Create the cache recorder that will hang around until startup.
@@ -502,6 +587,14 @@ RubySystem::resetStats()
         network->resetStats();
     }
     ClockedObject::resetStats();
+    srfd_opening_dirty_replies = m_srfd_replies_pending[1];
+    srfd_dirty_replies_pending = m_srfd_replies_pending[1];
+    srfd_opening_clean_replies = m_srfd_replies_pending[0];
+    srfd_clean_replies_pending = m_srfd_replies_pending[0];
+    srfd_opening_dirty_can_puts = m_srfd_can_puts_pending[1];
+    srfd_dirty_can_puts_pending = m_srfd_can_puts_pending[1];
+    srfd_opening_clean_can_puts = m_srfd_can_puts_pending[0];
+    srfd_clean_can_puts_pending = m_srfd_can_puts_pending[0];
 }
 
 bool

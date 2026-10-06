@@ -238,6 +238,7 @@ structure (CacheMemory, external = "yes") {
   void recordHitWithAddress(Addr);
   void recordMissWithAddress(Addr);
   void recordLlcMissStart(Addr);
+  void beginSrfdStore(Addr);
   void recordLlcMissComplete(Addr, int);
   void recordSrfdCleanCandidate();
   void recordSrfdCleanEmitted();

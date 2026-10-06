@@ -59,6 +59,6 @@ class RubyCache(SimObject):
     top_n_set = Param.Int(0, "Top N sets to be monitored for cache occupancy")
     max_re_reference_cycles = Param.Unsigned(
         100000,
-        "Maximum cache-cycle re-reference interval included in statistics",
+        "Upper histogram bound; longer intervals remain in the mean and overflow count",
     )
     ###PRANJAL

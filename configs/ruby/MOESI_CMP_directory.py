@@ -192,10 +192,17 @@ def create_system(
             start_index_bit=block_size_bits + l2_bits,
         )
 
+        store_clean = options.srfd_mode.startswith("cbdb-")
+        if options.srfd_mode == "cbdb-nocorner":
+            columns = options.num_cpus // options.mesh_rows
+            corners = {0, columns - 1, options.num_cpus - columns,
+                       options.num_cpus - 1}
+            store_clean = i not in corners
+
         l2_cntrl = MOESI_CMP_directory_L2Cache_Controller(
             version=i,
             srfd_enabled=options.srfd_mode != "baseline",
-            srfd_store_clean=options.srfd_mode.startswith("cbdb-"),
+            srfd_store_clean=store_clean,
             L2cache=l2_cache,
             transitions_per_cycle=options.ports,
             ruby_system=ruby_system,
@@ -206,7 +213,9 @@ def create_system(
         l2_cntrl_nodes.append(l2_cntrl)
 
         # Connect the L2 controllers and the network
-        l2_cntrl.GlobalRequestFromL2Cache = MessageBuffer()
+        # CAN_PUT must reach the directory before a later ownership request
+        # from this bank. Garnet preserves this order across request VCs.
+        l2_cntrl.GlobalRequestFromL2Cache = MessageBuffer(ordered=True)
         l2_cntrl.GlobalRequestFromL2Cache.out_port = (
             ruby_system.network.in_port
         )
@@ -239,7 +248,9 @@ def create_system(
     for dir_cntrl in dir_cntrl_nodes:
         dir_cntrl.srfd_store_clean = options.srfd_mode.startswith("cbdb-")
         # Connect the directory controllers and the network
-        dir_cntrl.requestToDir = MessageBuffer()
+        # Preserve notification order through ejection too: Ruby's random
+        # message delays can otherwise reorder CAN_PUT and a later GETX.
+        dir_cntrl.requestToDir = MessageBuffer(ordered=True)
         dir_cntrl.requestToDir.in_port = ruby_system.network.out_port
         dir_cntrl.responseToDir = MessageBuffer()
         dir_cntrl.responseToDir.in_port = ruby_system.network.out_port

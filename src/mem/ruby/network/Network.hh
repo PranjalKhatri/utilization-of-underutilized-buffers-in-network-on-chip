@@ -152,6 +152,7 @@ class Network : public ClockedObject
     bool getRandomization() const;
     bool getWarmupEnabled() const;
     RubySystem *getRubySystem() const { return m_ruby_system; }
+    virtual bool hasSrfdBuffers() const { return false; }
 
   protected:
     // Private copy constructor and assignment operator

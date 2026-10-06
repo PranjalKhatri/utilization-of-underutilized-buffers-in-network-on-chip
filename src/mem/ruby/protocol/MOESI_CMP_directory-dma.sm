@@ -50,7 +50,7 @@ machine(MachineType:DMA, "DMA Controller")
       MessageBuffer * reqToDir, network="To", virtual_network="1",
             vnet_type="request";
       MessageBuffer * respToDir, network="To", virtual_network="2",
-            vnet_type="dmaresponse";
+            vnet_type="response";
 
       MessageBuffer * mandatoryQueue;
       MessageBuffer * triggerQueue;

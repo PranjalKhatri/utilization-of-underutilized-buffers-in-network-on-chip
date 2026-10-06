@@ -171,7 +171,7 @@ class MeshDirCorners_XY(SimpleTopology):
 
         # Connect the dma nodes to router 0.  These should only be DMA nodes.
         for i, node in enumerate(dma_nodes):
-            assert node.type == "DMA_Controller"
+            assert "DMA_Controller" in node.type
             ext_links.append(
                 ExtLink(
                     link_id=link_count,
@@ -180,6 +180,7 @@ class MeshDirCorners_XY(SimpleTopology):
                     latency=link_latency,
                 )
             )
+            link_count += 1
 
         network.ext_links = ext_links
 

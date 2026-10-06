@@ -55,6 +55,14 @@ namespace ruby
 namespace garnet
 {
 
+bool
+GarnetNetwork::hasSrfdBuffers() const
+{
+    for (auto *router : m_routers)
+        if (router->srfdEnabled()) return true;
+    return false;
+}
+
 /*
  * GarnetNetwork sets up the routers and links and collects stats.
  * Default parameters (GarnetNetwork.py) can be overwritten from command line
@@ -93,6 +101,13 @@ GarnetNetwork::GarnetNetwork(const Params &p)
     for (std::vector<BasicRouter*>::const_iterator i =  p.routers.begin();
          i != p.routers.end(); ++i) {
         Router* router = safe_cast<Router*>(*i);
+        // SRFD retains the entire writeback packet before returning credits.
+        // A control-classified vnet only has one buffer credit and would stall
+        // forever after its header (e.g., a conflicting DMA vnet type label).
+        fatal_if(router->srfdEnabled() &&
+                 !router->srfdDisabledAtThisRouter() &&
+                 (m_virtual_networks <= 2 || m_vnet_type[2] != DATA_VNET_),
+                 "SRFD requires virtual network 2 to use data VC buffers");
         m_routers.push_back(router);
 
         // initialize the router's network pointers

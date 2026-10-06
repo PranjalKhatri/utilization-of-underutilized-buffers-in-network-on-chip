@@ -339,12 +339,13 @@ CacheMemory::allocate(Addr address, AbstractCacheEntry *entry)
     if (it != m_re_reference_cycle.end()) {
         const uint64_t cycles = current_cycle - it->second;
 
-        if (cycles > 0 && cycles <= m_max_re_reference_cycles) {
+        if (cycles > 0) {
             cacheMemoryStats.m_total_re_reference_cycles += cycles;
             cacheMemoryStats.m_total_re_references++;
             cacheMemoryStats.m_re_reference_cycles.sample(cycles);
-        } else if (cycles > m_max_re_reference_cycles) {
-            cacheMemoryStats.m_re_reference_over_limit++;
+        }
+        if (cycles > m_max_re_reference_cycles) {
+            cacheMemoryStats.m_re_reference_histogram_overflows++;
         }
 
         // Retain the address and begin a new interval for every observation.
@@ -529,6 +530,12 @@ CacheMemory::recordLlcMissStart(Addr address)
 }
 
 void
+CacheMemory::beginSrfdStore(Addr address)
+{
+    m_ruby_system->beginSrfdStore(makeLineAddress(address));
+}
+
+void
 CacheMemory::recordLlcMissComplete(Addr address, int source)
 {
     address = makeLineAddress(address);
@@ -594,6 +601,7 @@ CacheMemory::recordSrfdL1CleanWriteback()
 void
 CacheMemory::recordSrfdCanPutSent(bool dirty)
 {
+    m_ruby_system->recordSrfdCanPutSent(dirty);
     if (dirty)
         ++cacheMemoryStats.m_srfd_can_put_dirty_sent;
     else
@@ -822,8 +830,8 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
       ADD_STAT(m_re_reference_cycles, "Cycles between block eviction and re-reference"),
       ADD_STAT(m_total_re_reference_cycles, "Total sum of all re-reference cycles"),
       ADD_STAT(m_total_re_references, "Total count of successfully tracked re-references"),
-      ADD_STAT(m_re_reference_over_limit,
-               "Re-reference intervals greater than the configured limit"),
+      ADD_STAT(m_re_reference_histogram_overflows,
+               "Re-reference intervals above the histogram bound (included in the mean)"),
       ADD_STAT(m_tracked_re_reference_addresses,
                "Addresses retained for continued re-reference tracking"),
       ADD_STAT(m_avg_re_reference_cycles, "Running average of cycles between block eviction and re-reference"),
@@ -920,7 +928,7 @@ CacheMemoryStats::CacheMemoryStats(statistics::Group *parent,
         .flags(statistics::pdf | statistics::dist | statistics::nozero | statistics::nonan);
     m_total_re_reference_cycles.flags(statistics::nozero);
     m_total_re_references.flags(statistics::nozero);
-    m_re_reference_over_limit.flags(statistics::nozero);
+    m_re_reference_histogram_overflows.flags(statistics::nozero);
     m_tracked_re_reference_addresses.flags(statistics::nozero);
     
     // Calculate the running average dynamically

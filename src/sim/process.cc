@@ -367,8 +367,11 @@ Process::deallocateMem(Addr vaddr, int64_t size)
                 // achieve the same result, but would be more expensive
                 // because it would unnecessarily zero out pages that
                 // were allocated for the first time.
+                // Translate in the owning process, not CPU 0's address
+                // space: independent SE guests can use identical vaddrs.
                 SETranslatingPortProxy virt_mem(
-                    system->threads[0], SETranslatingPortProxy::Always);
+                    system->threads[contextIds.at(0)],
+                    SETranslatingPortProxy::Always);
                 const std::vector<uint8_t> zero_page(page_size, 0);
                 virt_mem.writeBlob(page_vaddr, zero_page.data(), page_size);
             }
