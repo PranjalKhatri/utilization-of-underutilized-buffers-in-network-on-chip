@@ -52,6 +52,7 @@ namespace garnet
 
 class CreditLink;
 class Router;
+class InputUnit;
 
 class OutputUnit : public Consumer
 {
@@ -67,8 +68,15 @@ class OutputUnit : public Consumer
     void decrement_credit(int out_vc);
     void increment_credit(int out_vc);
     bool has_credit(int out_vc);
-    bool has_free_vc(int vnet);
-    int select_free_vc(int vnet);
+    bool has_free_vc(int vnet, bool escape = false);
+    int select_free_vc(int vnet, bool escape = false);
+    Router *router() const { return m_router; }
+    void bindSrfd(InputUnit *input, Cycles latency);
+    int leaseSrfd(int vnet, uint64_t lease);
+    void releaseSrfdLease(int vc, uint64_t lease, uint64_t reclaim = 0);
+    void finishSrfdReclaim(int vnet, uint64_t epoch);
+    bool srfdLeased(int vc) const { return m_srfd_leases[vc] != 0; }
+    bool hasSrfdLeases() const;
 
     inline PortDirection get_direction() { return m_direction; }
 
@@ -118,6 +126,7 @@ class OutputUnit : public Consumer
     uint32_t functionalWrite(Packet *pkt);
 
   private:
+    friend class InputUnit;
     Router *m_router;
     GEM5_CLASS_VAR_USED int m_id;
     PortDirection m_direction;
@@ -129,6 +138,12 @@ class OutputUnit : public Consumer
     flitBuffer outBuffer;
     // vc state of downstream router
     std::vector<OutVcState> outVcState;
+    std::vector<uint64_t> m_srfd_leases;
+    std::vector<Tick> m_srfd_demand;
+    std::vector<bool> m_srfd_reclaim_pending;
+    std::vector<uint64_t> m_srfd_reclaim_epoch;
+    InputUnit *m_srfd_downstream = nullptr;
+    Cycles m_srfd_control_latency = Cycles(1);
 };
 
 } // namespace garnet

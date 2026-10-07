@@ -569,6 +569,10 @@ NetworkInterface::calculateVC(int vnet)
         if (m_vc_allocator[vnet] == m_vc_per_vnet)
             m_vc_allocator[vnet] = 0;
 
+        if (m_net_ptr->directionalSrfd() &&
+            m_net_ptr->get_vnet_type(vnet) == DATA_VNET_ &&
+            delta == m_vc_per_vnet - 1) continue;
+
         if (outVcState[(vnet*m_vc_per_vnet) + delta].isInState(
                     IDLE_, curTick())) {
             vc_busy_counter[vnet] = 0;

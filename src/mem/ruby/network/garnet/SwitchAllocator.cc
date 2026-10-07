@@ -297,7 +297,8 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
         // needs outvc
         // this is only true for HEAD and HEAD_TAIL flits.
 
-        if (output_unit->has_free_vc(vnet)) {
+        if (output_unit->has_free_vc(vnet,
+                m_router->getInputUnit(inport)->peekTopFlit(invc)->srfdEscape())) {
 
             has_outvc = true;
 
@@ -343,7 +344,8 @@ SwitchAllocator::vc_allocate(int outport, int inport, int invc)
 {
     // Select a free VC from the output port
     int outvc =
-        m_router->getOutputUnit(outport)->select_free_vc(get_vnet(invc));
+        m_router->getOutputUnit(outport)->select_free_vc(get_vnet(invc),
+            m_router->getInputUnit(inport)->peekTopFlit(invc)->srfdEscape());
 
     // has to get a valid VC since it checked before performing SA
     assert(outvc != -1);

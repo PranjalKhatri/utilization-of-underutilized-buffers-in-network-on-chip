@@ -169,6 +169,9 @@ class InputUnit : public Consumer
     //PRANJAL paper
     void regStats();
   private:
+    friend class Router;
+    friend class OutputUnit;
+    friend class GarnetNetwork;
     enum class SrfdRequestResult {
         Miss,
         Hit,
@@ -182,6 +185,9 @@ class InputUnit : public Consumer
         Addr address = 0;
         uint64_t sequence = 0;
         Tick stored_tick = 0;
+        bool staging = false;
+        bool previously_stored = false;
+        bool admission_pending = false;
     };
 
     SrfdRequestResult trySrfdRequest(flit *request, bool count_lookup = true);
@@ -190,6 +196,12 @@ class InputUnit : public Consumer
     int oldestStored(int vnet, bool complete_only = true) const;
     void returnDroppedRequestCredit(int vc);
     void discardCleanPacket(int vc);
+    void fallbackSpill(int vc);
+    void reclaimDirectional(int vnet, uint64_t epoch = 0);
+    void bindSrfd(OutputUnit *output, Cycles latency);
+    void borrowVc(int vc, uint64_t lease);
+    void markEscape(int vc);
+    bool copySpillFlit(InputUnit *source, int source_vc, int vc);
     //PRANJAL
     bool isLocalPacket() const {
         return m_direction == "Local";
@@ -220,9 +232,20 @@ class InputUnit : public Consumer
     // Input Virtual channels
     std::vector<VirtualChannel> virtualChannels;
     std::vector<SrfdEntry> m_srfd;
+    std::vector<uint64_t> m_srfd_leases;
+    std::vector<bool> m_srfd_reclaim_waiting;
+    std::vector<Tick> m_srfd_reclaim_start;
+    std::vector<uint64_t> m_srfd_reclaim_epoch;
+    std::vector<int> m_srfd_reclaim_victim;
+    OutputUnit *m_srfd_upstream = nullptr;
+    Cycles m_srfd_control_latency = Cycles(1);
+    uint64_t m_srfd_next_lease = 0;
     uint64_t m_srfd_sequence = 0;
     unsigned m_srfd_stored_count = 0;
     unsigned m_srfd_opening_count = 0;
+    unsigned m_srfd_opening_staged_offers_count = 0;
+    unsigned m_srfd_opening_staged_kind[2] = {};
+    unsigned m_srfd_opening_leases_count = 0;
     uint64_t m_srfd_last_occupancy_cycle = 0;
     statistics::Vector m_srfd_occupancy_cycles;
 
@@ -250,7 +273,22 @@ class InputUnit : public Consumer
     statistics::Scalar m_srfd_max_stored;
     statistics::Scalar m_srfd_resident;
     statistics::Scalar m_srfd_opening_resident;
+    statistics::Scalar m_srfd_opening_staged_offers;
+    statistics::Scalar m_srfd_opening_staged_clean;
+    statistics::Scalar m_srfd_opening_staged_dirty;
+    statistics::Scalar m_srfd_closing_staged_clean;
+    statistics::Scalar m_srfd_closing_staged_dirty;
     statistics::Distribution m_srfd_residence_cycles;
+    statistics::Scalar m_srfd_lease_requests;
+    statistics::Scalar m_srfd_lease_grants;
+    statistics::Scalar m_srfd_lease_denials;
+    statistics::Scalar m_srfd_lease_releases;
+    statistics::Scalar m_srfd_opening_leases;
+    statistics::Scalar m_srfd_closing_leases;
+    statistics::Scalar m_srfd_transfer_flits;
+    statistics::Scalar m_srfd_reclaim_requests;
+    statistics::Scalar m_srfd_reclaim_releases;
+    statistics::Distribution m_srfd_reclaim_cycles;
 
     // Statistical variables
     std::vector<double> m_num_buffer_writes;

@@ -1,5 +1,25 @@
 # Build and validation
 
+## Directional storage validation
+
+The implementation audit is in `PAPER_TESTS/srfd_directional_20261007/`.
+`run_random.py` runs 13 seeded comparisons/cases, including preserved-binary
+Local-only comparisons, 2x2/4x4 meshes, caps 4 and 5, DB/CB+DB policies,
+zero-capacity bypass and mid-run statistics resets with longer link latency.
+`run_negative.py` checks invalid configurations and the explicit disable flag.
+
+All 13 cases passed with 22,936 directional hits and 23,310 neighbour-triggered
+releases across the measured test windows. The disabled baseline and CB+DB
+cases matched preserved simulation ticks and principal SRFD counters exactly.
+Complete baseline KVM restores matched native NAMD outputs for both 2x2 and
+4x4 checkpoints. An additional 2x2 O3 computation-only NAMD smoke measured
+at least 1M instructions/core and exercised 937 leases, 875 directional
+pressure releases and 50 directional hits with balanced lifecycle counters.
+The experiment directory
+`PAPER_TESTS/namd_directional_20261007/` holds the O3 smokes and serial long-run
+workflow. See [DIRECTIONAL_SRFD.md](DIRECTIONAL_SRFD.md) for run commands and
+modeled hardware assumptions.
+
 Run generated artifacts under `PAPER_TESTS/`; keep repository sources and
 documentation outside it.
 

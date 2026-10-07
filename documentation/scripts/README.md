@@ -10,6 +10,9 @@ ignored `PAPER_TESTS/` tree.
 | `namd_status.py` | Show phase, per-core progress and completion state |
 | `namd_summary.py` | Print the principal IPC, LLC and SRFD fields from results JSON |
 | `srfd_timing.py STATS` | Print hit spacing, store-to-hit residence and post-eviction reuse from a stats file |
+| `directional_namd.py` | Restore/create a computation checkpoint with directional-storage flags and verified binary compatibility |
+| `directional_checkpoint_fs.py` | gem5 FS configuration used by the directional launcher |
+| `directional_namd_sweep.py --output DIR` | Validate checkpoints and run matched six-VC baseline plus directional caps 4 and 5 |
 | `srfd_random_smoke.sh` | Run a fresh 2x2 RubyRandomTester data-checking smoke |
 | `srfd_regressions.sh` | Run evaluator tests and the historical reservation matrix |
 

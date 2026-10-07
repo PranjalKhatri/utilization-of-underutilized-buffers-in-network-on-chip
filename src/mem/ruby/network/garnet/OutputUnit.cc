@@ -30,6 +30,7 @@
 
 
 #include "mem/ruby/network/garnet/OutputUnit.hh"
+#include "mem/ruby/network/garnet/InputUnit.hh"
 
 #include "debug/RubyNetwork.hh"
 #include "mem/ruby/network/garnet/Credit.hh"
@@ -56,11 +57,16 @@ OutputUnit::OutputUnit(int id, PortDirection direction, Router *router,
     for (int i = 0; i < m_num_vcs; i++) {
         outVcState.emplace_back(i, m_router->get_net_ptr(), consumerVcs);
     }
+    m_srfd_leases.resize(m_num_vcs, 0);
+    m_srfd_demand.resize(m_router->get_num_vnets(), 0);
+    m_srfd_reclaim_pending.resize(m_router->get_num_vnets(), false);
+    m_srfd_reclaim_epoch.resize(m_router->get_num_vnets(), 0);
 }
 
 void
 OutputUnit::decrement_credit(int out_vc)
 {
+    fatal_if(m_srfd_leases[out_vc], "Sending into a leased SRFD VC");
     DPRINTF(RubyNetwork, "Router %d OutputUnit %s decrementing credit:%d for "
             "outvc %d at time: %lld for %s\n", m_router->get_id(),
             m_router->getPortDirectionName(get_direction()),
@@ -73,6 +79,7 @@ OutputUnit::decrement_credit(int out_vc)
 void
 OutputUnit::increment_credit(int out_vc)
 {
+    fatal_if(m_srfd_leases[out_vc], "Ordinary credit received for a leased SRFD VC");
     DPRINTF(RubyNetwork, "Router %d OutputUnit %s incrementing credit:%d for "
             "outvc %d at time: %lld from:%s\n", m_router->get_id(),
             m_router->getPortDirectionName(get_direction()),
@@ -95,12 +102,31 @@ OutputUnit::has_credit(int out_vc)
 
 // Check if the output port (i.e., input port at next router) has free VCs.
 bool
-OutputUnit::has_free_vc(int vnet)
+OutputUnit::has_free_vc(int vnet, bool escape)
 {
+    if (!escape && m_srfd_downstream && m_router->srfdEnabled())
+        m_srfd_demand[vnet] = curTick();
     int vc_base = vnet*m_vc_per_vnet;
     for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
+        if (m_router->directionalSrfd() &&
+            m_router->get_net_ptr()->get_vnet_type(vnet) == DATA_VNET_ &&
+            ((vc % m_vc_per_vnet == m_vc_per_vnet - 1) != escape)) continue;
+        if (m_srfd_leases[vc]) continue;
         if (is_vc_idle(vc, curTick()))
             return true;
+    }
+
+    if (!escape && m_srfd_downstream && m_router->srfdEnabled()) {
+        bool leased = false;
+        for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; ++vc)
+            leased |= m_srfd_leases[vc] != 0;
+        if (!m_srfd_reclaim_pending[vnet] && leased) {
+            m_srfd_reclaim_pending[vnet] = true;
+            const uint64_t epoch = ++m_srfd_reclaim_epoch[vnet];
+            auto *input = m_srfd_downstream;
+            input->m_router->srfdControl(m_srfd_control_latency,
+                [input, vnet, epoch]() { input->reclaimDirectional(vnet, epoch); });
+        }
     }
 
     return false;
@@ -108,10 +134,14 @@ OutputUnit::has_free_vc(int vnet)
 
 // Assign a free output VC to the winner of Switch Allocation
 int
-OutputUnit::select_free_vc(int vnet)
+OutputUnit::select_free_vc(int vnet, bool escape)
 {
     int vc_base = vnet*m_vc_per_vnet;
     for (int vc = vc_base; vc < vc_base + m_vc_per_vnet; vc++) {
+        if (m_router->directionalSrfd() &&
+            m_router->get_net_ptr()->get_vnet_type(vnet) == DATA_VNET_ &&
+            ((vc % m_vc_per_vnet == m_vc_per_vnet - 1) != escape)) continue;
+        if (m_srfd_leases[vc]) continue;
         if (is_vc_idle(vc, curTick())) {
             outVcState[vc].setState(ACTIVE_, curTick());
             return vc;
@@ -119,6 +149,60 @@ OutputUnit::select_free_vc(int vnet)
     }
 
     return -1;
+}
+
+void
+OutputUnit::bindSrfd(InputUnit *input, Cycles latency)
+{
+    m_srfd_downstream = input;
+    m_srfd_control_latency = std::max(latency, Cycles(1));
+}
+
+int
+OutputUnit::leaseSrfd(int vnet, uint64_t lease)
+{
+    assert(lease && m_srfd_downstream);
+    if (m_srfd_reclaim_pending[vnet] || m_srfd_demand[vnet] == curTick())
+        return -1;
+    const int base = vnet * m_vc_per_vnet;
+    const int credits = m_router->get_net_ptr()->getBuffersPerDataVC();
+    for (int vc = base; vc < base + m_vc_per_vnet - 1; ++vc) {
+        if (!m_srfd_leases[vc] && is_vc_idle(vc, curTick()) &&
+            get_credit_count(vc) == credits) {
+            m_srfd_leases[vc] = lease;
+            return vc;
+        }
+    }
+    return -1;
+}
+
+void
+OutputUnit::releaseSrfdLease(int vc, uint64_t lease, uint64_t reclaim)
+{
+    fatal_if(!lease || m_srfd_leases[vc] != lease,
+             "Stale SRFD lease release at router %d VC %d", m_router->get_id(), vc);
+    assert(is_vc_idle(vc, curTick()));
+    assert(get_credit_count(vc) ==
+           m_router->get_net_ptr()->getBuffersPerDataVC());
+    m_srfd_leases[vc] = 0;
+    if (reclaim) finishSrfdReclaim(vc / m_vc_per_vnet, reclaim);
+    m_router->schedule_wakeup(Cycles(1));
+}
+
+void
+OutputUnit::finishSrfdReclaim(int vnet, uint64_t epoch)
+{
+    // An old acknowledgement must not clear a newer reclaim request.
+    if (epoch == m_srfd_reclaim_epoch[vnet])
+        m_srfd_reclaim_pending[vnet] = false;
+    m_router->schedule_wakeup(Cycles(1));
+}
+
+bool
+OutputUnit::hasSrfdLeases() const
+{
+    for (auto lease : m_srfd_leases) if (lease) return true;
+    return false;
 }
 
 /*

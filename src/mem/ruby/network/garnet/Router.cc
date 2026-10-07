@@ -71,6 +71,7 @@ Router::Router(const Params &p)
     m_network_ptr(nullptr), routingUnit(this), switchAllocator(this),
     crossbarSwitch(this)
 {
+    m_srfd_directional = p.srfd_directional_storage;
     fatal_if(m_srfd_reserved_vcs > m_vc_per_vnet,
              "SRFD reserved VCs (%u) exceed VCs per vnet (%u)",
              m_srfd_reserved_vcs, m_vc_per_vnet);
@@ -155,6 +156,136 @@ Router::wakeup()
 
     // Switch Traversal
     crossbarSwitch.wakeup();
+    // Ordinary switch allocation runs before lease arbitration.
+    while (!m_srfd_control.empty() &&
+           m_srfd_control.begin()->first <= curTick()) {
+        auto callback = std::move(m_srfd_control.begin()->second);
+        m_srfd_control.erase(m_srfd_control.begin());
+        callback();
+    }
+    if (m_srfd_spill.source && !m_srfd_spill.awaiting)
+        advanceSpill();
+}
+
+std::pair<InputUnit*, int>
+Router::findSrfd(Addr address)
+{
+    const auto it = m_srfd_index.find(address);
+    return it == m_srfd_index.end() ? std::make_pair(nullptr, -1) : it->second;
+}
+
+void
+Router::indexSrfd(Addr address, InputUnit *input, int vc)
+{
+    fatal_if(m_srfd_index.count(address), "Duplicate router-wide SRFD address %#x", address);
+    m_srfd_index.emplace(address, std::make_pair(input, vc));
+}
+
+void
+Router::eraseSrfd(Addr address, InputUnit *input, int vc)
+{
+    auto it = m_srfd_index.find(address);
+    fatal_if(it == m_srfd_index.end() || it->second != std::make_pair(input, vc),
+             "SRFD address index ownership mismatch for %#x", address);
+    m_srfd_index.erase(it);
+}
+
+void
+Router::srfdControl(Cycles delay, std::function<void()> callback)
+{
+    delay = std::max(delay, Cycles(1));
+    m_srfd_control.emplace(clockEdge(delay), std::move(callback));
+    schedule_wakeup(delay);
+}
+
+void
+Router::retrySrfd(Addr address)
+{
+    for (auto &input : m_input_unit)
+        input->retryWaitingSrfdRequests(address);
+}
+
+void
+Router::trySpill(InputUnit *source, int vc)
+{
+    if (m_srfd_spill.source) {
+        source->fallbackSpill(vc);
+        return;
+    }
+    m_srfd_spill.source = source;
+    m_srfd_spill.source_vc = vc;
+    for (unsigned i = 0; i < m_input_unit.size(); ++i) {
+        auto *input = m_input_unit[(i + m_srfd_direction_cursor) % m_input_unit.size()].get();
+        if (input->m_srfd_upstream &&
+            input->m_srfd_stored_count < srfdStorageCapacity())
+            m_srfd_spill.candidates.push_back(input);
+    }
+    ++m_srfd_direction_cursor;
+    std::stable_sort(m_srfd_spill.candidates.begin(), m_srfd_spill.candidates.end(),
+        [](InputUnit *a, InputUnit *b) {
+            return a->m_srfd_stored_count < b->m_srfd_stored_count;
+        });
+    schedule_wakeup(Cycles(1));
+}
+
+void
+Router::advanceSpill()
+{
+    auto &spill = m_srfd_spill;
+    if (spill.destination) {
+        if (spill.destination->copySpillFlit(
+                spill.source, spill.source_vc, spill.destination_vc)) {
+            spill = Spill();
+        } else {
+            schedule_wakeup(Cycles(1));
+        }
+        return;
+    }
+    if (spill.next == spill.candidates.size()) {
+        auto *source = spill.source;
+        const int vc = spill.source_vc;
+        spill = Spill();
+        source->fallbackSpill(vc);
+        return;
+    }
+    auto *destination = spill.candidates[spill.next++];
+    const int vnet = spill.source_vc / m_vc_per_vnet;
+    auto *upstream = destination->m_srfd_upstream;
+    const uint64_t lease = ++destination->m_srfd_next_lease;
+    spill.awaiting = true;
+    ++destination->m_srfd_lease_requests;
+    upstream->router()->srfdControl(destination->m_srfd_control_latency,
+        [this, destination, upstream, lease, vnet]() {
+            const int vc = upstream->leaseSrfd(vnet, lease);
+            srfdControl(destination->m_srfd_control_latency,
+                [this, destination, vc, lease]() {
+                    auto &current = m_srfd_spill;
+                    assert(current.source && current.awaiting);
+                    current.awaiting = false;
+                    if (vc < 0) {
+                        ++destination->m_srfd_lease_denials;
+                    } else {
+                        ++destination->m_srfd_lease_grants;
+                        destination->borrowVc(vc, lease);
+                        current.destination = destination;
+                        current.destination_vc = vc;
+                    }
+                    // Transfer starts on the following cycle, once per cycle.
+                    schedule_wakeup(Cycles(1));
+                });
+        });
+}
+
+bool
+Router::srfdTransient() const
+{
+    if (m_srfd_spill.source || !m_srfd_control.empty()) return true;
+    for (const auto &input : m_input_unit)
+        for (auto lease : input->m_srfd_leases)
+            if (lease) return true;
+    for (const auto &output : m_output_unit)
+        if (output->hasSrfdLeases()) return true;
+    return false;
 }
 
 int

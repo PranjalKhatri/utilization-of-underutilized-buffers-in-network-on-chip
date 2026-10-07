@@ -1,5 +1,11 @@
 # SRFD and network flags
 
+`--srfd-directional-storage` enables dynamic borrowing from existing cardinal
+input buffers. `--no-srfd-directional-storage` disables it; Local-only storage
+is the default. Enabled experiments reserve one data escape VC and support
+caps 4 and 5 with six physical VCs. See [DIRECTIONAL_SRFD.md](DIRECTIONAL_SRFD.md)
+for ownership, pressure behavior, limits and matching baseline requirements.
+
 The direct gem5 flags below are defined in `configs/network/Network.py`.
 They are used with MOESI CMP directory and Garnet. `srfd_eval.py` also forwards
 `--srfd-reserved-vcs` for its serial and parallel SE benchmark runs.

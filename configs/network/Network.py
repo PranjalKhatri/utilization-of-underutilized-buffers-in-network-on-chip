@@ -159,6 +159,14 @@ def define_options(parser):
         help="Data VCs per local input excluded from retained SRFD blocks "
              "(default: 0; storage limit = vcs-per-vnet minus this value)",
     )
+    parser.add_argument(
+        "--srfd-directional-storage", action="store_true", default=False,
+        help="Dynamically lease directional data VCs for SRFD (reserves an escape VC)",
+    )
+    parser.add_argument(
+        "--no-srfd-directional-storage", action="store_false",
+        dest="srfd_directional_storage",
+    )
 
 
 def create_network(options, ruby):
@@ -202,6 +210,9 @@ def create_network(options, ruby):
 
 
 def init_network(options, network, InterfaceClass):
+    directional = getattr(options, "srfd_directional_storage", False)
+    if directional and options.network != "garnet":
+        fatal("Directional SRFD requires Garnet")
     if options.network == "garnet":
         network.num_rows = options.mesh_rows
         network.vcs_per_vnet = options.vcs_per_vnet
@@ -217,6 +228,15 @@ def init_network(options, network, InterfaceClass):
         if not 0 <= reserved <= options.vcs_per_vnet:
             fatal("--srfd-reserved-vcs must be between 0 and --vcs-per-vnet")
         network.srfd_reserved_vcs = reserved
+        if hasattr(network, "srfd_directional_storage"):
+            network.srfd_directional_storage = directional
+        elif directional:
+            fatal("This gem5 binary does not support directional SRFD storage")
+        if directional and (
+            options.vcs_per_vnet < 2 or reserved < 1
+            or options.routing_algorithm != 1
+        ):
+            fatal("Directional SRFD requires XY, at least two VCs and one reserved VC")
         ##PRANJAL
         if hasattr(options, "packet_trace_file") and options.packet_trace_file:
             network.packet_trace_file = options.packet_trace_file

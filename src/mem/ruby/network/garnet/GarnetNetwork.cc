@@ -44,6 +44,8 @@
 #include "mem/ruby/network/garnet/NetworkInterface.hh"
 #include "mem/ruby/network/garnet/NetworkLink.hh"
 #include "mem/ruby/network/garnet/Router.hh"
+#include "mem/ruby/network/garnet/InputUnit.hh"
+#include "mem/ruby/network/garnet/OutputUnit.hh"
 #include "mem/ruby/system/RubySystem.hh"
 
 namespace gem5
@@ -72,6 +74,11 @@ GarnetNetwork::hasSrfdBuffers() const
 GarnetNetwork::GarnetNetwork(const Params &p)
     : Network(p)
 {
+    fatal_if(p.srfd_directional_storage &&
+             (p.routing_algorithm != 1 || p.vcs_per_vnet < 2 ||
+              p.srfd_reserved_vcs < 1),
+             "Directional SRFD requires XY, >=2 VCs and >=1 reserved VC");
+    m_srfd_directional = p.srfd_directional_storage;
     m_num_rows = p.num_rows;
     m_ni_flit_size = p.ni_flit_size;
     m_max_vcs_per_vnet = 0;
@@ -130,6 +137,9 @@ void
 GarnetNetwork::init()
 {
     Network::init();
+    fatal_if(directionalSrfd() &&
+             getRubySystem()->getProtocolInfo().getName() != "MOESI_CMP_directory",
+             "Directional SRFD is currently validated only for MOESI_CMP_directory");
 
     for (int i=0; i < m_nodes; i++) {
         m_nis[i]->addNode(m_toNetQueues[i], m_fromNetQueues[i]);
@@ -337,6 +347,15 @@ GarnetNetwork::makeInternalLink(SwitchID src, SwitchID dest, BasicLink* link,
     net_link->setType(INT_);
     CreditLink* credit_link = garnet_link->m_credit_link;
 
+    if (directionalSrfd()) {
+        fatal_if(garnet_link->srcBridgeEn || garnet_link->dstBridgeEn ||
+                 m_routers[src]->clockPeriod() != m_routers[dest]->clockPeriod() ||
+                 m_routers[src]->get_vc_per_vnet() != m_routers[dest]->get_vc_per_vnet(),
+                 "Directional SRFD requires homogeneous routers and unbridged links");
+    }
+    const int srfd_inport = m_routers[dest]->get_num_inports();
+    const int srfd_outport = m_routers[src]->get_num_outports();
+
     m_networklinks.push_back(net_link);
     m_creditlinks.push_back(credit_link);
 
@@ -383,6 +402,12 @@ GarnetNetwork::makeInternalLink(SwitchID src, SwitchID dest, BasicLink* link,
                         routing_table_entry,
                         link->m_weight, credit_link,
                         m_routers[dest]->get_vc_per_vnet());
+    }
+    if (directionalSrfd()) {
+        auto *input = m_routers[dest]->getInputUnit(srfd_inport);
+        auto *output = m_routers[src]->getOutputUnit(srfd_outport);
+        input->bindSrfd(output, link->m_latency);
+        output->bindSrfd(input, link->m_latency);
     }
 }
 

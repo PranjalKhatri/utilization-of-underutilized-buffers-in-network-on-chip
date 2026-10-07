@@ -519,8 +519,16 @@ def aggregate_srfd(stats, mode):
         key = kind + "_bypassed"
         result[key] = sum(value for name, value in stats.items()
                          if ".srfd_" in name and name.endswith("." + key))
-        if has_capacity_counters and result[kind + "_offered"] != (
-                result[kind + "_stored"] + result[key]):
+        opening = sum(value for name, value in stats.items()
+                      if ".srfd_" in name and
+                      name.endswith(".opening_staged_" + kind))
+        closing = sum(value for name, value in stats.items()
+                      if ".srfd_" in name and
+                      name.endswith(".closing_staged_" + kind))
+        result["opening_staged_" + kind] = opening
+        result["closing_staged_" + kind] = closing
+        if has_capacity_counters and result[kind + "_offered"] + opening != (
+                result[kind + "_stored"] + result[key] + closing):
             raise ValueError("SRFD offered/stored/bypassed accounting mismatch")
     if result["pressure_attempts"] != result["pressure_events"] + result["pressure_no_victim"]:
         raise ValueError("SRFD pressure attempt accounting is unbalanced")
@@ -540,6 +548,17 @@ def aggregate_srfd(stats, mode):
     result["local_reply_rate_percentage"] = (
         100.0 * (result["clean_hits"] + result["dirty_hits"]) / attempts
         if attempts else 0.0)
+    for suffix in ("lease_requests", "lease_grants", "lease_denials",
+                   "lease_releases", "opening_leases", "closing_leases",
+                   "transfer_flits", "reclaim_requests", "reclaim_releases"):
+        result[suffix] = sum(value for name, value in stats.items()
+                            if ".srfd_" in name and name.endswith("." + suffix))
+    if result["opening_leases"] + result["lease_grants"] != (
+            result["lease_releases"] + result["closing_leases"]):
+        raise ValueError("SRFD directional lease accounting is unbalanced")
+    result["directional_hits"] = sum(value for name, value in stats.items()
+        if ".srfd_" in name and ".srfd_Local_" not in name and
+        (name.endswith(".clean_hits") or name.endswith(".dirty_hits")))
 
     # RubySystem-wide timing/reuse statistics were added after the original
     # SRFD runs. Keep old result files readable while exposing the new fields

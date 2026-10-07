@@ -54,6 +54,7 @@ class GarnetNetwork(RubyNetwork):
     )
     packet_trace_file = Param.String("", "File path to output packet traces")
     srfd_mode = Param.String("baseline", "SRFD operating mode")
+    srfd_directional_storage = Param.Bool(False, "Lease directional input VCs for SRFD")
     srfd_reserved_vcs = Param.UInt32(
         0, "Data VCs per local input excluded from retained SRFD blocks"
     )
@@ -90,6 +91,8 @@ class GarnetRouter(BasicRouter):
         Parent.ni_flit_size, "bit width supported by the router"
     )
     srfd_mode = Param.String(Parent.srfd_mode, "SRFD operating mode")
+    srfd_directional_storage = Param.Bool(Parent.srfd_directional_storage,
+                                         "Lease directional input VCs for SRFD")
     srfd_reserved_vcs = Param.UInt32(
         Parent.srfd_reserved_vcs, "Data VCs excluded from retained SRFD blocks"
     )

@@ -35,6 +35,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <functional>
+#include <map>
+#include <unordered_map>
 
 #include "mem/ruby/common/Consumer.hh"
 #include "mem/ruby/common/NetDest.hh"
@@ -100,6 +103,19 @@ class Router : public BasicRouter, public Consumer
     uint32_t srfdStorageCapacity() const
     { return m_vc_per_vnet - m_srfd_reserved_vcs; }
     bool applySrfdPressure(int inport, int vnet);
+    bool directionalSrfd() const { return m_srfd_directional; }
+    bool escapeVc(int vc) const
+    { return m_srfd_directional && vc % m_vc_per_vnet == m_vc_per_vnet - 1 &&
+             m_network_ptr->get_vnet_type(vc / m_vc_per_vnet) == DATA_VNET_; }
+    uint64_t nextSrfdSequence() { return ++m_srfd_sequence; }
+    std::pair<InputUnit*, int> findSrfd(Addr address);
+    void indexSrfd(Addr address, InputUnit *input, int vc);
+    void eraseSrfd(Addr address, InputUnit *input, int vc);
+    void srfdControl(Cycles delay, std::function<void()> callback);
+    void trySpill(InputUnit *source, int vc);
+    void advanceSpill();
+    void retrySrfd(Addr address);
+    bool srfdTransient() const;
 
     void init_net_ptr(GarnetNetwork* net_ptr)
     {
@@ -154,11 +170,26 @@ class Router : public BasicRouter, public Consumer
     uint32_t functionalWrite(Packet *);
 
   private:
+    friend class InputUnit;
     Cycles m_latency;
     uint32_t m_virtual_networks, m_vc_per_vnet, m_num_vcs;
     uint32_t m_bit_width;
     SrfdMode m_srfd_mode;
     uint32_t m_srfd_reserved_vcs;
+    bool m_srfd_directional;
+    uint64_t m_srfd_sequence = 0;
+    unsigned m_srfd_direction_cursor = 0;
+    std::unordered_map<Addr, std::pair<InputUnit*, int>> m_srfd_index;
+    std::multimap<Tick, std::function<void()>> m_srfd_control;
+    struct Spill {
+        InputUnit *source = nullptr;
+        int source_vc = -1;
+        InputUnit *destination = nullptr;
+        int destination_vc = -1;
+        std::vector<InputUnit*> candidates;
+        unsigned next = 0;
+        bool awaiting = false;
+    } m_srfd_spill;
     int m_mesh_rows;
     GarnetNetwork *m_network_ptr;
 

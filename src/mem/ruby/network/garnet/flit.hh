@@ -90,6 +90,8 @@ class flit
     }
     //PRANJAL
     bool isAck() const { return m_is_ack; }
+    bool srfdEscape() const { return m_srfd_escape; }
+    void setSrfdEscape() { m_srfd_escape = true; }
     void setAck(bool ack) { m_is_ack = ack; }
     void
     advance_stage(flit_stage t_stage, Tick newTime)
@@ -118,6 +120,7 @@ class flit
     uint32_t m_width;
     int msgSize;
   protected:
+    bool m_srfd_escape = false;
     bool m_is_ack;//PRANJAL
     int m_packet_id;
     int m_id;

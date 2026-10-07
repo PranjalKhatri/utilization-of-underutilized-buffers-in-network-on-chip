@@ -85,7 +85,8 @@ The evaluator checks:
 
 ```text
 pressure_attempts = pressure_events + pressure_no_victim
-offered(kind)     = stored(kind) + bypassed(kind)   [new counter format]
+offered(kind) + opening_staged(kind)
+  = stored(kind) + bypassed(kind) + closing_staged(kind)
 opening_resident + dirty_stored + clean_stored
   = dirty_hits + clean_hits + dirty_forwarded + clean_dropped + resident
 ```
@@ -93,6 +94,11 @@ opening_resident + dirty_stored + clean_stored
 Reply/CAN_PUT lifecycle checks also account for pending transactions crossing
 an ROI reset. Older statistics without bypass counters are treated as zero
 bypass and remain readable.
+
+Directional storage additionally checks
+`opening_leases + lease_grants = lease_releases + closing_leases`.
+Directional neighbour reclaims have their own counters; they are not Local
+NI pressure attempts. See [DIRECTIONAL_SRFD.md](DIRECTIONAL_SRFD.md).
 
 Occupancy is time-weighted over LLC-facing inputs. State its denominator:
 retained blocks out of the configured cap, or physical data VCs out of six.

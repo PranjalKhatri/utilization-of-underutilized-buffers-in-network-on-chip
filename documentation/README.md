@@ -1,5 +1,8 @@
 # SRFD implementation and experiment documentation
 
+- [Directional SRFD storage](DIRECTIONAL_SRFD.md): dynamic neighbour leases,
+  escape routing, pressure recovery, toggles and the NAMD comparison workflow.
+
 This folder documents this repository's router-buffer implementation and the
 SPEC experiment workflows. gem5's upstream documentation remains in `docs/`.
 
