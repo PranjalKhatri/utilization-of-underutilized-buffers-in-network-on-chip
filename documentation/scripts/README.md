@@ -24,3 +24,8 @@ the principal scripts used for the completed run. They are provenance copies:
 some preserve relative paths to their original `PAPER_TESTS` working directory
 and should not be run in place. The top-level wrappers above are the supported
 entry points.
+
+`reference/topology_run_all.py`, `topology_run_checkpoint.py`, and
+`topology_checkpoint_fs.py` preserve the later cap-five and directory-placement
+workflow. It creates topology-specific checkpoints and compares each cap-four
+run with a baseline using the same topology.

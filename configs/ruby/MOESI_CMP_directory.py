@@ -85,7 +85,9 @@ def create_system(
             panic("SRFD local replies currently require XY routing")
         if options.buffers_per_data_vc < 5:
             panic("SRFD requires at least five buffers per data VC")
-        if options.topology not in ("Mesh_XY", "MeshDirCorners_XY"):
+        if options.topology not in (
+            "Mesh_XY", "MeshDirCorners_XY", "MeshDirMedials_XY"
+        ):
             panic("SRFD requires a mesh with colocated L2 controllers")
         if options.num_l2caches != options.num_cpus:
             panic("SRFD requires one distributed L2 bank per router")

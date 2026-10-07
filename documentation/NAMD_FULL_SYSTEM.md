@@ -183,3 +183,25 @@ Do not use that path as a general binary-mismatch bypass.
 
 The implementation rejects coherent DMA and active-SRFD checkpointing. PIO is
 therefore part of this validated configuration.
+
+## Directory-placement experiments
+
+Changing the topology requires a new baseline checkpoint and a baseline timing
+run for that topology. The topology comparison workflow supports:
+
+| Topology | Directory routers on a 4x4 mesh |
+|---|---|
+| `MeshDirCorners_XY` | 0, 3, 12, 15 |
+| Standard `Mesh_XY` | 0, 0, 0, 0 |
+| `MeshDirMedials_XY` | 5, 6, 9, 10, the central 2x2 routers |
+
+All three keep one L2 bank on every router. Standard `Mesh_XY` distributes the
+32 L1/L2 controllers evenly, then attaches its four remainder directory
+controllers to router 0. `MeshDirMedials_XY` was added for a balanced central
+directory placement while retaining the same bidirectional mesh links and XY
+routing weights.
+
+The recorded topology workflow runs a complete 16-copy KVM output validation
+and a short CB+DB O3 smoke before each topology's paired baseline and cap-four
+20M/core measurements. Its tracked provenance copy is
+`scripts/reference/topology_run_all.py`.
