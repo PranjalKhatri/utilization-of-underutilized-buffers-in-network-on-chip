@@ -154,6 +154,11 @@ def define_options(parser):
         default="baseline",
         help="SRFD router-buffer policy (baseline disables SRFD)",
     )
+    parser.add_argument(
+        "--srfd-reserved-vcs", type=int, default=0,
+        help="Data VCs per local input excluded from retained SRFD blocks "
+             "(default: 0; storage limit = vcs-per-vnet minus this value)",
+    )
 
 
 def create_network(options, ruby):
@@ -208,6 +213,10 @@ def init_network(options, network, InterfaceClass):
         network.buffers_per_ctrl_vc = options.buffers_per_ctrl_vc
         network.buffers_per_data_vc = options.buffers_per_data_vc
         network.srfd_mode = options.srfd_mode
+        reserved = options.srfd_reserved_vcs
+        if not 0 <= reserved <= options.vcs_per_vnet:
+            fatal("--srfd-reserved-vcs must be between 0 and --vcs-per-vnet")
+        network.srfd_reserved_vcs = reserved
         ##PRANJAL
         if hasattr(options, "packet_trace_file") and options.packet_trace_file:
             network.packet_trace_file = options.packet_trace_file

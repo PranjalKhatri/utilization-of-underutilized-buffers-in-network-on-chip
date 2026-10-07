@@ -127,7 +127,8 @@ class InputUnit : public Consumer
     inline bool
     need_stage(int vc, flit_stage stage, Tick time)
     {
-        if (m_srfd[vc].held || m_srfd_waiting[vc]) return false;
+        if (m_srfd[vc].held || m_srfd_waiting[vc] ||
+            m_srfd_clean_bypass[vc]) return false;
         return virtualChannels[vc].need_stage(stage, time);
     }
 
@@ -188,6 +189,7 @@ class InputUnit : public Consumer
     void releaseSrfd(int vc, bool drop);
     int oldestStored(int vnet, bool complete_only = true) const;
     void returnDroppedRequestCredit(int vc);
+    void discardCleanPacket(int vc);
     //PRANJAL
     bool isLocalPacket() const {
         return m_direction == "Local";
@@ -211,6 +213,9 @@ class InputUnit : public Consumer
     void update_vc_availability();
     void update_srfd_occupancy();
     std::vector<bool> m_srfd_waiting;
+    // An overflow clean candidate is assembled and discarded, rather than
+    // sent to a memory controller that never expected a clean writeback.
+    std::vector<bool> m_srfd_clean_bypass;
     //PRANJAL end
     // Input Virtual channels
     std::vector<VirtualChannel> virtualChannels;
@@ -225,6 +230,8 @@ class InputUnit : public Consumer
     statistics::Scalar m_srfd_clean_offered;
     statistics::Scalar m_srfd_dirty_stored;
     statistics::Scalar m_srfd_clean_stored;
+    statistics::Scalar m_srfd_dirty_bypassed;
+    statistics::Scalar m_srfd_clean_bypassed;
     statistics::Scalar m_srfd_dirty_forwarded;
     statistics::Scalar m_srfd_clean_dropped;
     statistics::Scalar m_srfd_gets_lookups;

@@ -54,6 +54,9 @@ class GarnetNetwork(RubyNetwork):
     )
     packet_trace_file = Param.String("", "File path to output packet traces")
     srfd_mode = Param.String("baseline", "SRFD operating mode")
+    srfd_reserved_vcs = Param.UInt32(
+        0, "Data VCs per local input excluded from retained SRFD blocks"
+    )
 
 
 class GarnetNetworkInterface(ClockedObject):
@@ -87,6 +90,9 @@ class GarnetRouter(BasicRouter):
         Parent.ni_flit_size, "bit width supported by the router"
     )
     srfd_mode = Param.String(Parent.srfd_mode, "SRFD operating mode")
+    srfd_reserved_vcs = Param.UInt32(
+        Parent.srfd_reserved_vcs, "Data VCs excluded from retained SRFD blocks"
+    )
     mesh_rows = Param.Int(Parent.num_rows, "Rows in the mesh")
 
 

@@ -204,7 +204,8 @@ def write_run_manifest(run_dir, command):
 def run_benchmarks(results_dir, target_benchmarks, srfd_mode="baseline",
                    profile="corners-4x4", write_status=True,
                    memory="32GB", fast_forward=None, maxinsts=10000000,
-                   cpu_type="X86O3CPU", warmup_insts=100000, max_tick=None):
+                   cpu_type="X86O3CPU", warmup_insts=100000, max_tick=None,
+                   srfd_reserved_vcs=0):
     if max_tick is not None and max_tick <= 0:
         raise ValueError("max_tick must be positive")
     profiles = {"development": (16, 16, 4, "Mesh_XY", 6),
@@ -218,6 +219,8 @@ def run_benchmarks(results_dir, target_benchmarks, srfd_mode="baseline",
                 # this profile as the paper's four-corner-memory topology.
                 "paper-mesh-6vc": (64, 4, 8, "Mesh_XY", 6)}
     num_cpus, num_dirs, mesh_rows, topology, vcs_per_vnet = profiles[profile]
+    if not 0 <= srfd_reserved_vcs <= vcs_per_vnet:
+        raise ValueError("SRFD reservation must be between zero and profile VCs")
     results_dir = os.path.abspath(results_dir)
     os.makedirs(results_dir, exist_ok=True)
     print(f"[*] Starting data collection. Results will be saved to {results_dir}")
@@ -271,6 +274,7 @@ def run_benchmarks(results_dir, target_benchmarks, srfd_mode="baseline",
             "--router-latency=2",
             "--routing-algorithm=1",
             f"--srfd-mode={srfd_mode}",
+            f"--srfd-reserved-vcs={srfd_reserved_vcs}",
             "-c", cmd_str,
             "-F", str(fast_forward if fast_forward is not None
                        else config.get("fast_forward", 1000000)),
@@ -344,7 +348,8 @@ def run_benchmarks(results_dir, target_benchmarks, srfd_mode="baseline",
 
 def run_benchmarks_parallel(results_dir, target_benchmarks, srfd_mode,
                             profile, jobs, memory="32GB", fast_forward=None,
-                            maxinsts=10000000, cpu_type="X86O3CPU", warmup_insts=100000):
+                            maxinsts=10000000, cpu_type="X86O3CPU", warmup_insts=100000,
+                            srfd_reserved_vcs=0):
     """Run benchmarks concurrently; each gem5 process owns a distinct m5out."""
     os.makedirs(results_dir, exist_ok=True)
     completed = {}
@@ -355,7 +360,8 @@ def run_benchmarks_parallel(results_dir, target_benchmarks, srfd_mode,
             started = time.monotonic()
             future = executor.submit(
                 run_benchmarks, results_dir, {bench: config}, srfd_mode,
-                profile, False, memory, fast_forward, maxinsts, cpu_type, warmup_insts)
+                profile, False, memory, fast_forward, maxinsts, cpu_type,
+                warmup_insts, srfd_reserved_vcs=srfd_reserved_vcs)
             submitted[future] = (bench, config, started)
         for future in as_completed(submitted):
             bench, config, started = submitted[future]
@@ -504,6 +510,18 @@ def aggregate_srfd(stats, mode):
         if not values:
             raise ValueError(f"Missing SRFD statistic: *.{suffix}")
         result[suffix] = max(values) if suffix == "max_stored" else sum(values)
+    # Older binaries have no capacity-bypass counters. A default reservation
+    # of zero preserves their behavior and treats missing counters as zero.
+    has_capacity_counters = any(
+        ".srfd_" in name and name.endswith(".dirty_bypassed")
+        for name in stats)
+    for kind in ("dirty", "clean"):
+        key = kind + "_bypassed"
+        result[key] = sum(value for name, value in stats.items()
+                         if ".srfd_" in name and name.endswith("." + key))
+        if has_capacity_counters and result[kind + "_offered"] != (
+                result[kind + "_stored"] + result[key]):
+            raise ValueError("SRFD offered/stored/bypassed accounting mismatch")
     if result["pressure_attempts"] != result["pressure_events"] + result["pressure_no_victim"]:
         raise ValueError("SRFD pressure attempt accounting is unbalanced")
     result["opening_resident"] = sum(value for name, value in stats.items()
@@ -947,6 +965,8 @@ if __name__ == "__main__":
         "--srfd-modes", default="baseline",
         help=("Comma-separated SRFD modes, or 'all' for baseline plus every "
               "SRFD variant"))
+    parser.add_argument("--srfd-reserved-vcs", type=int, default=0,
+                        help="Data VCs excluded from retained SRFD storage")
     parser.add_argument(
         "--profile",
         choices=("development", "corners-4x4", "corners-4x4-6vc", "paper",
@@ -1031,12 +1051,13 @@ if __name__ == "__main__":
                 run_benchmarks_parallel(
                     mode_dir, target_benchmarks, mode, args.profile,
                     args.jobs, args.memory, args.fast_forward, args.maxinsts,
-                    args.cpu_type, args.warmup_insts
+                    args.cpu_type, args.warmup_insts, args.srfd_reserved_vcs
                 ) if args.jobs > 1 else run_benchmarks(
                     mode_dir, target_benchmarks, mode, args.profile,
                     memory=args.memory, fast_forward=args.fast_forward,
                     maxinsts=args.maxinsts, cpu_type=args.cpu_type,
-                    warmup_insts=args.warmup_insts
+                    warmup_insts=args.warmup_insts,
+                    srfd_reserved_vcs=args.srfd_reserved_vcs
                 )
             )
             completed_benchmarks.update(mode_completed)

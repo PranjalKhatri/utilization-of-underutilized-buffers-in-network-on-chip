@@ -66,10 +66,14 @@ Router::Router(const Params &p)
   : BasicRouter(p), Consumer(this), m_latency(p.latency),
     m_virtual_networks(p.virt_nets), m_vc_per_vnet(p.vcs_per_vnet),
     m_num_vcs(m_virtual_networks * m_vc_per_vnet), m_bit_width(p.width),
-    m_srfd_mode(parseSrfdMode(p.srfd_mode)), m_mesh_rows(p.mesh_rows),
+    m_srfd_mode(parseSrfdMode(p.srfd_mode)),
+    m_srfd_reserved_vcs(p.srfd_reserved_vcs), m_mesh_rows(p.mesh_rows),
     m_network_ptr(nullptr), routingUnit(this), switchAllocator(this),
     crossbarSwitch(this)
 {
+    fatal_if(m_srfd_reserved_vcs > m_vc_per_vnet,
+             "SRFD reserved VCs (%u) exceed VCs per vnet (%u)",
+             m_srfd_reserved_vcs, m_vc_per_vnet);
     m_input_unit.clear();
     m_output_unit.clear();
 }

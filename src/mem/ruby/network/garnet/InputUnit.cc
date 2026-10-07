@@ -65,6 +65,7 @@ InputUnit::InputUnit(int id, PortDirection direction, Router *router)
     }
     m_srfd.resize(m_num_vcs);
     m_srfd_waiting.resize(m_num_vcs, false);
+    m_srfd_clean_bypass.resize(m_num_vcs, false);
 
     //PRANJAL
     // --- PAPER IMPLEMENTATION: Initialize VC Tracking ---
@@ -165,20 +166,35 @@ InputUnit::wakeup()
                              msg->getaddr(), m_router->get_id());
                     releaseSrfd(other, true);
                 }
-                auto &entry = m_srfd[vc];
-                entry.held = true;
-                entry.complete = t_flit->get_type() == HEAD_TAIL_;
-                entry.dirty = msg->getSRFDDirty();
-                entry.address = msg->getaddr();
-                entry.sequence = ++m_srfd_sequence;
-                entry.stored_tick = curTick();
-                update_srfd_occupancy();
-                ++m_srfd_stored_count;
-                m_srfd_resident = m_srfd_stored_count;
-                if (entry.dirty) ++m_srfd_dirty_stored;
-                else ++m_srfd_clean_stored;
-                if (m_srfd_stored_count > m_srfd_max_stored.value())
-                    m_srfd_max_stored = m_srfd_stored_count;
+                if (m_srfd_stored_count >= m_router->srfdStorageCapacity()) {
+                    // Count incomplete retained packets against the limit as
+                    // well. Interleaved headers must not consume the headroom.
+                    // Dirty overflow takes its ordinary writeback route;
+                    // clean overflow is dropped only after its tail arrives.
+                    if (msg->getSRFDDirty()) {
+                        ++m_srfd_dirty_bypassed;
+                    } else {
+                        ++m_srfd_clean_bypassed;
+                        m_srfd_clean_bypass[vc] = true;
+                    }
+                } else {
+                    auto &entry = m_srfd[vc];
+                    entry.held = true;
+                    entry.complete = t_flit->get_type() == HEAD_TAIL_;
+                    entry.dirty = msg->getSRFDDirty();
+                    entry.address = msg->getaddr();
+                    entry.sequence = ++m_srfd_sequence;
+                    entry.stored_tick = curTick();
+                    update_srfd_occupancy();
+                    ++m_srfd_stored_count;
+                    m_srfd_resident = m_srfd_stored_count;
+                    if (entry.dirty) ++m_srfd_dirty_stored;
+                    else ++m_srfd_clean_stored;
+                    if (m_srfd_stored_count > m_srfd_max_stored.value())
+                        m_srfd_max_stored = m_srfd_stored_count;
+                    assert(m_srfd_stored_count <=
+                           m_router->srfdStorageCapacity());
+                }
             }
             //PRANJAL
             m_local_packets_generated += isLocalPacket();
@@ -244,6 +260,8 @@ InputUnit::wakeup()
             (t_flit->get_type() == TAIL_ ||
              t_flit->get_type() == HEAD_TAIL_)) {
             const Addr address = t_flit->get_msg_ptr()->getaddr();
+            if (m_srfd_clean_bypass[vc])
+                discardCleanPacket(vc);
             m_router->get_net_ptr()->getRubySystem()->completeSrfdStore(address);
             retryWaitingSrfdRequests(address);
         }
@@ -300,6 +318,20 @@ InputUnit::returnDroppedRequestCredit(int vc)
 }
 
 void
+InputUnit::discardCleanPacket(int vc)
+{
+    while (virtualChannels[vc].isReady(curTick())) {
+        flit *victim = virtualChannels[vc].getTopFlit();
+        const bool tail = victim->get_type() == TAIL_ ||
+                          victim->get_type() == HEAD_TAIL_;
+        delete victim;
+        increment_credit(vc, tail, curTick());
+    }
+    set_vc_idle(vc, curTick());
+    m_srfd_clean_bypass[vc] = false;
+}
+
+void
 InputUnit::releaseSrfd(int vc, bool drop)
 {
     auto &entry = m_srfd[vc];
@@ -307,14 +339,7 @@ InputUnit::releaseSrfd(int vc, bool drop)
     m_srfd_residence_cycles.sample(
         (curTick() - entry.stored_tick) / m_router->clockPeriod());
     if (drop) {
-        while (virtualChannels[vc].isReady(curTick())) {
-            flit *victim = virtualChannels[vc].getTopFlit();
-            const bool tail = victim->get_type() == TAIL_ ||
-                              victim->get_type() == HEAD_TAIL_;
-            delete victim;
-            increment_credit(vc, tail, curTick());
-        }
-        set_vc_idle(vc, curTick());
+        discardCleanPacket(vc);
         ++m_srfd_clean_dropped;
     } else {
         virtualChannels[vc].peekTopFlit()->advance_stage(SA_, curTick());
@@ -341,8 +366,9 @@ InputUnit::applySrfdPressure(int vnet)
     for (int vc = begin; vc < end; ++vc) {
         stored += m_srfd[vc].held && m_srfd[vc].complete;
     }
+    const unsigned capacity = m_router->srfdStorageCapacity();
     const bool pressure = m_router->srfdDefensive() ?
-        (stored > 0) : (stored == m_vc_per_vnet);
+        (stored > 0) : (capacity > 0 && stored >= capacity);
     if (!pressure) {
         ++m_srfd_pressure_no_victim;
         return false;
@@ -536,6 +562,10 @@ InputUnit::regStats()
     m_srfd_clean_offered.name(prefix + "clean_offered");
     m_srfd_dirty_stored.name(prefix + "dirty_stored");
     m_srfd_clean_stored.name(prefix + "clean_stored");
+    m_srfd_dirty_bypassed.name(prefix + "dirty_bypassed")
+        .desc("Dirty candidates forwarded without storage at the capacity limit");
+    m_srfd_clean_bypassed.name(prefix + "clean_bypassed")
+        .desc("Clean candidates discarded without storage at the capacity limit");
     m_srfd_dirty_forwarded.name(prefix + "dirty_forwarded");
     m_srfd_clean_dropped.name(prefix + "clean_dropped");
     m_srfd_gets_lookups.name(prefix + "gets_lookups");

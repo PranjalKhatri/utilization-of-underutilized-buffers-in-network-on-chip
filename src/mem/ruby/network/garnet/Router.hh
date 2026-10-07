@@ -97,6 +97,8 @@ class Router : public BasicRouter, public Consumer
     bool srfdStoresClean() const;
     bool srfdDefensive() const;
     bool srfdDisabledAtThisRouter() const;
+    uint32_t srfdStorageCapacity() const
+    { return m_vc_per_vnet - m_srfd_reserved_vcs; }
     bool applySrfdPressure(int inport, int vnet);
 
     void init_net_ptr(GarnetNetwork* net_ptr)
@@ -156,6 +158,7 @@ class Router : public BasicRouter, public Consumer
     uint32_t m_virtual_networks, m_vc_per_vnet, m_num_vcs;
     uint32_t m_bit_width;
     SrfdMode m_srfd_mode;
+    uint32_t m_srfd_reserved_vcs;
     int m_mesh_rows;
     GarnetNetwork *m_network_ptr;
 
