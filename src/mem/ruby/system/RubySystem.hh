@@ -112,7 +112,11 @@ class RubySystem : public ClockedObject
     void beginSrfdStore(Addr address);
     void completeSrfdStore(Addr address);
     bool srfdStorePending(Addr address) const;
-    void recordSrfdReply(bool dirty);
+    void recordSrfdReply(bool dirty, uint64_t residence_cycles);
+    // Track address reuse after a retained block leaves SRFD without serving
+    // the request that caused its removal.
+    void recordSrfdEviction(Addr address);
+    void recordSrfdRequest(Addr address);
     void recordSrfdCanPutSent(bool dirty);
     void recordSrfdCanPutAccepted(bool dirty);
     void registerAbstractController(
@@ -168,6 +172,9 @@ class RubySystem : public ClockedObject
     //std::vector<Network *> m_networks;
     std::vector<std::unique_ptr<Network>> m_networks;
     std::unordered_set<Addr> m_srfd_pending_stores;
+    std::unordered_map<Addr, uint64_t> m_srfd_eviction_cycle;
+    uint64_t m_srfd_last_hit_cycle = 0;
+    bool m_srfd_has_last_hit = false;
     uint64_t m_srfd_replies_pending[2] = {};
     uint64_t m_srfd_can_puts_pending[2] = {};
     statistics::Scalar srfd_dirty_replies_pending;
@@ -178,6 +185,13 @@ class RubySystem : public ClockedObject
     statistics::Scalar srfd_opening_clean_replies;
     statistics::Scalar srfd_opening_dirty_can_puts;
     statistics::Scalar srfd_opening_clean_can_puts;
+    statistics::Distribution srfd_hit_interval_cycles;
+    statistics::Distribution srfd_hit_residence_cycles;
+    statistics::Scalar srfd_eviction_events;
+    statistics::Scalar srfd_eviction_timestamp_overwrites;
+    statistics::Scalar srfd_evicted_rereferences;
+    statistics::Distribution srfd_evicted_rereference_cycles;
+    statistics::Scalar srfd_eviction_addresses_tracked;
     std::vector<AbstractController *> m_abs_cntrl_vec;
     Cycles m_start_cycle;
 

@@ -101,6 +101,43 @@ Ordinary VC occupancy is not included in SRFD-only occupancy. Residence means
 include released blocks but exclude live survivors; opening entries have
 reset-relative ages.
 
+## SRFD hit and post-eviction reuse timing
+
+The RubySystem-wide counters below are reset at the ROI boundary. They provide
+sample counts and distribution means directly in Ruby cycles:
+
+| Statistic | Meaning |
+|---|---|
+| `system.ruby.srfd_hit_interval_cycles` | Cycles between consecutive local SRFD replies anywhere in the system |
+| `system.ruby.srfd_hit_residence_cycles` | Cycles from storing a block in SRFD until that same retained copy supplies a local reply |
+| `system.ruby.srfd_eviction_events` | Complete retained blocks removed without supplying a local reply |
+| `system.ruby.srfd_evicted_rereferences` | First later GETS/GETX references to tracked SRFD-evicted addresses |
+| `system.ruby.srfd_evicted_rereference_cycles` | Cycles from the most recent tracked SRFD eviction until that reference |
+| `system.ruby.srfd_eviction_timestamp_overwrites` | Same address evicted again before it is referenced; the newer eviction becomes the timing origin |
+| `system.ruby.srfd_eviction_addresses_tracked` | Addresses still awaiting a later reference at the end of the interval |
+
+Use the distribution `::mean` and `::samples` fields. The first hit after a
+statistics reset has no interval sample, so normally
+`hit_interval_cycles::samples = hit_residence_cycles::samples - 1` when at
+least one hit occurs. Hits in the same Ruby cycle produce a valid zero-cycle
+interval.
+
+The old per-input `residence_cycles` distribution mixes local hits, dirty
+pressure forwarding, clean drops, duplicate coalescing and clean-GETX
+conflicts. Use `srfd_hit_residence_cycles` for store-to-hit latency.
+
+Post-eviction tracking is cache-line-address based. It records pressure
+releases and all other complete SRFD removals that do not supply a local reply.
+Only the first later eligible GETS/GETX consumes a timestamp. A block that is
+never referenced again remains in `srfd_eviction_addresses_tracked`; it is not
+included in the re-reference mean.
+
+Print the principal values from any new stats file with:
+
+```sh
+python3 documentation/scripts/srfd_timing.py PATH/roi_stats.txt
+```
+
 Injected flits per instruction can describe traffic overhead across windows
 with different retired totals. Network packet latency can include intentional
 SRFD retention; injected-minus-received also includes dropped packets and must

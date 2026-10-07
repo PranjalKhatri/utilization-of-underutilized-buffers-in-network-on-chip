@@ -338,6 +338,8 @@ InputUnit::releaseSrfd(int vc, bool drop)
     assert(entry.held && entry.complete);
     m_srfd_residence_cycles.sample(
         (curTick() - entry.stored_tick) / m_router->clockPeriod());
+    m_router->get_net_ptr()->getRubySystem()->recordSrfdEviction(
+        entry.address);
     if (drop) {
         discardCleanPacket(vc);
         ++m_srfd_clean_dropped;
@@ -388,6 +390,8 @@ InputUnit::trySrfdRequest(flit *request, bool count_lookup)
     const MsgPtr &request_msg = request->get_msg_ptr();
     const bool getx = request_msg->getSRFDGetX();
     if (count_lookup) {
+        m_router->get_net_ptr()->getRubySystem()->recordSrfdRequest(
+            request_msg->getaddr());
         if (getx) ++m_srfd_getx_lookups; else ++m_srfd_gets_lookups;
     }
     if (m_router->get_net_ptr()->getRubySystem()->
@@ -448,9 +452,11 @@ InputUnit::trySrfdRequest(flit *request, bool count_lookup)
     reply->get_msg_ptr()->getDestination().addNetDest(destination);
     reply->get_msg_ptr()->setSRFDReply(true);
     grant_outport(match, m_router->route_compute(route, m_id, m_direction));
-    m_srfd_residence_cycles.sample(
-        (curTick() - m_srfd[match].stored_tick) / m_router->clockPeriod());
-    m_router->get_net_ptr()->getRubySystem()->recordSrfdReply(m_srfd[match].dirty);
+    const uint64_t residence_cycles =
+        (curTick() - m_srfd[match].stored_tick) / m_router->clockPeriod();
+    m_srfd_residence_cycles.sample(residence_cycles);
+    m_router->get_net_ptr()->getRubySystem()->recordSrfdReply(
+        m_srfd[match].dirty, residence_cycles);
     if (m_srfd[match].dirty) {
         ++m_srfd_dirty_hits;
         if (getx) ++m_srfd_dirty_getx_hits;

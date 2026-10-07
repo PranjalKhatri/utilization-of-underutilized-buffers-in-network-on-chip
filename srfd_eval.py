@@ -540,6 +540,48 @@ def aggregate_srfd(stats, mode):
     result["local_reply_rate_percentage"] = (
         100.0 * (result["clean_hits"] + result["dirty_hits"]) / attempts
         if attempts else 0.0)
+
+    # RubySystem-wide timing/reuse statistics were added after the original
+    # SRFD runs. Keep old result files readable while exposing the new fields
+    # whenever the producing binary supports them.
+    global_stats = {
+        "hit_interval_samples": "srfd_hit_interval_cycles::samples",
+        "mean_cycles_between_hits": "srfd_hit_interval_cycles::mean",
+        "hit_residence_samples": "srfd_hit_residence_cycles::samples",
+        "mean_store_to_hit_cycles": "srfd_hit_residence_cycles::mean",
+        "eviction_events": "srfd_eviction_events",
+        "eviction_timestamp_overwrites":
+            "srfd_eviction_timestamp_overwrites",
+        "evicted_rereferences": "srfd_evicted_rereferences",
+        "evicted_rereference_samples":
+            "srfd_evicted_rereference_cycles::samples",
+        "mean_eviction_to_rereference_cycles":
+            "srfd_evicted_rereference_cycles::mean",
+        "eviction_addresses_tracked": "srfd_eviction_addresses_tracked",
+    }
+    for field, suffix in global_stats.items():
+        value = stats.get("system.ruby." + suffix, 0.0)
+        result[field] = value if np.isfinite(value) else 0.0
+    has_global_timing = any(
+        name.startswith("system.ruby.srfd_hit_") or
+        name.startswith("system.ruby.srfd_eviction_") or
+        name.startswith("system.ruby.srfd_evicted_")
+        for name in stats)
+    if has_global_timing:
+        hits = result["clean_hits"] + result["dirty_hits"]
+        if result["hit_residence_samples"] != hits:
+            raise ValueError("SRFD hit-residence sample accounting is unbalanced")
+        if result["hit_interval_samples"] != max(0, hits - 1):
+            raise ValueError("SRFD hit-interval sample accounting is unbalanced")
+        if (result["evicted_rereferences"] !=
+                result["evicted_rereference_samples"]):
+            raise ValueError(
+                "SRFD eviction re-reference sample accounting is unbalanced")
+        if result["eviction_events"] != (
+                result["evicted_rereferences"] +
+                result["eviction_addresses_tracked"] +
+                result["eviction_timestamp_overwrites"]):
+            raise ValueError("SRFD eviction lifetime accounting is unbalanced")
     if mode == "baseline" and any(result[name] for name in suffixes):
         raise ValueError("Baseline contains nonzero SRFD actions")
     return result

@@ -87,11 +87,45 @@ RubySystem::srfdStorePending(Addr address) const
 }
 
 void
-RubySystem::recordSrfdReply(bool dirty)
+RubySystem::recordSrfdReply(bool dirty, uint64_t residence_cycles)
 {
+    const uint64_t cycle = (uint64_t)curCycle();
+    if (m_srfd_has_last_hit) {
+        srfd_hit_interval_cycles.sample(cycle - m_srfd_last_hit_cycle);
+    }
+    m_srfd_last_hit_cycle = cycle;
+    m_srfd_has_last_hit = true;
+    srfd_hit_residence_cycles.sample(residence_cycles);
+
     ++m_srfd_replies_pending[dirty];
     (dirty ? srfd_dirty_replies_pending : srfd_clean_replies_pending) =
         m_srfd_replies_pending[dirty];
+}
+
+void
+RubySystem::recordSrfdEviction(Addr address)
+{
+    const auto [it, inserted] = m_srfd_eviction_cycle.insert_or_assign(
+        address, (uint64_t)curCycle());
+    ++srfd_eviction_events;
+    if (!inserted) {
+        ++srfd_eviction_timestamp_overwrites;
+    }
+    srfd_eviction_addresses_tracked = m_srfd_eviction_cycle.size();
+}
+
+void
+RubySystem::recordSrfdRequest(Addr address)
+{
+    const auto it = m_srfd_eviction_cycle.find(address);
+    if (it == m_srfd_eviction_cycle.end()) {
+        return;
+    }
+    const uint64_t cycles = (uint64_t)curCycle() - it->second;
+    ++srfd_evicted_rereferences;
+    srfd_evicted_rereference_cycles.sample(cycles);
+    m_srfd_eviction_cycle.erase(it);
+    srfd_eviction_addresses_tracked = m_srfd_eviction_cycle.size();
 }
 
 void
@@ -130,6 +164,20 @@ RubySystem::RubySystem(const Params &p)
       srfd_opening_clean_replies(this, "srfd_opening_clean_replies", "Clean replies outstanding at statistics reset"),
       srfd_opening_dirty_can_puts(this, "srfd_opening_dirty_can_puts", "Dirty CAN_PUT notifications outstanding at reset"),
       srfd_opening_clean_can_puts(this, "srfd_opening_clean_can_puts", "Clean CAN_PUT notifications outstanding at reset"),
+      ADD_STAT(srfd_hit_interval_cycles,
+               "Ruby cycles between consecutive SRFD local replies"),
+      ADD_STAT(srfd_hit_residence_cycles,
+               "Ruby cycles from SRFD storage until a local reply hit"),
+      ADD_STAT(srfd_eviction_events,
+               "Retained blocks removed from SRFD without a local reply"),
+      ADD_STAT(srfd_eviction_timestamp_overwrites,
+               "Repeated SRFD evictions of an address before re-reference"),
+      ADD_STAT(srfd_evicted_rereferences,
+               "Requests to addresses previously evicted from SRFD"),
+      ADD_STAT(srfd_evicted_rereference_cycles,
+               "Ruby cycles from SRFD eviction until address re-reference"),
+      ADD_STAT(srfd_eviction_addresses_tracked,
+               "Evicted SRFD addresses awaiting a re-reference"),
       m_cache_recorder(NULL)
 {
     m_randomization = p.randomization;
@@ -138,6 +186,19 @@ RubySystem::RubySystem(const Params &p)
     assert(isPowerOf2(m_block_size_bytes));
     m_block_size_bits = floorLog2(m_block_size_bytes);
     m_memory_size_bits = p.memory_size_bits;
+
+    auto initSrfdTiming = [](statistics::Distribution &dist) {
+        dist.init(0, 1000000, 1000)
+            .flags(statistics::pdf | statistics::dist |
+                   statistics::nozero | statistics::nonan);
+    };
+    initSrfdTiming(srfd_hit_interval_cycles);
+    initSrfdTiming(srfd_hit_residence_cycles);
+    initSrfdTiming(srfd_evicted_rereference_cycles);
+    srfd_eviction_events.flags(statistics::nozero);
+    srfd_eviction_timestamp_overwrites.flags(statistics::nozero);
+    srfd_evicted_rereferences.flags(statistics::nozero);
+    srfd_eviction_addresses_tracked.flags(statistics::nozero);
 
     // Resize to the size of different machine types
     m_abstract_controls.resize(MachineType_NUM);
@@ -582,6 +643,9 @@ RubySystem::processRubyEvent()
 void
 RubySystem::resetStats()
 {
+    m_srfd_eviction_cycle.clear();
+    m_srfd_has_last_hit = false;
+    srfd_eviction_addresses_tracked = 0;
     m_start_cycle = curCycle();
     for (auto& network : m_networks) {
         network->resetStats();

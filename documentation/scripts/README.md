@@ -9,6 +9,7 @@ ignored `PAPER_TESTS/` tree.
 | `namd_headroom.sh` | Invoke the validated aggressive/defensive headroom workflow |
 | `namd_status.py` | Show phase, per-core progress and completion state |
 | `namd_summary.py` | Print the principal IPC, LLC and SRFD fields from results JSON |
+| `srfd_timing.py STATS` | Print hit spacing, store-to-hit residence and post-eviction reuse from a stats file |
 | `srfd_random_smoke.sh` | Run a fresh 2x2 RubyRandomTester data-checking smoke |
 | `srfd_regressions.sh` | Run evaluator tests and the historical reservation matrix |
 
