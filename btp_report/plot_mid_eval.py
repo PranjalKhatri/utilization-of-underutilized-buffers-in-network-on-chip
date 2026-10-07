@@ -27,7 +27,9 @@ def finish(fig, name):
 
 def llc_penalty():
     baseline = np.ones(3)
-    cbdb_aggressive = np.array([0.994447, 0.986315, 0.981269])
+    # NAMD is the checkpointed computation-only 20M-instruction/core ROI.
+    cbdb_aggressive = np.array([0.994447, 159.588788 / 166.540087,
+                                0.981269])
     x = np.arange(3)
     width = 0.35
     fig, ax = plt.subplots(figsize=(7.2, 4.1))
@@ -40,18 +42,19 @@ def llc_penalty():
                 f"{(1-value)*100:.2f}% lower", ha="center", va="bottom",
                 fontsize=9, fontweight="bold")
     ax.axhline(1.0, color="#374151", linewidth=0.8)
-    ax.set_ylim(0.97, 1.006)
+    ax.set_ylim(0.95, 1.006)
     ax.set_xticks(x, BENCHMARKS)
     ax.set_ylabel("Mean LLC miss penalty / baseline")
-    ax.set_title("Normalized LLC Miss Penalty (4x4, 10M instruction limit)")
+    ax.set_title("Normalized LLC Miss Penalty (4x4)")
     ax.legend(frameon=False, loc="lower left")
     ax.grid(axis="y", alpha=0.22)
     finish(fig, "srfd_4x4_llc_penalty")
 
 
 def occupancy():
-    db_aggressive = np.array([4.884, 4.872, 4.883])
-    cbdb_aggressive = np.array([4.944, 4.985, 4.936])
+    # NAMD is the checkpointed computation-only 20M-instruction/core ROI.
+    db_aggressive = np.array([4.884, 4.302, 4.883])
+    cbdb_aggressive = np.array([4.944, 4.937, 4.936])
     x = np.arange(3)
     width = 0.35
     fig, ax = plt.subplots(figsize=(5.4, 4.1))
@@ -71,17 +74,18 @@ def occupancy():
 
 
 def local_replies():
-    dirty = np.array([18, 17, 204])
-    clean = np.array([93, 106, 821])
+    # NAMD is the checkpointed computation-only 20M-instruction/core ROI.
+    dirty = np.array([18, 5067, 204])
+    clean = np.array([93, 5429, 821])
     x = np.arange(3)
     fig, ax = plt.subplots(figsize=(5.4, 4.1))
     ax.bar(x, dirty, label="Dirty replies", color=COLORS["dirty"])
     bars = ax.bar(x, clean, bottom=dirty, label="Clean replies",
                   color=COLORS["clean"])
     for i, total in enumerate(dirty + clean):
-        ax.text(i, total + 18, f"{total:,}", ha="center", va="bottom",
+        ax.text(i, total + 180, f"{total:,}", ha="center", va="bottom",
                 fontsize=9, fontweight="bold")
-    ax.set_ylim(0, 1150)
+    ax.set_ylim(0, 12000)
     ax.set_xticks(x, BENCHMARKS)
     ax.set_ylabel("Successful local replies")
     ax.set_title("CB+DB Aggressive Local Replies")
@@ -91,27 +95,45 @@ def local_replies():
 
 
 def hit_rate_trend():
-    policies = ["DB-Def", "DB-Agg", "CB+DB-Def", "CB+DB-Agg"]
-    rates = {
-        "Leela": [0.006762, 0.016904, 0.008334, 0.017131],
-        "NAMD": [0.018722, 0.064568, 0.046155, 0.102166],
-        "Cactus": [0.040559, 0.103358, 0.205858, 0.392636],
-    }
-    markers = ["o", "s", "^"]
-    colors = ["#D97706", "#163A63", "#3A7D44"]
+    policies = ["DB-Agg\ncap 6", "CB+DB-Agg\ncap 6",
+                "CB+DB-Def\ncap 4", "CB+DB-Agg\ncap 4"]
+    rates = np.array([5.5341, 4.1447, 1.6742, 3.0037])
     x = np.arange(len(policies))
     fig, ax = plt.subplots(figsize=(5.6, 4.1))
-    for (benchmark, values), marker, color in zip(
-            rates.items(), markers, colors):
-        ax.plot(x, values, marker=marker, linewidth=2.0, markersize=6,
-                label=benchmark, color=color)
-    ax.set_yscale("log")
-    ax.set_xticks(x, policies, rotation=18, ha="right")
-    ax.set_ylabel("Local reply rate (%) — log scale")
-    ax.set_title("Useful-Hit Trend by SRFD Policy")
-    ax.legend(frameon=False, fontsize=8)
+    bars = ax.bar(x, rates, color=[COLORS["db"], COLORS["cbdb"],
+                                  "#75A987", COLORS["cbdb"]])
+    for bar, value in zip(bars, rates):
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.08,
+                f"{value:.2f}%", ha="center", va="bottom", fontsize=9,
+                fontweight="bold")
+    ax.set_ylim(0, 6.2)
+    ax.set_xticks(x, policies)
+    ax.set_ylabel("Local replies / eligible requests (%)")
+    ax.set_title("NAMD Computation-Only Local Reply Rate")
     ax.grid(axis="y", which="both", alpha=0.22)
     finish(fig, "srfd_4x4_hit_rate_trend")
+
+
+def message_buffer_stall():
+    labels = ["Baseline", "DB-Agg\ncap 6", "CB+DB-Agg\ncap 6",
+              "CB+DB-Agg\ncap 4", "CB+DB-Def\ncap 4"]
+    # Sum of Ruby MessageBuffer m_stall_time, normalized per simulated
+    # instruction and then to baseline.
+    normalized = np.array([1.0, 5.225101, 8.000500, 1.202931, 1.046865])
+    fig, ax = plt.subplots(figsize=(7.2, 4.1))
+    bars = ax.bar(np.arange(len(labels)), normalized,
+                  color=[COLORS["baseline"], COLORS["db"], COLORS["cbdb"],
+                         "#58A06A", "#8BC49A"])
+    for bar, value in zip(bars, normalized):
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.10,
+                f"{value:.2f}x", ha="center", va="bottom", fontsize=9,
+                fontweight="bold")
+    ax.set_ylim(0, 8.8)
+    ax.set_xticks(np.arange(len(labels)), labels)
+    ax.set_ylabel("MessageBuffer stall ticks/instruction / baseline")
+    ax.set_title("NAMD Computation-Only Ruby Buffer Stall Proxy")
+    ax.grid(axis="y", alpha=0.22)
+    finish(fig, "namd_message_buffer_stall")
 
 
 if __name__ == "__main__":
@@ -119,3 +141,4 @@ if __name__ == "__main__":
     occupancy()
     local_replies()
     hit_rate_trend()
+    message_buffer_stall()

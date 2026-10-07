@@ -62,7 +62,7 @@
   \begin{columns}
     \begin{column}{0.45\textwidth}
       \begin{itemize}
-        \item \textbf{LLC Miss Penalty:} Time from issuing an off-chip GETS/GETX at L2 until the response data reaches L2 (about 151--160 Ruby cycles in the completed baselines).
+        \item \textbf{LLC Miss Penalty:} Time from issuing an off-chip GETS/GETX at L2 until the response data reaches L2 (about 151--167 Ruby cycles in the completed baselines).
         \item \textbf{VC Availability:} The fraction of execution cycles where NoC virtual channels remain unused.
         \item \textbf{Re-reference Time:} The duration from eviction to a future request for the same LLC block; this is the metric plotted in thousands of cycles.
       \end{itemize}
@@ -215,8 +215,9 @@
 
   \vspace{-0.1cm}
   \small CB+DB Aggressive reduced mean LLC miss penalty for all three completed
-  workloads: Leela 0.56\%, NAMD 1.37\%, and Cactus 1.87\%. The metric is in
-  Ruby cycles, from off-chip GETS/GETX issue at L2 until response data reaches L2.
+  workloads: Leela 0.56\%, NAMD 4.17\%, and Cactus 1.87\%. NAMD is the
+  checkpointed computation-only 20M-instruction/core ROI. The metric is in Ruby
+  cycles, from off-chip GETS/GETX issue at L2 until response data reaches L2.
 \end{frame}
 
 \begin{frame}{4$\times$4 Results: Router-Buffer Usefulness}
@@ -232,9 +233,44 @@
   \end{columns}
   \small
   \begin{itemize}
-    \item Aggressive modes maintained approximately \textbf{4.87--4.99 stored blocks} per participating L2-facing router input, close to the six-VC capacity.
-    \item Aggressive retention raises the chance of a local reply; Cactus increases from 0.041\% in DB-Defensive to 0.393\% in CB+DB-Aggressive.
+    \item In the NAMD computation ROI, cap-6 DB-Aggressive and CB+DB-Aggressive average \textbf{4.30} and \textbf{4.94} retained blocks per L2-facing input.
+    \item NAMD local-reply rate reaches 5.53\% for DB-Aggressive and 4.14\% for CB+DB-Aggressive; reserving two VC slots lowers CB+DB rates to 1.67--3.00\%.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{NAMD: Ruby Buffer Stall Comparison}
+  \centering
+  \includegraphics[width=0.9\linewidth,height=0.59\textheight,keepaspectratio]{namd_message_buffer_stall.png}
+
+  \small
+  \begin{itemize}
+    \item The value sums Ruby \texttt{MessageBuffer::m\_stall\_time}, divides by simulated instructions, and normalizes to the computation-only baseline.
+    \item Cap 6 raises this queue-residence proxy to 5.23$\times$ (DB) and 8.00$\times$ (CB+DB); cap 4 limits it to 1.20$\times$ aggressive and 1.05$\times$ defensive.
+    \item A retained block's own router residence is measured separately. It affects this proxy indirectly when occupied VCs delay source-message injection.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{NAMD: Retained-Block Timing}
+  \small
+  \centering
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    \textbf{Policy} & \textbf{Mean residence} & \textbf{Cycles/local reply} \\
+    \midrule
+    DB-Aggressive, cap 6 & 36,344.75 & 1,316.76 \\
+    CB+DB-Aggressive, cap 6 & 7,940.49 & 1,698.74 \\
+    CB+DB-Aggressive, cap 4 & 5,552.56 & 2,278.65 \\
+    CB+DB-Defensive, cap 4 & 2,142.73 & 4,150.07 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.35cm}
+  \begin{block}{Interpretation}
+    Mean residence is sample-weighted over retired retained packets and mixes
+    local hits, pressure forwarding, and clean drops. Cycles/local reply is ROI
+    cycles divided by all local replies across 16 cores; current counters do not
+    expose store-to-hit-only latency or the hit inter-arrival distribution.
+  \end{block}
 \end{frame}
 
 \begin{frame}{NAMD: Retention Benefit and Pressure Overhead}
@@ -300,9 +336,11 @@
 \end{frame}
 
 \begin{frame}{Observations from the Mid-Evaluation Runs}
-  \textbf{Completed configuration:} 16 cores, 4$\times$4 MeshDirCorners\_XY, six VCs per vnet, homogeneous CPU2017 workloads, TimingSimpleCPU.
+  \textbf{Completed configuration:} 16 cores, 4$\times$4 MeshDirCorners\_XY,
+  and six VCs per vnet. The updated NAMD result uses O3 CPUs and its
+  checkpointed computation-only 20M-instruction/core ROI.
   \begin{itemize}
-    \item Router buffers are actively utilised: aggressive modes average nearly five complete retained packets in the six eligible data VCs.
+    \item NAMD CB+DB-Aggressive averages 4.94 complete retained packets in the six eligible data VCs; DB-Aggressive averages 4.30.
     \item Local clean and dirty replies occur without an off-chip data return, demonstrating the complete Store--Reply--\texttt{CAN\_PUT} path.
     \item Cactus provides the strongest current result: 1,025 local replies and a 1.87\% lower mean LLC miss penalty with CB+DB Aggressive.
     \item The measured local-reply rate remains workload-dependent; longer runs and the paper-scale topology are required for final performance conclusions.
