@@ -1,5 +1,9 @@
 # Directional SRFD storage
 
+See [ESCAPE_VC_EXPLAINED.md](ESCAPE_VC_EXPLAINED.md) for concrete deadlock and
+East-to-North release examples, including physical storage versus logical
+routing origin.
+
 Enable with `--srfd-directional-storage`; disable with
 `--no-srfd-directional-storage`. The default remains Local-only SRFD.
 

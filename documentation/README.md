@@ -2,6 +2,8 @@
 
 - [Directional SRFD storage](DIRECTIONAL_SRFD.md): dynamic neighbour leases,
   escape routing, pressure recovery, toggles and the NAMD comparison workflow.
+- [Escape VC examples](ESCAPE_VC_EXPLAINED.md): circular waits, reservation,
+  and how an East-stored packet leaves through North or a Local output.
 
 This folder documents this repository's router-buffer implementation and the
 SPEC experiment workflows. gem5's upstream documentation remains in `docs/`.
