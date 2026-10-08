@@ -10,6 +10,8 @@ p.add_argument('--srfd-directional-storage',action='store_true')
 p.add_argument('--no-srfd-directional-storage',action='store_false',dest='srfd_directional_storage')
 p.add_argument('--compatibility-trial',action='store_true')
 p.add_argument('--mesh-rows',type=int,default=2)
+p.add_argument('--mem-size',default='3GB')
+p.add_argument('--no-access-backing-store',action='store_true')
 p.add_argument('--topology',choices=['MeshDirCorners_XY','Mesh_XY','MeshDirMedials_XY'],default='MeshDirCorners_XY')
 p.add_argument('--mode',choices=['baseline','cbdb-aggressive','db-aggressive','cbdb-defensive'],default='baseline')
 p.add_argument('--checkpoint',required=True)
@@ -33,6 +35,7 @@ if a.action=='restore':
  if meta['cores']!=cores:p.error('checkpoint geometry mismatch')
  if meta.get('srfd_mode')!='baseline' or meta.get('compute_boundary',{}).get('call')!=7:p.error('expected the saved baseline computation-call-7 checkpoint')
  if meta.get('topology','MeshDirCorners_XY')!=a.topology:p.error('checkpoint topology mismatch')
+ if meta.get('mem_size','3GB')!=a.mem_size or meta.get('access_backing_store',True)==a.no_access_backing_store:p.error('checkpoint memory size/backing mode mismatch')
 out.mkdir(parents=True,exist_ok=False)
 script=out/'guest.rcS'
 script.write_text(f'''#!/bin/bash
@@ -68,6 +71,8 @@ cmd=[str(binary),'-d',str(out),str(HERE/'directional_checkpoint_fs.py'),f'--acti
  '--kernel=/root/.cache/gem5/x86-linux-kernel-4.19.83-1.0.0','--disk-image=/root/.cache/gem5/x86-parsec-1.0.0',f'--payload-image={ASSETS/"payload_compute.img"}',f'--script={script}']
 if a.trace_roi:cmd.append('--trace-roi')
 if a.srfd_directional_storage:cmd.append('--srfd-directional-storage')
+cmd.append(f'--mem-size={a.mem_size}')
+if a.no_access_backing_store:cmd.append('--no-access-backing-store')
 (out/'command.json').write_text(json.dumps(cmd,indent=2))
 def sha(path):
  h=hashlib.sha256()
@@ -80,6 +85,8 @@ for f in sources:shutil.copy2(f,snap/f.name)
 manifest={'command':cmd,'binary_sha256':sha(binary),'payload_sha256':sha(ASSETS/'payload_compute.img'),'hook_sha256':sha(ASSETS/'compute_gate.so'),'sources':{str(f.relative_to(ROOT)):sha(f) for f in sources},'cores':cores,'topology':a.topology,'budget_convention':'all CPUs remain active; stop once each reaches requested target','iterations':a.iterations,'srfd_reserved_vcs':a.srfd_reserved_vcs,'srfd_storage_limit':6-a.srfd_reserved_vcs,'srfd_directional_storage':a.srfd_directional_storage}
 git=['git','-c',f'safe.directory={ROOT}']
 manifest['git_head']=subprocess.check_output(git+['rev-parse','HEAD'],cwd=ROOT).decode().strip()
+manifest['mem_size']=a.mem_size
+manifest['access_backing_store']=not a.no_access_backing_store
 changed=subprocess.check_output(git+['diff','--name-only','--','src','configs','srfd_eval.py'],cwd=ROOT).decode().splitlines()
 manifest['modified_source_sha256']={name:sha(ROOT/name) for name in changed if (ROOT/name).is_file()}
 if changed:

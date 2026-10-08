@@ -13,6 +13,7 @@ ignored `PAPER_TESTS/` tree.
 | `directional_namd.py` | Restore/create a computation checkpoint with directional-storage flags and verified binary compatibility |
 | `directional_checkpoint_fs.py` | gem5 FS configuration used by the directional launcher |
 | `directional_namd_sweep.py --output DIR` | Validate checkpoints and run matched six-VC baseline plus directional caps 4 and 5 |
+| `namd_8x8_sweep.py --output DIR` | Validate the 16 GiB guest and queue 64-core Local/directional comparisons |
 | `srfd_random_smoke.sh` | Run a fresh 2x2 RubyRandomTester data-checking smoke |
 | `srfd_regressions.sh` | Run evaluator tests and the historical reservation matrix |
 

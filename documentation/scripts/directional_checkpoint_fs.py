@@ -26,6 +26,8 @@ parser.add_argument('--srfd-reserved-vcs', type=int, default=0)
 parser.add_argument('--srfd-directional-storage', action='store_true')
 parser.add_argument('--no-srfd-directional-storage', action='store_false', dest='srfd_directional_storage')
 parser.add_argument('--mesh-rows', type=int, default=2)
+parser.add_argument('--mem-size', default='3GB')
+parser.add_argument('--no-access-backing-store', action='store_true')
 parser.add_argument('--topology', default='MeshDirCorners_XY',
                     choices=['MeshDirCorners_XY', 'Mesh_XY',
                              'MeshDirMedials_XY'])
@@ -49,6 +51,7 @@ for path in [args.kernel,args.disk_image,args.script,args.payload_image]:
 cores = args.mesh_rows ** 2
 OUT = Path(m5.options.outdir)
 status = {'status': 'configuring', 'cores': cores, 'mesh_rows': args.mesh_rows,
+          'mem_size': args.mem_size, 'access_backing_store': not args.no_access_backing_store,
           'topology': args.topology, 'srfd_mode': args.srfd_mode,
           'srfd_reserved_vcs': args.srfd_reserved_vcs,
           'srfd_directional_storage': args.srfd_directional_storage, 'srfd_storage_limit': 6-args.srfd_reserved_vcs, 'events': [],
@@ -177,17 +180,19 @@ def run_fs(options, root, system, future_class):
 Simulation.run = run_fs
 legacy = ROOT / 'configs/deprecated/example/fs.py'
 sys.argv = [str(legacy), '--cpu-type=X86KvmCPU', f'--num-cpus={cores}',
-    '--num-dirs=4', f'--num-l2caches={cores}', '--ruby', '--access-backing-store',
+    '--num-dirs=4', f'--num-l2caches={cores}', '--ruby',
     '--network=garnet', f'--topology={args.topology}', f'--mesh-rows={args.mesh_rows}',
     '--vcs-per-vnet=6', '--buffers-per-data-vc=5', '--link-width-bits=128',
     '--router-latency=2', '--routing-algorithm=1', f'--srfd-mode={args.srfd_mode}', f'--srfd-reserved-vcs={args.srfd_reserved_vcs}',
-    '--mem-size=3GB', '--sys-clock=2GHz', '--cpu-clock=2GHz', '--ruby-clock=2GHz',
+    f'--mem-size={args.mem_size}', '--sys-clock=2GHz', '--cpu-clock=2GHz', '--ruby-clock=2GHz',
     '--l1d_size=16kB', '--l1d_assoc=4', '--l1i_size=16kB', '--l1i_assoc=4',
     '--l2_size=128kB', '--l2_assoc=8', f'--kernel={args.kernel}',
     f'--disk-image={args.disk_image}', '--root-device=/dev/hda1', f'--script={args.script}',
     '--command-line=earlyprintk=ttyS0 console=ttyS0 lpj=7999923 root=/dev/hda1 rw ide_core.nodma=0.0 ide_core.nodma=0.1 devtmpfs.mount=1 init=/bin/bash HOME=/root -- -i']
 if args.srfd_directional_storage:
     sys.argv.append('--srfd-directional-storage')
+if not args.no_access_backing_store:
+    sys.argv.append('--access-backing-store')
 if args.payload_image:
     sys.argv.append(f'--disk-image={args.payload_image}')
 try:
