@@ -6,6 +6,8 @@
   and how an East-stored packet leaves through North or a Local output.
 - [8x8 NAMD workflow](NAMD_8X8.md): 64-core checkpoints, large-memory validation
   and matched Local/directional cap comparisons.
+- [SRFD policy design proposal](SRFD_POLICY_DESIGN.md): admission filtering,
+  history-based victim selection, examples, proposed APIs and evaluation.
 
 This folder documents this repository's router-buffer implementation and the
 SPEC experiment workflows. gem5's upstream documentation remains in `docs/`.
